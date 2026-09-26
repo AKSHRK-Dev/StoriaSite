@@ -1,0 +1,58 @@
+---
+summary: What Storia is, what it adds to Folia, and which parts make up the project.
+---
+Storia is Minecraft server software for large communities. It is a fork of
+[Folia](https://github.com/PaperMC/Folia), which is itself built on [Paper](https://papermc.io), so it keeps
+Folia's **regionised multithreading**: nearby chunks are grouped into independent regions that tick in
+parallel on different CPU cores. On top of that, Storia adds features aimed at making a busy server feel like
+single player for everyone on it.
+
+*Storia* is Italian for "history". The logo is a row of columns, like the entrance of a museum.
+
+## What Storia adds
+
+| Feature | In one sentence | Docs |
+| --- | --- | --- |
+| RAM world | Worlds live in RAM and are written to disk in the background. | [[ram-world]] |
+| Fast pregeneration | `/storia pregen` uses every core but one and can be resumed. | [[pregeneration]] |
+| Per-player budget | Each player gets a fair share of the tick threads; only lagging regions are limited. | [[player-budget]] |
+| Faster physics | Entity pushing is about 3× faster with identical results. Redstone is untouched. | [[performance]] |
+| Faster world generation | Optimised noise sampling; terrain is identical to vanilla for the same seed. | [[performance]] |
+| Terrain offload | The heaviest step of terrain generation can run on other machines, encrypted. | [[offload]] |
+| Storia Proxy | A Velocity fork with 50 placeholders for MOTD, tab list and messages. | [[proxy]] |
+
+## Design rules
+
+Everything in Storia follows three rules:
+
+1. **Vanilla results.** The same seed produces the same terrain, and entities are pushed in the same order with
+   the same random rolls. Changes to terrain and physics are verified bit for bit against the original code.
+2. **Redstone never stops.** No optimisation pauses, slows or skips redstone, and by default nothing lowers the
+   simulation distance, so farms and machines near players keep running.
+3. **Safe fallbacks.** If RAM is short, worlds load from disk. If a worker is slow or gone, the server generates
+   terrain itself. A feature failing never takes the server down with it.
+
+## The programs
+
+| Program | What it does | Java |
+| --- | --- | --- |
+| **Storia** | The Minecraft server. | 25 |
+| **Storia Worker** | Computes terrain for a Storia server on another machine. | 25 |
+| **Storia Relay** | Shares terrain work between any number of workers. | 21+ |
+| **Storia Proxy** | Velocity with built-in placeholders, tab list and MOTD. | 21+ |
+
+All four are published on the [downloads page](/en-us/downloads/) and on
+[GitHub Releases]({{GITHUB}}/releases).
+
+## Is Storia right for my server?
+
+Storia is a good fit when:
+
+- you have many players who spread out (survival, SMP, large towns, skyblock islands),
+- your machine has several CPU cores, and
+- your plugins support Folia (see [[plugins]]).
+
+If your server is small, or relies on plugins that only support Paper, Paper is the simpler choice. Folia's
+threading model changes how plugins must schedule work, and Storia inherits that.
+
+Next: [[getting-started]].
