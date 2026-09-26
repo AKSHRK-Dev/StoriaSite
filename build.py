@@ -124,7 +124,7 @@ T = {
         "latest": "Latest release", "version": "Version", "file": "File", "size": "Size", "released": "Released", "sha": "SHA-256",
         "notes": "Release notes", "all": "All releases", "dev": "Development builds are available from GitHub Actions.",
         "products": [
-            ("storia", "Storia", "Server", r"storia-[0-9][^-]*\.jar", "The Storia server. Replace your Folia or Paper jar with it.", "Requires Java 25.", "getting-started"),
+            ("storia", "Storia", "Server", r"storia-[0-9][0-9.]*(-[0-9]+)?\.jar", "The Storia server. Replace your Folia or Paper jar with it.", "Requires Java 25.", "getting-started"),
             ("worker", "Storia Worker", "Offload", r"storia-worker-.*\.zip", "A ready-to-run package that generates terrain for your server on another machine.", "Requires Java 25 and a copy of your world's level.dat and datapacks.", "worker"),
             ("relay", "Storia Relay", "Offload", r"storia-relay-.*\.zip", "Shares terrain work between any number of Storia Workers.", "Requires Java 21 or newer. No Minecraft files.", "relay"),
             ("proxy", "Storia Proxy", "Proxy", r"storia-proxy-.*\.jar", "A Velocity fork with 50 built-in placeholders.", "Requires Java 21 or newer.", "proxy"),
@@ -189,7 +189,7 @@ T = {
         "latest": "最新リリース", "version": "バージョン", "file": "ファイル", "size": "サイズ", "released": "公開日", "sha": "SHA-256",
         "notes": "リリースノート", "all": "すべてのリリース", "dev": "開発版のビルドは GitHub Actions から入手できます。",
         "products": [
-            ("storia", "Storia", "サーバー", r"storia-[0-9][^-]*\.jar", "Storia サーバー本体です。Folia や Paper の jar と置き換えて使います。", "Java 25 が必要です。", "getting-started"),
+            ("storia", "Storia", "サーバー", r"storia-[0-9][0-9.]*(-[0-9]+)?\.jar", "Storia サーバー本体です。Folia や Paper の jar と置き換えて使います。", "Java 25 が必要です。", "getting-started"),
             ("worker", "Storia Worker", "処理の分担", r"storia-worker-.*\.zip", "別のマシンでメインサーバーの地形を生成する、すぐに使えるパッケージです。", "Java 25 と、ワールドの level.dat・データパックのコピーが必要です。", "worker"),
             ("relay", "Storia Relay", "処理の分担", r"storia-relay-.*\.zip", "何台もの Storia Worker に地形生成の仕事を配ります。", "Java 21 以上が必要です。Minecraft のファイルは不要です。", "relay"),
             ("proxy", "Storia Proxy", "プロキシ", r"storia-proxy-.*\.jar", "50 個のプレースホルダーを内蔵した Velocity のフォークです。", "Java 21 以上が必要です。", "proxy"),

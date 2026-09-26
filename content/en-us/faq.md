@@ -12,6 +12,12 @@ Yes. Storia is open source, like Paper, Folia and Velocity, which it is built on
 
 Minecraft **{{MC}}**, Java Edition. Storia follows Folia's supported versions.
 
+### What do the version numbers mean?
+
+Storia versions follow Minecraft. `26.2` is the first Storia release for Minecraft 26.2; later builds for the same
+Minecraft version are `26.2-2`, `26.2-3`, and so on. Always run the **same version** on the server, the workers and
+the relay.
+
 ### Can I use Storia for a small server?
 
 You can, but Folia's threading model mainly pays off with many players spread across the world. For a small
