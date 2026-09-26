@@ -26,14 +26,21 @@ world**: it only reads the world settings needed to produce the same terrain.
       README.md
     ```
 
-2. **Copy the world settings.** From the main server, copy `world/level.dat` and the `world/datapacks/` folder
-   into a new `world/` folder next to `storia.jar`. Only these are needed, not the region files.
+2. **Copy the world settings.** Copy the main server's world folder into a `world/` folder next to
+   `storia.jar`, **without** the chunk folders (`region`, `entities`, `poi`). What is left is small: `level.dat`,
+   `datapacks/` and the `data/` folders, which in Minecraft {{MC}} hold the seed and world generation settings.
 
     ```bash
-    mkdir -p world
-    scp main-server:/srv/storia/world/level.dat world/
-    scp -r main-server:/srv/storia/world/datapacks world/
+    rsync -a --exclude region --exclude entities --exclude poi \
+      main-server:/srv/storia/world/ world/
     ```
+
+    On Windows, copy the whole world folder and delete the `region`, `entities` and `poi` folders inside
+    `world/dimensions/*/*/`.
+
+    !!! warning "Copy the data folders too"
+        Copying only `level.dat` is not enough in Minecraft {{MC}}: the seed lives in
+        `dimensions/minecraft/overworld/data/minecraft/world_gen_settings.dat`. Without it the worker cannot start.
 
 3. **Accept the EULA.** Read the [Minecraft EULA](https://aka.ms/MinecraftEULA) and, if you agree:
 
@@ -87,7 +94,7 @@ The worker must produce **exactly** the same terrain as the main server. After y
 - add, remove or update a datapack that affects world generation,
 - update Storia on the main server,
 
-copy `level.dat` and `datapacks/` again and update the worker's `storia.jar` to the **same version**. If they
+copy the world settings again (step 2) and update the worker's `storia.jar` to the **same version**. If they
 differ, the worker refuses the affected dimensions (the log says `terrain differs: check seed, datapacks and
 Storia build`), and the main server generates them locally. Nothing breaks, it is just not offloaded.
 

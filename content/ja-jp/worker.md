@@ -24,14 +24,20 @@ summary: 手伝う側のマシンに Storia Worker を用意して、メイン�
       README.md
     ```
 
-2. **ワールドの設定をコピーします。** メインサーバーの `world/level.dat` と `world/datapacks/` フォルダを、`storia.jar` の隣に作った
-   `world/` フォルダに入れます。必要なのはこれだけで、リージョンファイルは要りません。
+2. **ワールドの設定をコピーします。** メインサーバーのワールドフォルダを、チャンクのフォルダ（`region`・`entities`・`poi`）を
+   **除いて**、`storia.jar` の隣の `world/` フォルダにコピーします。残るのは小さなファイルだけです：`level.dat`、`datapacks/`、
+   そして Minecraft {{MC}} でシードやワールド生成の設定が入っている `data/` フォルダです。
 
     ```bash
-    mkdir -p world
-    scp main-server:/srv/storia/world/level.dat world/
-    scp -r main-server:/srv/storia/world/datapacks world/
+    rsync -a --exclude region --exclude entities --exclude poi \
+      main-server:/srv/storia/world/ world/
     ```
+
+    Windows では、ワールドフォルダを丸ごとコピーしてから、`world/dimensions/*/*/` の中の `region`・`entities`・`poi` フォルダを削除してください。
+
+    !!! warning "data フォルダも必要です"
+        Minecraft {{MC}} では `level.dat` だけでは足りません。シードは
+        `dimensions/minecraft/overworld/data/minecraft/world_gen_settings.dat` にあり、これがないとワーカーは起動できません。
 
 3. **EULA に同意します。** [Minecraft EULA](https://aka.ms/MinecraftEULA) を読み、同意する場合は：
 
@@ -84,7 +90,7 @@ summary: 手伝う側のマシンに Storia Worker を用意して、メイン�
 - ワールド生成に関わるデータパックを追加・削除・更新した
 - メインサーバーの Storia を更新した
 
-`level.dat` と `datapacks/` をもう一度コピーし、ワーカーの `storia.jar` も **同じバージョン** にしてください。違っていると、ワーカーは該当する
+ワールドの設定（手順 2）をもう一度コピーし、ワーカーの `storia.jar` も **同じバージョン** にしてください。違っていると、ワーカーは該当する
 ディメンションを断り（ログに `terrain differs: check seed, datapacks and Storia build` と出ます）、メインサーバーが自分で生成します。
 何も壊れませんが、分担されなくなります。
 

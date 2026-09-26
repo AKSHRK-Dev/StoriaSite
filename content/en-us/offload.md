@@ -64,8 +64,8 @@ Restart. Offloading starts once the server has finished loading (`Done`).
 
 ### Workers
 
-Follow [[worker]]. In short: unzip `storia-worker-{{VERSION}}.zip`, copy the main server's `level.dat` and
-`datapacks`, set the same secret, and run `start-worker.sh`.
+Follow [[worker]]. In short: unzip `storia-worker-{{VERSION}}.zip`, copy the main server's world folder without
+its `region`, `entities` and `poi` folders, set the same secret, and run `start-worker.sh`.
 
 ### With a relay
 

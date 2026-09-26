@@ -67,7 +67,7 @@ Storia 独自の変更は、バニラと同じ結果を保ちます（地形、�
 
 ### ワーカーがディメンションを断る：「terrain differs」
 
-ワーカーの `level.dat`・データパック・Storia のバージョンが、サーバーと一致していません。`level.dat` と `datapacks/` をコピーし直し、
+ワーカーのワールドの設定・データパック・Storia のバージョンが、サーバーと一致していません。ワールドフォルダを（`region`・`entities`・`poi` を除いて）コピーし直し、
 同じ Storia のリリースを使ってください。[[worker#keeping-the-worker-in-sync|ワーカーを同じ状態に保つ]] を参照してください。
 
 ### ワーカーがディメンションを断る：「no such dimension here」

@@ -60,7 +60,7 @@ offload:
 
 ### ワーカー
 
-[[worker]] の手順に従います。要約すると、`storia-worker-{{VERSION}}.zip` を展開し、メインサーバーの `level.dat` と `datapacks` をコピーし、
+[[worker]] の手順に従います。要約すると、`storia-worker-{{VERSION}}.zip` を展開し、メインサーバーのワールドフォルダを `region`・`entities`・`poi` を除いてコピーし、
 同じ合言葉を設定して `start-worker.sh` を実行します。
 
 ### リレーを使う場合

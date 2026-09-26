@@ -73,8 +73,8 @@ Pregenerate with `/storia pregen` (see [[pregeneration]]), raise `chunk-system.w
 
 ### The worker refuses a dimension: "terrain differs"
 
-The worker's `level.dat`, datapacks or Storia version do not match the server. Copy `level.dat` and `datapacks/`
-again and use the same Storia release. See [[worker#keeping-the-worker-in-sync]].
+The worker's world settings, datapacks or Storia version do not match the server. Copy the world folder again
+(without `region`, `entities` and `poi`) and use the same Storia release. See [[worker#keeping-the-worker-in-sync]].
 
 ### The worker refuses a dimension: "no such dimension here"
 
