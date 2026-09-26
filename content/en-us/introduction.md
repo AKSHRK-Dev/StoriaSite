@@ -35,6 +35,8 @@ Everything in Storia follows three rules:
 
 ## The programs
 
+For the full picture of how they connect, see [How Storia works](/en-us/how-it-works/).
+
 | Program | What it does | Java |
 | --- | --- | --- |
 | **Storia** | The Minecraft server. | 25 |

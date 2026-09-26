@@ -20,6 +20,8 @@ from pathlib import Path
 
 import markdown
 
+from site_how import HOW
+
 ROOT = Path(__file__).resolve().parent
 DIST = ROOT / "dist"
 CONTENT = ROOT / "content"
@@ -261,6 +263,7 @@ def header(lang, path, current):
     <a class="brand" href="{url(lang)}" aria-label="StoriaMC">{logo("storia")}<span class="word">StoriaMC</span></a>
     <nav class="nav" id="site-nav" aria-label="Main">
       <a href="{url(lang)}#features">{t['features']}</a>
+      <a href="{url(lang, 'how-it-works/')}"{cur('how')}>{HOW[lang]['nav']}</a>
       <a href="{url(lang, 'downloads/')}"{cur('downloads')}>{t['downloads']}</a>
       <a href="{url(lang, 'docs/')}"{cur('docs')}>{t['docs']}</a>
     </nav>
@@ -290,6 +293,7 @@ def footer(lang):
         {d('getting-started')}{d('configuration')}{d('commands')}
       </ul></div>
       <div><h2>{t['f_learn']}</h2><ul>
+        <li><a href="{url(lang, 'how-it-works/')}">{e(HOW[lang]['nav'])}</a></li>
         {d('offload')}{d('player-budget')}{d('placeholders')}{d('faq')}
       </ul></div>
       <div><h2>{t['f_source']}</h2><ul>
@@ -465,6 +469,7 @@ def home(lang):
   <div class="container">
     <div class="head"><p class="kicker">{e(t['prog_k'])}</p><h2>{e(t['prog_t'])}</h2><p>{e(t['prog_p'])}</p></div>
     <div class="programs">{programs}</div>
+    <p style="text-align:center;margin:28px 0 0"><a class="link" href="{url(lang, 'how-it-works/')}">{e(HOW[lang]['title'])} {ICON['arrow']}</a></p>
   </div>
 </section>
 
@@ -484,6 +489,133 @@ java -Xmx8G -jar storia-{e(v)}.jar nogui</pre>
   </div>
 </section>"""
     return page(lang, "", "", t["desc"], body, "home")
+
+
+# ---------------------------------------------------------------------------------------------
+# How it works
+# ---------------------------------------------------------------------------------------------
+def arch_svg(lang):
+    h = HOW[lang]
+    d = h["d"]
+
+    def node(x, y, w, label, sub="", main=False, hgt=56):
+        cls = "n main" if main else "n"
+        t = (f'<g class="{cls}"><rect x="{x}" y="{y}" width="{w}" height="{hgt}" rx="10"/>'
+             f'<text x="{x + w / 2}" y="{y + (hgt / 2 if not sub else hgt / 2 - 8)}" class="nt">{e(label)}</text>')
+        if sub:
+            t += f'<text x="{x + w / 2}" y="{y + hgt / 2 + 12}" class="ns">{e(sub)}</text>'
+        return t + "</g>"
+
+    def edge(x1, y1, x2, y2, dash=False):
+        return f'<line class="e{" dash" if dash else ""}" x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" marker-end="url(#ah)"/>'
+
+    def label(x, y, text):
+        return f'<text class="el" x="{x}" y="{y}">{e(text)}</text>'
+
+    workers = "".join(node(930, 196 + i * 92, 150, f"{d['worker']} {chr(65 + i)}", d['wsub']) for i in range(3))
+    wedges = "".join(edge(850, 316, 928, 224 + i * 92, True) for i in range(3))
+    return f"""<svg class="arch" viewBox="0 0 1090 440" role="img" aria-labelledby="arch-title arch-desc">
+<title id="arch-title">{e(h['diagram_label'])}</title>
+<desc id="arch-desc">{e(' '.join(h['diagram_desc']))}</desc>
+<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 10 5 0 10z" class="ah"/></marker></defs>
+<text class="gh" x="185" y="40">{e(d['net'])}</text>
+<text class="gh" x="555" y="40">{e(d['game'])}</text>
+<text class="gh" x="905" y="40">{e(d['help'])}</text>
+<line class="sep" x1="410" y1="60" x2="410" y2="430"/><line class="sep" x1="690" y1="60" x2="690" y2="430"/>
+{node(10, 192, 130, d['players'])}
+{edge(140, 220, 218, 220)}{label(179, 208, 'MC')}
+{node(220, 192, 150, d['proxy'], ':25565')}
+{edge(370, 210, 468, 128)}{edge(370, 230, 468, 312)}{label(446, 224, d['fwd'])}
+{node(470, 96, 180, d['lobby'], 'Folia')}
+{node(470, 288, 180, d['survival'], 'Folia', True)}
+{edge(650, 316, 718, 316, True)}{label(684, 304, 'AES-GCM')}
+{node(720, 288, 130, d['relay'], ':25590')}
+{wedges}{workers}
+</svg>"""
+
+
+def how_it_works(lang):
+    t, h = T[lang], HOW[lang]
+    L = h["labels"]
+    order = [("storia", "Storia"), ("proxy", "Storia Proxy"), ("worker", "Storia Worker"), ("relay", "Storia Relay")]
+    roles = "".join(f"""<article class="role" id="{k}">
+  <div class="role-head">{logo(k)}<div><h3>{e(n)}</h3><p class="role-sub">{e(h['roles'][k]['role'])}</p></div></div>
+  <dl>
+    <dt>{L['does']}</dt><dd>{e(h['roles'][k]['does'])}</dd>
+    <dt>{L['not']}</dt><dd>{e(h['roles'][k]['not'])}</dd>
+    <dt>{L['runs']}</dt><dd>{e(h['roles'][k]['runs'])}</dd>
+    <dt>{L['needs']}</dt><dd>{e(h['roles'][k]['needs'])}</dd>
+    <dt>{L['ports']}</dt><dd>{e(h['roles'][k]['ports'])}</dd>
+    <dt>{L['config']}</dt><dd>{e(h['roles'][k]['config'])}</dd>
+  </dl>
+  <a class="link" href="{url(lang, f"docs/{h['roles'][k]['docs']}/")}">{L['docs']} {ICON['arrow']}</a>
+</article>""" for k, n in order)
+    inside = "".join(f"""<a class="layer" href="{url(lang, f'docs/{slug}/')}"><h3>{e(name)}</h3><p>{e(text)}</p></a>""" for name, text, slug in h["inside"])
+    chunk = "".join(f"""<li><span class="who who-{who}">{e(h['who'][who])}</span><p>{e(text)}</p></li>""" for who, text in h["chunk"])
+    join = "".join(f"""<li><h3>{e(title)}</h3><p>{e(text)}</p></li>""" for title, text in h["join"])
+
+    def table(head, rows, cls=""):
+        th = "".join(f'<th scope="col">{e(x)}</th>' for x in head)
+        trs = "".join("<tr>" + f'<th scope="row">{e(r[0])}</th>' + "".join(f"<td>{e(c)}</td>" for c in r[1:]) + "</tr>" for r in rows)
+        return f'<div class="table-wrap"><table class="plain {cls}"><thead><tr>{th}</tr></thead><tbody>{trs}</tbody></table></div>'
+
+    def chips(items):
+        out = []
+        for i, it in enumerate(items):
+            key, _, mult = it.partition("×")
+            label = h["chips"][key] + (f" ×{mult}" if mult else "")
+            out.append(f'<span class="chip chip-{key}">{e(label)}</span>')
+        return '<span class="arrow" aria-hidden="true">→</span>'.join(out)
+
+    setups = "".join(f"""<article class="setup"><span class="setup-n">{i + 1}</span><h3>{e(name)}</h3><p>{e(text)}</p>
+  <div class="flow" aria-label="{e(' → '.join(h['chips'][x.partition('×')[0]] for x in items))}">{chips(items)}</div><p class="uses">{e(uses)}</p></article>"""
+                     for i, (name, text, items, uses) in enumerate(h["setups"]))
+    desc = "".join(f"<li>{e(x)}</li>" for x in h["diagram_desc"])
+    body = f"""
+<section class="page-head"><div class="container">
+  <p class="kicker">{e(h['kicker'])}</p>
+  <h1>{e(h['title'])}</h1>
+  <p>{e(h['lede'])}</p>
+</div></section>
+
+<div class="container">
+  <figure class="arch-fig">
+    <div class="arch-wrap" tabindex="0" aria-label="{e(h['diagram_label'])}">{arch_svg(lang)}</div>
+    <figcaption><ol class="arch-steps">{desc}</ol></figcaption>
+  </figure>
+</div>
+
+<section class="section"><div class="container">
+  <div class="head"><h2>{e(h['roles_t'])}</h2><p>{e(h['roles_p'])}</p></div>
+  <div class="roles">{roles}</div>
+</div></section>
+
+<section class="section alt"><div class="container">
+  <div class="head"><h2>{e(h['inside_t'])}</h2><p>{e(h['inside_p'])}</p></div>
+  <div class="layers">{inside}</div>
+</div></section>
+
+<section class="section"><div class="container two">
+  <div><h2 class="sub-h">{e(h['chunk_t'])}</h2><p class="sub-p">{e(h['chunk_p'])}</p><ol class="journey">{chunk}</ol></div>
+  <div><h2 class="sub-h">{e(h['join_t'])}</h2><ol class="steps-list">{join}</ol></div>
+</div></section>
+
+<section class="section alt"><div class="container">
+  <div class="head"><h2>{e(h['wire_t'])}</h2></div>
+  {table(h['wire_h'], h['wire'])}
+  <div class="head" style="margin-top:72px"><h2>{e(h['fail_t'])}</h2></div>
+  {table(h['fail_h'], h['fail'])}
+</div></section>
+
+<section class="section"><div class="container">
+  <div class="head"><h2>{e(h['setups_t'])}</h2><p>{e(h['setups_p'])}</p></div>
+  <div class="setups">{setups}</div>
+  <div class="head" style="margin-top:72px"><h2>{e(h['req_t'])}</h2></div>
+  {table(h['req_h'], h['req'])}
+  <p class="dl-note">{e(h['req_note'])}</p>
+  <p style="text-align:center;margin-top:28px"><a class="btn primary" href="{url(lang, 'downloads/')}">{ICON['dl']}{e(h['cta'])}</a></p>
+</div></section>"""
+    return page(lang, "how-it-works/", h["title"], h["lede"], body, "how")
 
 
 # ---------------------------------------------------------------------------------------------
@@ -756,6 +888,7 @@ def main():
     for lang in LANGS:
         write(lang, "", home(lang))
         write(lang, "downloads/", downloads(lang))
+        write(lang, "how-it-works/", how_it_works(lang))
         for key in ("worker", "relay", "proxy"):  # old per-product pages
             write(lang, f"downloads/{key}/", redirect_page(url(lang, f"downloads/#{key}")))
         docs(lang)
