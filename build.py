@@ -112,130 +112,126 @@ e = html.escape
 # ---------------------------------------------------------------------------------------------
 # Products
 # ---------------------------------------------------------------------------------------------
-# key, name, download path, asset pattern, docs slug
+# key, name, asset pattern, docs slug
 PRODUCTS = [
-    ("storia", "Storia", "downloads/", r"storia-[0-9][0-9.]*(-[0-9]+)?\.jar", "getting-started"),
-    ("worker", "Storia Worker", "downloads/worker/", r"storia-worker-.*\.zip", "worker"),
-    ("relay", "Storia Relay", "downloads/relay/", r"storia-relay-.*\.zip", "relay"),
-    ("proxy", "Storia Proxy", "downloads/proxy/", r"storia-proxy-.*\.jar", "proxy"),
+    ("storia", "Storia", r"storia-[0-9][0-9.]*(-[0-9]+)?\.jar", "getting-started"),
+    ("worker", "Storia Worker", r"storia-worker-.*\.zip", "worker"),
+    ("relay", "Storia Relay", r"storia-relay-.*\.zip", "relay"),
+    ("proxy", "Storia Proxy", r"storia-proxy-.*\.jar", "proxy"),
 ]
+
+ICON.update({
+    "ram": svg('<rect x="3" y="7" width="18" height="10" rx="1.5"/><path d="M7 11v2M11 11v2M15 11v2M6 17v2M10 17v2M14 17v2M18 17v2"/>'),
+    "bolt": svg('<path d="M13 2 4 14h7l-1 8 9-12h-7z"/>'),
+    "users": svg('<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.8-3.6 3.4-5.5 6.5-5.5s5.7 1.9 6.5 5.5"/><circle cx="17" cy="9" r="2.5"/><path d="M17 14.5c2.4 0 4 1.5 4.5 4.5"/>'),
+    "net": ICON["relay"],
+    "check": svg('<circle cx="12" cy="12" r="9"/><path d="m8 12.5 2.8 2.8L16.5 9.5"/>'),
+    "java": svg('<path d="M8 3v4M12 3v4M16 3v4"/><path d="M4 9h14v5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5z"/><path d="M18 11h1.5a2 2 0 0 1 0 4H18"/>'),
+    "code": svg('<path d="m8 8-4 4 4 4M16 8l4 4-4 4M13.5 5l-3 14"/>'),
+    "layers": svg('<path d="m12 3 9 5-9 5-9-5z"/><path d="m3 13 9 5 9-5"/>'),
+    "tag": svg('<path d="M3 12V4a1 1 0 0 1 1-1h8l9 9-9 9z"/><circle cx="8" cy="8" r="1.5"/>'),
+})
 
 # ---------------------------------------------------------------------------------------------
 # UI strings
 # ---------------------------------------------------------------------------------------------
 T = {
     "en-us": {
-        "software": "Software", "downloads": "Downloads", "docs": "Docs", "github": "GitHub",
-        "theme": "Toggle theme", "menu": "Menu", "language": "Language",
+        "features": "Features", "downloads": "Downloads", "docs": "Docs", "github": "GitHub",
+        "theme": "Toggle theme", "menu": "Menu", "language": "Language", "documentation": "Documentation",
         "desc": "Storia is a Folia-based Minecraft server with RAM-backed worlds, fast chunk pregeneration, a fair share of the server for every player, redstone-safe physics optimizations and encrypted terrain offloading to other machines.",
-        "hero1": "Multithreaded Minecraft.", "hero2": "Fair for every player.",
-        "hero_p": "Storia builds on Folia with worlds that live in RAM, five-times-faster pregeneration, a fair share of the CPU for every player and terrain generation spread across machines, all without ever stopping your redstone.",
-        "documentation": "Documentation",
-        "meta": [f"Minecraft {MC_VERSION}", "Java 25", "Based on Folia", "Open source"],
-        "cards_title": 'Everything your server <span class="accent">needs.</span>',
-        "product_text": {
-            "storia": "The Minecraft server. Folia's regionised multithreading plus RAM worlds, fast pregeneration and a per-player budget.",
-            "worker": "Generates terrain for your server on another machine. Opens no player port and never changes your world.",
-            "relay": "A tiny program that shares terrain work between any number of workers. No Minecraft files needed.",
-            "proxy": "A Velocity fork with 50 built-in placeholders, a live tab list, MOTD and network-wide messages.",
-        },
-        "get": "Download",
-        "learn": "Learn more",
-        "f_ram": ("Worlds that live in <span class=\"accent\">RAM.</span>",
-                  "Storia copies your worlds into RAM when it starts and writes changes back to disk in the background. Disk I/O stops being your bottleneck.",
-                  ["Only changed files are synced, at an interval you choose", "Atomic writes: the copy on disk is never half-written", "Survives a crash of the server process and recovers on the next start"]),
-        "f_pregen": ("Pregeneration, <span class=\"accent\">5× faster.</span>",
-                     "/storia pregen uses every core but one while it runs, keeps every thread busy and saves its progress, so a restart simply continues where it left off.",
-                     ["3,721 chunks in 40 seconds instead of 3 minutes 21 on six cores", "Faster noise sampling, with terrain identical to vanilla", "Resume after a restart with /storia pregen resume"]),
-        "bars": [("Folia default", "3m 21s", 100, False), ("Storia /storia pregen", "40s", 20, True)],
-        "bars_t": "3,721 chunks · 6 cores", "bars_note": "Lower is better. Same seed, same machine.",
-        "f_budget": ("A fair share for <span class=\"accent\">every player.</span>",
-                     "Every player is entitled to an equal share of the tick threads. When one region lags or takes more than its share while the server is busy, only the players in that region get a shorter view distance, until it recovers.",
-                     ["Nothing is limited while the server has headroom", "Simulation distance is untouched, so farms and redstone keep running", "Memory pressure lowers view distance for everyone, then restores it"]),
-        "f_offload": ("Terrain on <span class=\"accent\">other machines.</span>",
-                      "Send the heaviest step of terrain generation to Storia Workers on spare machines. Results are bit-for-bit identical, and the server falls back to generating locally the moment a worker is busy, slow or gone.",
-                      ["AES-256-GCM encryption, keyed by a shared secret that never leaves the machine", "Probe chunks on connect: mismatching seeds or datapacks are refused", "Storia Relay lets workers join and leave at any time"]),
-        "f_proxy": ("A proxy with <span class=\"accent\">50 placeholders.</span>",
-                    "Storia Proxy is Velocity with a live tab list, a server list MOTD and join, leave and switch messages, all built from placeholders for the proxy, every backend and the viewing player.",
-                    ["{online_lobby}, {status_survival}, {player_ping} and 47 more", "MiniMessage formatting, reloadable without a restart", "An API to register your own placeholders from plugins"]),
-        "f_vanilla": ("The promise of <span class=\"accent\">vanilla.</span>",
-                      "Every optimisation in Storia must produce exactly what vanilla would. Terrain and physics changes are checked against the original code, and redstone is never paused, slowed or skipped.",
-                      []),
-        "stats": [("0", "", "differences in 18M noise samples"), ("0", "", "differences in 500,000 entity pushes"), ("3", "×", "faster entity pushing"), ("0", "", "redstone changes")],
-        # downloads
-        "dl_desc": {
-            "storia": "Download Storia, our Minecraft server software for large communities, built on Folia.",
-            "worker": "Download Storia Worker to generate terrain for your Storia server on another machine.",
-            "relay": "Download Storia Relay to share terrain work between any number of Storia Workers.",
-            "proxy": "Download Storia Proxy, a Velocity fork with 50 built-in placeholders.",
+        "pill": "Storia {v} is out", "pill_tag": "New",
+        "hero": 'Big servers that feel <span class="accent">like single player.</span>',
+        "hero_sub": "Storia is a Minecraft server built on Folia. It keeps worlds in RAM, gives every player a fair slice of the CPU and can hand terrain generation to other machines, without ever pausing your redstone.",
+        "get": "Download {v}", "read": "Read the docs",
+        "meta": [("layers", "Minecraft " + MC_VERSION), ("java", "Java 25"), ("code", "Open source")],
+        "why_k": "What's inside", "why_t": "Six things Storia does for your server",
+        "why_p": "Each one keeps vanilla behaviour: the same terrain for the same seed, the same physics, and redstone that never stops.",
+        "more": "How it works",
+        "t_ram": ("RAM world", "Worlds live in memory", "Worlds are copied into RAM at startup and synced back to disk in the background, so disk speed stops mattering."),
+        "t_pregen": ("Pregeneration", "Five times faster pregen", "/storia pregen puts every spare core to work and picks up where it left off after a restart."),
+        "t_budget": ("Player budget", "Everyone gets their share", "When the server is busy, only the region that is actually lagging is slowed down, and farms keep running."),
+        "t_offload": ("Offload", "More machines, more terrain", "Workers on other machines compute the heaviest step of terrain generation. Identical results, encrypted, with instant local fallback."),
+        "t_proxy": ("Storia Proxy", "50 placeholders built in", "A Velocity fork with a live tab list, MOTD and join messages for the whole network."),
+        "t_vanilla": ("Vanilla-exact", "Faster, never different", "Every change is checked against the original code, sample by sample and push by push."),
+        "bars": [("Folia default", "3m 21s", 100, False), ("Storia", "40s", 20, True)],
+        "bars_note": "3,721 chunks on 6 cores. Lower is better.",
+        "people": [("Alice", 92, 40, True, "view 9"), ("Bob", 22, 40, False, "view 12"), ("Carol", 15, 40, False, "view 12")],
+        "people_note": "Share of a tick thread vs. each player's fair share (line)",
+        "facts": [("0", "", "differences in 18M noise samples"), ("0", "", "in 500k entity pushes"), ("3", "×", "faster entity pushing"), ("0", "", "redstone changes")],
+        "prog_k": "The family", "prog_t": "Four programs, one release",
+        "prog_p": "Run the server on its own, or add helpers when you need them. All four ship together in every release.",
+        "products": {
+            "storia": ("The server", "Folia's regionised multithreading plus RAM worlds, fast pregeneration and a per-player budget."),
+            "worker": ("Terrain helper", "Generates terrain for your server on a spare machine. No player port."),
+            "relay": ("Work router", "Shares terrain work between any number of workers. No Minecraft files."),
+            "proxy": ("Network proxy", "Velocity with placeholders, a live tab list and network messages."),
         },
         "req": {"storia": "Java 25", "worker": "Java 25", "relay": "Java 21+", "proxy": "Java 21+"},
-        "get_title": "Get {name}{ver}", "build": "Release", "older": "Older builds",
-        "older_text": 'Looking for older builds or changelogs? Every release is on <a href="{url}">GitHub Releases</a>.',
-        "dev_builds": "Development builds", "no_release": "No release yet", "other_software": "Other software",
+        "close_t": "Start with Storia in a minute.", "close_p": "Replace your Folia jar, accept the EULA and you are running. Folia plugins work as they are.",
+        # downloads
+        "dl_k": "Downloads", "dl_t": 'Get Storia <span class="accent">{v}</span>', "dl_p": "Every release contains the server and its three companions, built by GitHub Actions from the public source.",
+        "release": "Storia {v}", "released": "Released {d}", "notes": "Release notes",
+        "for_mc": "for Minecraft {mc}",
+        "dl_btn": "Download", "dev": "Looking for the newest changes? Development builds are on", "history": "Release history",
+        "no_release": "No release has been published yet.",
         # docs
         "search": "Search docs", "search_empty": "No results", "on_page": "On this page", "prev": "Previous", "next": "Next",
         "docs_menu": "Documentation menu",
         # footer
-        "f_start": "Getting Started", "f_soft": "Software", "f_comm": "Community", "f_res": "Resources",
-        "issues": "Issues", "releases": "Releases", "website_src": "Website source",
-        "legal": "This website is not an official Minecraft website and is not associated with Mojang Studios or Microsoft. All product and company names are trademarks or registered trademarks of their respective holders. Storia is built on the work of PaperMC (Paper, Folia, Velocity).",
-        "nf_title": "Page not found", "nf_text": "The page you are looking for does not exist.", "nf_home": "Back home",
+        "tagline": "A Minecraft server for big communities, built on Folia.",
+        "f_use": "Use", "f_learn": "Learn", "f_source": "Source",
+        "issues": "Report an issue", "releases": "All releases", "website_src": "This website",
+        "legal": "Storia is not an official Minecraft product and is not affiliated with Mojang or Microsoft.",
+        "thanks": "Built on Paper, Folia and Velocity by PaperMC.",
+        "nf_title": "Page not found", "nf_text": "There is nothing here. It may have moved.", "nf_home": "Go home",
     },
     "ja-jp": {
-        "software": "ソフトウェア", "downloads": "ダウンロード", "docs": "ドキュメント", "github": "GitHub",
-        "theme": "テーマ切り替え", "menu": "メニュー", "language": "言語",
+        "features": "特長", "downloads": "ダウンロード", "docs": "ドキュメント", "github": "GitHub",
+        "theme": "テーマ切り替え", "menu": "メニュー", "language": "言語", "documentation": "ドキュメント",
         "desc": "Storia は Folia ベースの Minecraft サーバーです。RAM 上のワールド、高速なチャンク事前生成、プレイヤーごとの公平な負荷分配、回路を止めない物理演算の最適化、暗号化された別マシンへの地形生成の分担を備えています。",
-        "hero1": "マルチスレッドの Minecraft。", "hero2": "全員に公平なサーバーを。",
-        "hero_p": "Storia は Folia をベースに、RAM 上で動くワールド、約 5 倍速い事前生成、プレイヤー全員への公平な CPU の割り当て、複数マシンでの地形生成を加えました。回路は一切止めません。",
-        "documentation": "ドキュメント",
-        "meta": [f"Minecraft {MC_VERSION}", "Java 25", "Folia ベース", "オープンソース"],
-        "cards_title": 'サーバーに必要なものを、<span class="accent">すべて。</span>',
-        "product_text": {
-            "storia": "Minecraft サーバー本体。Folia のリージョン並列処理に、RAM ワールド・高速な事前生成・プレイヤーごとの予算を加えました。",
-            "worker": "別のマシンでサーバーの地形を生成します。プレイヤー用ポートは開かず、ワールドも変更しません。",
-            "relay": "何台ものワーカーに地形生成の仕事を配る小さなプログラム。Minecraft のファイルは不要です。",
-            "proxy": "50 個のプレースホルダー、自動更新のタブリスト、MOTD、ネットワーク全体のメッセージを備えた Velocity のフォーク。",
-        },
-        "get": "ダウンロード",
-        "learn": "詳しく見る",
-        "f_ram": ("ワールドは <span class=\"accent\">RAM の上に。</span>",
-                  "起動時にワールドを RAM にコピーし、変更はバックグラウンドでディスクに書き戻します。ディスク I/O がボトルネックになりません。",
-                  ["変更されたファイルだけを、決めた間隔で同期", "原子的な書き込みで、ディスク上のワールドが書きかけになることはありません", "サーバーのプロセスが落ちても RAM 上のデータは残り、次の起動で復旧"]),
-        "f_pregen": ("事前生成が <span class=\"accent\">約 5 倍速く。</span>",
-                     "/storia pregen は実行中だけ CPU コアを 1 つ残してすべて使い、すべてのスレッドを休ませません。進み具合は保存されるので、再起動しても続きから再開できます。",
-                     ["6 コアで 3,721 チャンクが 3 分 21 秒から 40 秒に", "ノイズ計算を高速化。地形はバニラとまったく同じ", "再起動後は /storia pregen resume で再開"]),
-        "bars": [("Folia の初期設定", "3分21秒", 100, False), ("Storia /storia pregen", "40秒", 20, True)],
-        "bars_t": "3,721 チャンク · 6 コア", "bars_note": "短いほど高速です。同じシード・同じマシンで計測。",
-        "f_budget": ("すべてのプレイヤーに <span class=\"accent\">公平な割り当てを。</span>",
-                     "プレイヤーは全員、ティックスレッドを同じだけ使う権利を持っています。サーバーが混んでいるときに、あるリージョンが重くなったり割り当て以上を使ったりすると、そのリージョンにいるプレイヤーだけ、回復するまで描画距離を短くします。",
-                     ["サーバーに余裕があるうちは何も制限しません", "シミュレーション距離は変えないので、トラップも回路も動き続けます", "メモリが逼迫したら全員の描画距離を下げ、落ち着けば戻します"]),
-        "f_offload": ("地形生成を <span class=\"accent\">別のマシンで。</span>",
-                      "地形生成で一番重い処理を、空いているマシンの Storia Worker に任せます。結果はビット単位で同一で、ワーカーが忙しい・遅い・止まったときは、その場でサーバー自身の生成に戻ります。",
-                      ["AES-256-GCM で暗号化。鍵のもとになる合言葉はマシンの外に出ません", "接続時に確認用チャンクを照合し、シードやデータパックの違いを拒否", "Storia Relay を使えば、ワーカーをいつでも追加・削除できます"]),
-        "f_proxy": ("<span class=\"accent\">50 個のプレースホルダー</span>を持つプロキシ。",
-                    "Storia Proxy は、自動更新のタブリスト、サーバーリストの MOTD、参加・退出・移動のメッセージを備えた Velocity です。どれもプロキシ・各サーバー・表示するプレイヤーのプレースホルダーで組み立てられます。",
-                    ["{online_lobby}、{status_survival}、{player_ping} ほか 47 個", "MiniMessage で装飾でき、再起動なしで再読み込み", "プラグインから独自のプレースホルダーを登録できる API"]),
-        "f_vanilla": ("<span class=\"accent\">バニラと同じ</span>、という約束。",
-                      "Storia の最適化は、すべてバニラとまったく同じ結果を出さなければなりません。地形と物理演算の変更は元のコードと照合し、レッドストーンを止めたり遅らせたり飛ばしたりすることはありません。",
-                      []),
-        "stats": [("0", "件", "ノイズ 1,800 万件での差異"), ("0", "件", "押し合い 50 万回での差異"), ("3", "倍", "エンティティの押し合いの速さ"), ("0", "件", "レッドストーンへの変更")],
-        "dl_desc": {
-            "storia": "Folia をベースにした、大人数向けの Minecraft サーバーソフトウェア Storia をダウンロード。",
-            "worker": "別のマシンで Storia サーバーの地形を生成する Storia Worker をダウンロード。",
-            "relay": "何台もの Storia Worker に地形生成の仕事を配る Storia Relay をダウンロード。",
-            "proxy": "50 個のプレースホルダーを内蔵した Velocity のフォーク、Storia Proxy をダウンロード。",
+        "pill": "Storia {v} を公開しました", "pill_tag": "新着",
+        "hero": '大人数のサーバーを、<span class="accent">シングルプレイの快適さで。</span>',
+        "hero_sub": "Storia は Folia をベースにした Minecraft サーバーです。ワールドを RAM に置き、CPU を全員に公平に分け、地形生成をほかのマシンに任せることもできます。回路は一切止めません。",
+        "get": "{v} をダウンロード", "read": "ドキュメントを読む",
+        "meta": [("layers", "Minecraft " + MC_VERSION), ("java", "Java 25"), ("code", "オープンソース")],
+        "why_k": "中身", "why_t": "Storia がサーバーにしてくれる 6 つのこと",
+        "why_p": "どれもバニラと同じ動きを保ちます。同じシードなら同じ地形、同じ物理演算、そして回路は止まりません。",
+        "more": "仕組みを見る",
+        "t_ram": ("RAM ワールド", "ワールドはメモリの上に", "起動時にワールドを RAM にコピーし、変更はバックグラウンドでディスクへ。ディスクの速さが気にならなくなります。"),
+        "t_pregen": ("事前生成", "事前生成が約 5 倍速く", "/storia pregen は空いているコアをすべて使い、再起動しても続きから再開します。"),
+        "t_budget": ("プレイヤーごとの予算", "全員に、公平な取り分を", "サーバーが混んだときに遅くするのは、本当に重いリージョンだけ。トラップは動き続けます。"),
+        "t_offload": ("処理の分担", "マシンを足せば、地形も速く", "ほかのマシンのワーカーが、地形生成で一番重い処理を計算します。結果は同一で、暗号化され、いつでも自分での生成に戻れます。"),
+        "t_proxy": ("Storia Proxy", "50 個のプレースホルダー", "自動更新のタブリスト、MOTD、ネットワーク全体の参加メッセージを備えた Velocity のフォーク。"),
+        "t_vanilla": ("バニラと同一", "速く、でも違わない", "すべての変更を、元のコードと 1 件ずつ照合しています。"),
+        "bars": [("Folia の初期設定", "3分21秒", 100, False), ("Storia", "40秒", 20, True)],
+        "bars_note": "3,721 チャンク・6 コア。短いほど高速です。",
+        "people": [("Alice", 92, 40, True, "描画 9"), ("Bob", 22, 40, False, "描画 12"), ("Carol", 15, 40, False, "描画 12")],
+        "people_note": "ティックスレッドの使用量と、1 人あたりの公平な取り分（線）",
+        "facts": [("0", "件", "ノイズ 1,800 万件での差異"), ("0", "件", "押し合い 50 万回での差異"), ("3", "倍", "押し合いの計算の速さ"), ("0", "件", "レッドストーンへの変更")],
+        "prog_k": "ファミリー", "prog_t": "4 つのソフトを、ひとつのリリースで",
+        "prog_p": "サーバー単体でも動き、必要になったら手伝い役を足せます。4 つとも毎回のリリースにそろって入っています。",
+        "products": {
+            "storia": ("サーバー本体", "Folia のリージョン並列処理に、RAM ワールド・高速な事前生成・プレイヤーごとの予算を加えたもの。"),
+            "worker": ("地形のお手伝い", "空いているマシンで地形を生成します。プレイヤー用ポートは開きません。"),
+            "relay": ("仕事の中継", "何台ものワーカーに仕事を配ります。Minecraft のファイルは不要です。"),
+            "proxy": ("ネットワーク用プロキシ", "プレースホルダー、自動更新のタブリスト、ネットワークのメッセージを備えた Velocity。"),
         },
         "req": {"storia": "Java 25", "worker": "Java 25", "relay": "Java 21 以上", "proxy": "Java 21 以上"},
-        "get_title": "{name}{ver} を入手", "build": "リリース", "older": "過去のビルド",
-        "older_text": '過去のビルドや変更履歴をお探しですか？すべてのリリースは <a href="{url}">GitHub Releases</a> にあります。',
-        "dev_builds": "開発版のビルド", "no_release": "まだリリースがありません", "other_software": "ほかのソフトウェア",
+        "close_t": "1 分で Storia を始めよう。", "close_p": "Folia の jar と入れ替えて、EULA に同意すれば動きます。Folia 対応のプラグインはそのまま使えます。",
+        "dl_k": "ダウンロード", "dl_t": 'Storia <span class="accent">{v}</span> を入手', "dl_p": "各リリースには、サーバー本体と 3 つの関連ソフトが入っています。すべて公開されているソースから GitHub Actions でビルドしています。",
+        "release": "Storia {v}", "released": "{d} 公開", "notes": "リリースノート",
+        "for_mc": "Minecraft {mc} 向け",
+        "dl_btn": "ダウンロード", "dev": "最新の変更を試したい場合は、開発版のビルドを入手できます：", "history": "リリース履歴",
+        "no_release": "まだリリースがありません。",
         "search": "ドキュメントを検索", "search_empty": "見つかりませんでした", "on_page": "このページの内容", "prev": "前へ", "next": "次へ",
         "docs_menu": "ドキュメントのメニュー",
-        "f_start": "はじめる", "f_soft": "ソフトウェア", "f_comm": "コミュニティ", "f_res": "リソース",
-        "issues": "Issues", "releases": "Releases", "website_src": "このサイトのソース",
-        "legal": "このサイトは Minecraft の公式サイトではなく、Mojang Studios や Microsoft とは関係ありません。製品名・会社名は各社の商標または登録商標です。Storia は PaperMC（Paper・Folia・Velocity）の成果をもとに作られています。",
-        "nf_title": "ページが見つかりません", "nf_text": "お探しのページは存在しません。", "nf_home": "ホームに戻る",
+        "tagline": "Folia をベースにした、大人数のコミュニティのための Minecraft サーバー。",
+        "f_use": "使う", "f_learn": "学ぶ", "f_source": "ソース",
+        "issues": "問題を報告", "releases": "すべてのリリース", "website_src": "このサイト",
+        "legal": "Storia は Minecraft の公式製品ではなく、Mojang や Microsoft とは関係ありません。",
+        "thanks": "PaperMC の Paper・Folia・Velocity をもとに作られています。",
+        "nf_title": "ページが見つかりません", "nf_text": "ここには何もありません。移動した可能性があります。", "nf_home": "ホームへ",
     },
 }
 
@@ -249,20 +245,16 @@ def url(lang, path=""):
 # ---------------------------------------------------------------------------------------------
 def header(lang, path, current):
     t = T[lang]
-    items = "".join(
-        f'<a href="{url(lang, p)}">{logo(k)}<div><strong>{e(n)}</strong><span>{e(t["product_text"][k])}</span></div></a>'
-        for k, n, p, _, _ in PRODUCTS)
     cur = lambda k: ' aria-current="page"' if current == k else ""
     lang_opts = "".join(f'<option value="{l}" data-href="{url(l, path)}"{" selected" if l == lang else ""}>{LANG_NAME[l]}</option>' for l in LANGS)
     lang_links = " ".join(f'<a href="{url(l, path)}" hreflang="{HTML_LANG[l]}">{LANG_NAME[l]}</a>' for l in LANGS if l != lang)
     return f"""<header class="site-header" id="site-header">
   <div class="container">
-    <a class="brand" href="{url(lang)}" aria-label="Storia">{logo("storia")}<span class="word">STORIA</span></a>
+    <a class="brand" href="{url(lang)}" aria-label="Storia">{logo("storia")}<span class="word">Storia</span></a>
     <nav class="nav" id="site-nav" aria-label="Main">
-      <div class="dd"><button type="button" aria-haspopup="true">{t['software']} {ICON['chev']}</button><div class="dd-menu">{items}</div></div>
+      <a href="{url(lang)}#features">{t['features']}</a>
       <a href="{url(lang, 'downloads/')}"{cur('downloads')}>{t['downloads']}</a>
       <a href="{url(lang, 'docs/')}"{cur('docs')}>{t['docs']}</a>
-      <a href="{GITHUB}" rel="noopener">{t['github']} {ICON['ext']}</a>
     </nav>
     <div class="header-tools">
       <a class="icon-btn hide-sm" href="{GITHUB}" aria-label="GitHub">{ICON['github']}</a>
@@ -279,32 +271,25 @@ def header(lang, path, current):
 def footer(lang):
     t = T[lang]
     d = lambda slug: f'<li><a href="{url(lang, f"docs/{slug}/")}">{e(doc_title(slug, lang))}</a></li>'
-    soft = "".join(f'<li><a href="{url(lang, p)}">{e(n)}</a></li>' for k, n, p, _, _ in PRODUCTS)
     return f"""<footer class="site-footer">
   <div class="container">
-    <div class="cols">
-      <div><h4>{t['f_start']}</h4><ul>
+    <div class="top">
+      <div class="about"><a class="brand" href="{url(lang)}">{logo("storia")}<span class="word" style="color:var(--ink)">Storia</span></a><p>{e(t['tagline'])}</p></div>
+      <div><h4>{t['f_use']}</h4><ul>
         <li><a href="{url(lang, 'downloads/')}">{t['downloads']}</a></li>
-        <li><a href="{url(lang, 'docs/')}">{t['documentation']}</a></li>
-        {d('getting-started')}{d('configuration')}
+        {d('getting-started')}{d('configuration')}{d('commands')}
       </ul></div>
-      <div><h4>{t['f_soft']}</h4><ul>{soft}</ul></div>
-      <div><h4>{t['f_comm']}</h4><ul>
-        <li><a href="{GITHUB}">GitHub</a></li>
-        <li><a href="{GITHUB}/issues">{t['issues']}</a></li>
-        <li><a href="{GITHUB}/releases">{t['releases']}</a></li>
+      <div><h4>{t['f_learn']}</h4><ul>
+        {d('offload')}{d('player-budget')}{d('placeholders')}{d('faq')}
+      </ul></div>
+      <div><h4>{t['f_source']}</h4><ul>
+        <li><a href="{GITHUB}">Storia</a></li>
         <li><a href="https://github.com/{PROXY_REPO}">Storia Proxy</a></li>
-      </ul></div>
-      <div><h4>{t['f_res']}</h4><ul>
-        {d('placeholders')}{d('faq')}{d('building')}
         <li><a href="https://github.com/{SITE_REPO}">{t['website_src']}</a></li>
+        <li><a href="{GITHUB}/issues">{t['issues']}</a></li>
       </ul></div>
     </div>
-    <div class="bottom">
-      <a class="brand" href="{url(lang)}">{logo("storia")}<span class="word">STORIA</span></a>
-      <div class="copyright">© {datetime.now().year} Storia<br><a href="https://github.com/{SITE_REPO}">{SITE_REPO}</a>{f' @ <a href="https://github.com/{SITE_REPO}/commit/{SITE_SHA}">{SITE_SHA[:7]}</a>' if SITE_SHA else ''}</div>
-    </div>
-    <p class="legal">{e(t['legal'])}</p>
+    <div class="bottom"><span>© {datetime.now().year} Storia · {e(t['legal'])}</span><span>{e(t['thanks'])}</span></div>
   </div>
 </footer>"""
 
@@ -313,9 +298,9 @@ def page(lang, path, title, description, body, current):
     full_title = f"{title} | Storia" if title else "Storia"
     alternates = "".join(f'<link rel="alternate" hreflang="{HTML_LANG[l]}" href="{url(l, path)}">' for l in LANGS)
     alternates += f'<link rel="alternate" hreflang="x-default" href="{url("en-us", path)}">'
-    fonts = ("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,600;0,700;0,800;1,800"
-             "&family=JetBrains+Mono:wght@400;500"
-             + ("&family=Noto+Sans+JP:wght@400;500;600;700" if lang == "ja-jp" else "") + "&display=swap")
+    fonts = ("https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500"
+             "&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500"
+             + ("&family=Noto+Sans+JP:wght@400;500;700;800&family=Noto+Serif+JP:wght@500;600" if lang == "ja-jp" else "") + "&display=swap")
     return f"""<!doctype html>
 <html lang="{HTML_LANG[lang]}" data-lang="{lang}">
 <head>
@@ -327,7 +312,7 @@ def page(lang, path, title, description, body, current):
 <meta property="og:description" content="{e(description)}">
 <meta property="og:type" content="website">
 <meta property="og:image" content="/assets/storia.png">
-<meta name="theme-color" content="#2f7bf5">
+<meta name="theme-color" content="#c4552f">
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/assets/storia.png" type="image/png">
 {alternates}
@@ -368,106 +353,113 @@ def terminal_lines(version):
     ]
 
 
-def feature(key, lang, visual, slug, flip=False, alt=False):
-    t = T[lang]
-    title, text, bullets = t[key]
-    lis = "".join(f"<li>{e(b)}</li>" for b in bullets)
-    return f"""<section class="feature{' flip' if flip else ''}{' band alt' if alt else ''}">
-  <div class="container">
-    <div class="text">
-      <h2>{title}</h2>
-      <p>{e(text)}</p>
-      {f'<ul>{lis}</ul>' if lis else ''}
-      <a class="btn secondary" href="{url(lang, f'docs/{slug}/')}">{t['learn']} {ICON['arrow']}</a>
-    </div>
-    <div class="visual">{visual}</div>
-  </div>
-</section>"""
-
-
 def diagram(lang):
     ja = lang == "ja-jp"
-    labels = ["プレイヤー" if ja else "Players", "Storia Proxy", "Storia", "Relay", "ワーカー" if ja else "Worker", "地形ノイズ" if ja else "terrain noise"]
-    box = lambda x, y, w, h, title, sub="", strong=False: (
-        f'<rect x="{x}" y="{y}" width="{w}" height="{h}" rx="6" fill="{"#2f7bf5" if strong else "#1f2937"}" stroke="{"#2f7bf5" if strong else "#334155"}"/>'
-        f'<text x="{x + w / 2}" y="{y + (h / 2 if not sub else h / 2 - 7)}" text-anchor="middle" dominant-baseline="middle" font-size="14" font-weight="600" fill="#fff">{e(title)}</text>'
-        + (f'<text x="{x + w / 2}" y="{y + h / 2 + 11}" text-anchor="middle" dominant-baseline="middle" font-size="10" fill="#cbd5e1">{e(sub)}</text>' if sub else ""))
+    labels = ["プレイヤー" if ja else "Players", "Proxy", "Storia", "Relay", "ワーカー" if ja else "Worker"]
+    box = lambda x, y, w, h, title, strong=False: (
+        f'<rect x="{x}" y="{y}" width="{w}" height="{h}" rx="8" fill="{"#c4552f" if strong else "#2a2724"}" stroke="{"#c4552f" if strong else "#45403a"}"/>'
+        f'<text x="{x + w / 2}" y="{y + h / 2}" text-anchor="middle" dominant-baseline="middle" font-size="13" font-weight="700" fill="#fff" font-family="Manrope, sans-serif">{e(title)}</text>')
     line = lambda x1, y1, x2, y2, dash=False: (
-        f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" stroke="#64748b" stroke-width="1.5"{" stroke-dasharray=&quot;4 4&quot;" if dash else ""} marker-end="url(#arr)"/>')
-    workers = "".join(box(440, 12 + i * 62, 118, 46, f"{labels[4]} {chr(65 + i)}", labels[5]) for i in range(3))
-    wlines = "".join(line(404, 105, 438, 35 + i * 62, True) for i in range(3))
-    return f"""<div class="panel"><div class="t">storia offload · AES-256-GCM</div>
-<svg class="diagram" viewBox="0 0 570 210" role="img" aria-label="Storia offload">
-<defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 10 5 0 10z" fill="#64748b"/></marker></defs>
-{box(0, 82, 84, 46, labels[0])}{line(86, 105, 104, 105)}
-{box(106, 82, 104, 46, labels[1])}{line(212, 105, 230, 105)}
-{box(232, 76, 90, 58, labels[2], "26.2", True)}{line(324, 105, 342, 105, True)}
-{box(344, 82, 60, 46, labels[3])}
-{wlines}{workers}
-</svg></div>"""
+        f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" stroke="#7a726a" stroke-width="1.5"{" stroke-dasharray=&quot;4 4&quot;" if dash else ""} marker-end="url(#arr)"/>')
+    workers = "".join(box(468, 10 + i * 56, 96, 40, f"{labels[4]} {chr(65 + i)}") for i in range(3))
+    wlines = "".join(line(436, 88, 466, 30 + i * 56, True) for i in range(3))
+    return f"""<svg class="diagram" viewBox="0 0 570 180" role="img" aria-label="offload">
+<defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 10 5 0 10z" fill="#7a726a"/></marker></defs>
+{box(0, 68, 88, 40, labels[0])}{line(90, 88, 112, 88)}
+{box(114, 68, 76, 40, labels[1])}{line(192, 88, 214, 88)}
+{box(216, 62, 100, 52, labels[2], True)}{line(318, 88, 344, 88, True)}
+{box(346, 68, 88, 40, labels[3])}{wlines}{workers}
+<text x="285" y="170" text-anchor="middle" font-size="10.5" letter-spacing="1.5" fill="#9c948b" font-family="JetBrains Mono, monospace">AES-256-GCM</text>
+</svg>"""
+
+
+def tile(lang, key, icon, visual, slug, width=""):
+    t = T[lang]
+    tag, title, text = t[key]
+    return f"""<article class="tile {width}">
+  <div class="tag">{ICON[icon]}{e(tag)}</div>
+  <h3>{e(title)}</h3>
+  <p>{e(text)}</p>
+  <a class="link" href="{url(lang, f'docs/{slug}/')}">{t['more']} {ICON['arrow']}</a>
+  <div class="visual">{visual}</div>
+</article>"""
 
 
 def home(lang):
     t = T[lang]
-    version = LATEST["version"]
-    term = "".join(f'<span class="ln" data-k="{k}">{h}</span>' for k, h in terminal_lines(version))
-    meta = "".join(f"<span>{e(m)}</span>" for m in t["meta"])
-    cards = "".join(f"""<a class="card" href="{url(lang, p)}"><div class="top">{logo(k)}<h3>{e(n)}</h3></div>
-      <p>{e(t['product_text'][k])}</p><span class="go">{t['get']} →</span></a>""" for k, n, p, _, _ in PRODUCTS)
-    status = """<div class="panel"><div class="t">/storia status</div><pre><span style="color:#67e8f9">Storia 26.2</span>
-<span style="color:#94a3b8">RAM world:</span> <span style="color:#4ade80">enabled</span>
-<span style="color:#94a3b8">RAM path:</span> /dev/shm/storia/survival
-<span style="color:#94a3b8">Disk path:</span> /srv/survival
-<span style="color:#94a3b8">RAM used:</span> 3187 MB
-<span style="color:#94a3b8">Sync interval:</span> 300 s
-<span style="color:#94a3b8">Last sync:</span> 2m 14s ago (184 file(s))</pre></div>""".replace("26.2", e(version))
-    bars = "".join(f"""<div class="bar-row{' win' if win else ''}"><div class="lbl"><span>{e(n)}</span><b>{e(v)}</b></div>
-      <div class="track"><div class="fill" style="width:{w}%"></div></div></div>""" for n, v, w, win in t["bars"])
-    pregen = f'<div class="panel"><div class="t">{e(t["bars_t"])}</div><div class="bars">{bars}</div><p class="bar-note">{e(t["bars_note"])}</p></div>'
-    budget = """<div class="panel"><div class="t">/storia budget</div><pre><span style="color:#67e8f9">Player budget (checked every 5s)</span>
-<span style="color:#94a3b8">Tick threads busy:</span> <span style="color:#f87171">91% (saturated: heavy regions are limited)</span>
-<span style="color:#94a3b8">Share per player:</span> 40% of a thread
-<span style="color:#94a3b8">Heap after GC:</span> <span style="color:#4ade80">52%</span>
- Alice: <span style="color:#94a3b8">region 38.2 MSPT, 20.0 TPS, 140% thread, 1 player(s)</span> <span style="color:#facc15">| sim default, view 9</span>
- Bob: <span style="color:#94a3b8">region 6.1 MSPT, 20.0 TPS, 20% thread, 2 player(s)</span> <span style="color:#4ade80">| sim default, view default</span>
- Carol: <span style="color:#94a3b8">region 4.8 MSPT, 20.0 TPS, 15% thread, 1 player(s)</span> <span style="color:#4ade80">| sim default, view default</span></pre></div>"""
-    proxy = f"""<div class="panel"><div class="t">storia-proxy.toml · tablist</div>
-<div class="mc-tab"><b style="color:#fff">My Network</b><br><span style="color:#aaa">42/200 online · 21:37</span>
-<div class="rows"><span>Alice <i>12ms</i></span><span>Bob <i>34ms</i></span><span>Carol <i style="color:#facc15">96ms</i></span><span>Dave <i>18ms</i></span></div>
-<span style="color:#aaa">survival <span style="color:#666">(28)</span> · ping <span style="color:#4ade80">12ms</span></span><br><span style="color:#666">uptime 3d 4h 12m</span></div>
-<div class="mc-motd"><span class="ico">{MARK}</span><div><b style="color:#fff">My Network</b> <span style="color:#555">|</span> <span style="color:#aaa">3/3 servers up</span><br><span style="color:#aaa">42 players online · 21:37</span></div></div></div>"""
-    stats = "".join(f"<div><b>{v}<small>{u}</small></b><span>{e(l)}</span></div>" for v, u, l in t["stats"])
-    vanilla = f'<div class="panel"><div class="stats">{stats}</div></div>'
+    v = LATEST["version"]
+    term = "".join(f'<span class="ln" data-k="{k}">{h}</span>' for k, h in terminal_lines(v))
+    meta = "".join(f"<span>{ICON[i]}{e(m)}</span>" for i, m in t["meta"])
+    status = f"""<div class="screen"><pre><span class="a">Storia {e(v)}</span>
+<span class="k">RAM world:</span> <span class="g">enabled</span>
+<span class="k">RAM used:</span> 3187 MB
+<span class="k">Sync interval:</span> 300 s
+<span class="k">Last sync:</span> 2m 14s ago (184 file(s))</pre></div>"""
+    bars = "".join(f"""<div class="bar-row{' win' if win else ''}"><div class="lbl"><span>{e(n)}</span><b>{e(val)}</b></div>
+      <div class="track"><div class="fill" style="width:{w}%"></div></div></div>""" for n, val, w, win in t["bars"])
+    pregen = f'<div class="screen"><div class="bars">{bars}</div><p class="bar-note">{e(t["bars_note"])}</p></div>'
+    people = "".join(f"""<div class="person{' over' if over else ''}"><span>{e(n)}</span>
+      <div class="track"><i style="width:{min(use, 100)}%"></i><s style="left:{share}%"></s></div><em>{e(state)}</em></div>""" for n, use, share, over, state in t["people"])
+    budget = f'<div class="screen"><div class="people">{people}</div><p class="bar-note">{e(t["people_note"])}</p></div>'
+    offload = f'<div class="screen">{diagram(lang)}</div>'
+    proxy = """<div class="screen" style="padding:14px"><div class="mc"><b style="color:#fff">My Network</b><br><span style="color:#aaa">42/200 online · 21:37</span>
+<div class="rows"><span>Alice <i>12ms</i></span><span>Bob <i>34ms</i></span><span>Carol <i style="color:#f5c16c">96ms</i></span><span>Dave <i>18ms</i></span></div>
+<span style="color:#aaa">survival (28) · ping <span style="color:#9bd49b">12ms</span></span></div></div>"""
+    facts = "".join(f"<div><b>{val}<small>{u}</small></b><span>{e(l)}</span></div>" for val, u, l in t["facts"])
+    vanilla = f'<div class="facts">{facts}</div>'
+    programs = "".join(f"""<div class="program">{logo(k)}<h3>{e(n)}</h3><span class="req">{e(t['products'][k][0])} · {e(t['req'][k])}</span>
+      <p>{e(t['products'][k][1])}</p><a class="link" href="{url(lang, 'downloads/')}#{k}">{t['dl_btn']} {ICON['arrow']}</a></div>""" for k, n, _, _ in PRODUCTS)
     body = f"""
 <section class="hero">
   <div class="container">
-    <div>
-      <h1><span>{e(t['hero1'])}</span><span class="accent">{e(t['hero2'])}</span></h1>
-      <p>{e(t['hero_p'])}</p>
-      <div class="actions">
-        <a class="btn primary" href="{url(lang, 'downloads/')}">{t['downloads']}</a>
-        <a class="btn secondary" href="{url(lang, 'docs/')}">{t['documentation']}</a>
-      </div>
-      <div class="meta">{meta}</div>
+    <a class="pill" href="{url(lang, 'downloads/')}"><b>{t['pill_tag']}</b>{e(t['pill'].format(v=v))}{ICON['arrow']}</a>
+    <h1>{t['hero']}</h1>
+    <p class="sub">{e(t['hero_sub'])}</p>
+    <div class="actions">
+      <a class="btn primary" href="{url(lang, 'downloads/')}">{ICON['dl']}{e(t['get'].format(v=v))}</a>
+      <a class="btn secondary" href="{url(lang, 'docs/')}">{t['read']}</a>
     </div>
-    <div class="terminal" aria-hidden="true"><div class="bar"><i></i><i></i><i></i><b>storia — bash</b></div><pre id="term">{term}</pre></div>
+    <div class="meta">{meta}</div>
+    <div class="stage"><div class="terminal" aria-hidden="true"><div class="bar"><i></i><i></i><i></i><b>storia</b></div><pre id="term">{term}</pre></div></div>
   </div>
 </section>
 
-<section class="band alt">
+<section class="section" id="features">
   <div class="container">
-    <h2>{t['cards_title']}</h2>
-    <div class="cards">{cards}</div>
+    <div class="head"><p class="kicker">{e(t['why_k'])}</p><h2>{e(t['why_t'])}</h2><p>{e(t['why_p'])}</p></div>
+    <div class="bento">
+      {tile(lang, 't_ram', 'ram', status, 'ram-world', 'w7')}
+      {tile(lang, 't_pregen', 'bolt', pregen, 'pregeneration', 'w5')}
+      {tile(lang, 't_budget', 'users', budget, 'player-budget', 'w5')}
+      {tile(lang, 't_offload', 'net', offload, 'offload', 'w7')}
+      {tile(lang, 't_proxy', 'proxy', proxy, 'placeholders')}
+      {tile(lang, 't_vanilla', 'check', vanilla, 'performance')}
+    </div>
   </div>
 </section>
 
-{feature('f_ram', lang, status, 'ram-world')}
-{feature('f_pregen', lang, pregen, 'pregeneration', flip=True)}
-{feature('f_budget', lang, budget, 'player-budget')}
-{feature('f_offload', lang, diagram(lang), 'offload', flip=True)}
-{feature('f_proxy', lang, proxy, 'placeholders')}
-{feature('f_vanilla', lang, vanilla, 'performance', flip=True)}
-<div style="height:48px"></div>"""
+<section class="section alt">
+  <div class="container">
+    <div class="head"><p class="kicker">{e(t['prog_k'])}</p><h2>{e(t['prog_t'])}</h2><p>{e(t['prog_p'])}</p></div>
+    <div class="programs">{programs}</div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="closing">
+      <div><h2>{e(t['close_t'])}</h2><p>{e(t['close_p'])}</p>
+        <div class="actions"><a class="btn primary" href="{url(lang, 'downloads/')}">{ICON['dl']}{e(t['get'].format(v=v))}</a>
+        <a class="btn secondary" href="{url(lang, 'docs/getting-started/')}">{e(doc_title('getting-started', lang))}</a></div></div>
+      <pre><span style="color:#9c948b"># 1</span>
+java -Xmx8G -jar storia-{e(v)}.jar nogui
+<span style="color:#9c948b"># 2</span>
+echo "eula=true" &gt; eula.txt
+<span style="color:#9c948b"># 3</span>
+java -Xmx8G -jar storia-{e(v)}.jar nogui</pre>
+    </div>
+  </div>
+</section>"""
     return page(lang, "", "", t["desc"], body, "home")
 
 
@@ -482,54 +474,52 @@ def fmt_date(s):
     return s[:10]
 
 
-def downloads(lang, key):
+def downloads(lang):
     t = T[lang]
-    _, name, path, pattern, doc = next(p for p in PRODUCTS if p[0] == key)
-    rows = []
-    for rel in RELEASES:
-        asset = next((a for a in rel["assets"] if re.fullmatch(pattern, a["name"])), None)
-        if asset:
-            rows.append((rel, asset))
-    if rows:
-        rel, asset = rows[0]
-        ver = rel["tag_name"].lstrip("v")
-        sha = (asset.get("digest") or "").replace("sha256:", "")
-        main_btn = f"""<a class="dl-main" href="{e(asset['browser_download_url'])}"><span class="ic">{ICON['dl']}</span>
-  <span class="txt"><b>{e(name)} {e(ver)}</b><span>{e(asset['name'])} · {fmt_size(asset['size'])}</span></span></a>
-<div class="dl-meta"><span>{e(t['req'][key])}</span><span>{t['build']} {e(rel['tag_name'])} · {fmt_date(rel['published_at'])}</span>{f'<span>SHA-256 <code>{e(sha)}</code></span>' if sha else ''}</div>"""
-        title_ver = f' <span class="accent">{e(ver)}</span>'
+    if RELEASES:
+        rel = RELEASES[0]
+        v = rel["tag_name"].lstrip("v")
+        files = []
+        for k, name, pattern, doc in PRODUCTS:
+            asset = next((a for a in rel["assets"] if re.fullmatch(pattern, a["name"])), None)
+            if not asset:
+                continue
+            sha = (asset.get("digest") or "").replace("sha256:", "")
+            files.append(f"""<div class="file" id="{k}">{logo(k)}
+  <div><h3>{e(name)}</h3><p>{e(t['products'][k][1])}</p>
+    <div class="meta"><span>{e(asset['name'])}</span><span>{fmt_size(asset['size'])}</span><span>{e(t['req'][k])}</span>{f'<span title="SHA-256 {e(sha)}">SHA-256 <code class="sha">{e(sha)}</code></span>' if sha else ''}<a href="{url(lang, f'docs/{doc}/')}" style="color:var(--accent);text-decoration:none;font-weight:700">{t['docs']}</a></div></div>
+  <a class="btn primary small" href="{e(asset['browser_download_url'])}">{ICON['dl']}{t['dl_btn']}</a></div>""")
+        release = f"""<div class="release">
+  <div class="rhead"><div><h2>{e(t['release'].format(v=v))}</h2><span>{e(t['for_mc'].format(mc=MC_VERSION))} · {e(t['released'].format(d=fmt_date(rel['published_at'])))}</span></div>
+    <a class="link" href="{e(rel['html_url'])}">{t['notes']} {ICON['arrow']}</a></div>
+  {''.join(files)}
+</div>"""
     else:
-        main_btn = f'<a class="dl-main" href="{GITHUB}/releases"><span class="ic">{ICON["dl"]}</span><span class="txt"><b>{t["no_release"]}</b><span>GitHub Releases</span></span></a>'
-        title_ver = ""
-    switch = "".join(f'<a href="{url(lang, p)}"{" aria-current=page" if k == key else ""}>{logo(k)}{e(n)}</a>' for k, n, p, _, _ in PRODUCTS)
-    builds = []
-    for rel, asset in rows:
-        changes = rel.get("changes") or [{"sha": "", "message": rel.get("name") or rel["tag_name"]}]
-        lines = "".join(
-            f'<div class="change">{f"""<a href="{GITHUB}/commit/{c["sha"]}">{c["sha"][:7]}</a>""" if c["sha"] else ""}<span>{linkify(e(c["message"]))}</span></div>'
-            for c in changes)
-        builds.append(f"""<div class="build"><a class="badge" href="{e(asset['browser_download_url'])}">{ICON['file']}{e(rel['tag_name'].lstrip('v'))}</a>
-  <div class="changes">{lines}<div class="files"><a href="{e(rel['html_url'])}">{t['releases']}</a>{e(asset['name'])} · {fmt_size(asset['size'])}</div></div>
-  <span class="date" data-time="{e(rel['published_at'])}">{fmt_date(rel['published_at'])}</span></div>""")
+        v = MC_VERSION
+        release = f'<div class="release"><div class="rhead"><span>{t["no_release"]}</span></div></div>'
+    entries = []
+    for rel in RELEASES:
+        changes = rel.get("changes") or []
+        lis = "".join(f'<li><a href="{GITHUB}/commit/{c["sha"]}">{c["sha"][:7]}</a><span>{linkify(e(c["message"]))}</span></li>' for c in changes)
+        links = "".join(f'<a href="{e(a["browser_download_url"])}">{e(a["name"])}</a>' for a in rel["assets"])
+        entries.append(f"""<div class="entry"><div class="when"><b>{e(rel['tag_name'].lstrip('v'))}</b><span data-time="{e(rel['published_at'])}">{fmt_date(rel['published_at'])}</span></div>
+  {f'<ul>{lis}</ul>' if lis else ''}<div class="files">{links}</div></div>""")
     body = f"""
-<section class="dl-head"><div class="container">
-  <div class="dl-kicker">{logo(key)}{t['downloads']}</div>
-  <h1>{t['get_title'].format(name=e(name), ver=title_ver)}</h1>
-  <p>{e(t['dl_desc'][key])} <a href="{url(lang, f'docs/{doc}/')}" style="color:var(--accent);text-decoration:none">{t['documentation']} →</a></p>
-  {main_btn}
-  <div class="dl-switch" aria-label="{t['other_software']}">{switch}</div>
+<section class="page-head"><div class="container">
+  <p class="kicker">{e(t['dl_k'])}</p>
+  <h1>{t['dl_t'].format(v=e(v))}</h1>
+  <p>{e(t['dl_p'])}</p>
 </div></section>
-<section class="older"><div class="container">
-  <div class="intro"><h2>{t['older']}</h2><p>{t['older_text'].format(url=GITHUB + '/releases')}</p>
-    <p><a href="{GITHUB}/actions">{t['dev_builds']}</a></p></div>
-  {''.join(builds)}
-</div></section>"""
-    return page(lang, path, f"{t['downloads']}: {name}", t["dl_desc"][key], body, "downloads")
+<div class="container">
+  {release}
+  <p class="dl-note">{e(t['dev'])} <a href="{GITHUB}/actions">GitHub Actions</a>.</p>
+</div>
+<section class="section"><div class="container"><div class="history"><h2>{t['history']}</h2>{''.join(entries)}</div></div></section>"""
+    return page(lang, "downloads/", t["downloads"], t["dl_p"], body, "downloads")
 
 
 def linkify(text):
-    return re.sub(r"\(#(\d+)\)", lambda m: f'(<a href="{GITHUB}/pull/{m.group(1)}" style="color:var(--accent)">#{m.group(1)}</a>)', text)
-
+    return re.sub(r"\(#(\d+)\)", lambda m: f'(<a href="{GITHUB}/pull/{m.group(1)}">#{m.group(1)}</a>)', text)
 
 # ---------------------------------------------------------------------------------------------
 # Docs
@@ -729,9 +719,9 @@ def main():
         shutil.copy2(f, DIST / "assets" / f.name)
     for lang in LANGS:
         write(lang, "", home(lang))
-        for key, *_ in PRODUCTS:
-            _, _, path, _, _ = next(p for p in PRODUCTS if p[0] == key)
-            write(lang, path, downloads(lang, key))
+        write(lang, "downloads/", downloads(lang))
+        for key in ("worker", "relay", "proxy"):  # old per-product pages
+            write(lang, f"downloads/{key}/", redirect_page(url(lang, f"downloads/#{key}")))
         docs(lang)
         write(lang, "404.html", not_found(lang))
     (DIST / "index.html").write_text(redirect_page(url("en-us")), encoding="utf-8")
