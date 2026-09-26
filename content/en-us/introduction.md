@@ -15,7 +15,8 @@ single player for everyone on it.
 | --- | --- | --- |
 | RAM world | Worlds live in RAM and are written to disk in the background. | [[ram-world]] |
 | Fast pregeneration | `/storia pregen` uses every core but one and can be resumed. | [[pregeneration]] |
-| Per-player budget | Each player gets a fair share of the tick threads; only lagging regions are limited. | [[player-budget]] |
+| Tick guard | A crowded spot like spawn stays smooth: the crowd thinks less, the players are not limited. | [[tick-guard]] |
+| Per-player budget | Only players who add load themselves (flying fast) get a shorter view distance while it is busy. | [[player-budget]] |
 | Faster physics | Entity pushing is about 3× faster with identical results. Redstone is untouched. | [[performance]] |
 | Faster world generation | Optimized noise sampling; terrain is identical to vanilla for the same seed. | [[performance]] |
 | Terrain offload | The heaviest step of terrain generation can run on other machines, encrypted. | [[offload]] |

@@ -47,11 +47,16 @@ Back up the disk copy, after `/storia sync` if you want the newest state. See [[
 
 ## Performance
 
+### Spawn is laggy because of someone else's farm. Will I be slowed down?
+
+No. The [[tick-guard]] thins out the crowd's AI in the crowded chunks until the region is back under its target,
+and players standing nearby are not limited. `/storia region` shows the crowded chunks, so you can find the farm.
+
 ### Players' view distance drops sometimes. Why?
 
-That is the [[player-budget]] limiting a region that is lagging or using more than its share while the server is
-busy. `/storia budget` shows which region and why. The simulation distance is not changed, so farms keep
-working. To disable it, set `player-budget.enabled: false`.
+The [[player-budget]] shortens the view distance of players who move very fast (elytra, ...) while their region
+is over budget, and restores it when they slow down. `/storia budget` shows each player's speed. Players who
+stand or walk are never limited. To disable it, set `player-budget.enabled: false`.
 
 ### Chunk generation is slow during normal play
 

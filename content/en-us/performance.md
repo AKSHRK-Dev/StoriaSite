@@ -32,6 +32,11 @@ Terrain generation spends most of its time sampling noise and counting blocks. S
 The terrain is **identical to vanilla** for the same seed: 18 million noise outputs were compared bit for bit with
 the original code. Existing worlds and seed maps stay valid.
 
+## Crowds
+
+A crowded spot (a mob farm, a villager hall) used to slow down everyone in the same region. The [[tick-guard]]
+now thins out the crowd's AI only while the region is overloaded, and never touches blocks or redstone.
+
 ## Redstone
 
 Storia does **not** change redstone, pistons, hoppers or block updates. The [[player-budget]] never lowers

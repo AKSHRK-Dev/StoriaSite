@@ -178,7 +178,7 @@ h1, h2, h3 { font-family: var(--serif); font-optical-sizing: auto; }
 .bar-row.win .fill { background: var(--accent); }
 .bar-note { margin-top: 12px; font-size: 11.5px; color: var(--panel-muted); font-family: var(--sans); }
 .people { display: grid; gap: 10px; font-family: var(--sans); }
-.person { display: grid; grid-template-columns: 64px 1fr 70px; gap: 12px; align-items: center; font-size: 13px; }
+.person { display: grid; grid-template-columns: 76px 1fr 64px; gap: 12px; align-items: center; font-size: 13px; }
 .person .track { height: 8px; border-radius: 6px; background: var(--panel-2); position: relative; }
 .person .track i { position: absolute; inset: 0 auto 0 0; border-radius: 6px; background: #9bd49b; }
 .person .track s { position: absolute; top: -4px; bottom: -4px; width: 2px; background: var(--panel-muted); text-decoration: none; }
@@ -378,3 +378,9 @@ pre { margin: 0; }
   .lang > button { padding: 0 10px; }
   .brand .word { font-size: 20px; }
 }
+.beta { display: inline-block; vertical-align: middle; margin-left: 10px; font-family: var(--sans); font-size: 12px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--accent-ink); background: var(--accent); padding: 3px 10px; border-radius: 999px; }
+.entry .when .beta { margin-left: 0; }
+.beta-head { max-width: 920px; margin: 48px auto 16px; font-size: 26px; font-weight: 600; }
+.release.is-beta { border-style: dashed; border-color: var(--control); }
+.beta-note { margin: 8px 0 0; font-size: 13.5px; color: var(--ink-2); }
+.release .rhead .beta { color: var(--accent-ink); font-size: 12px; font-weight: 800; }

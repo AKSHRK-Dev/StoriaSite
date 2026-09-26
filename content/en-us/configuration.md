@@ -19,6 +19,12 @@ ram-world:
 pregen:
   worker-threads: -1
   max-in-flight: -1
+tick-guard:
+  enabled: true
+  target-mspt: 40.0
+  crowd-threshold: 16
+  player-radius: 8.0
+  max-level: 3
 player-budget:
   enabled: true
   check-interval-ticks: 100
@@ -30,6 +36,7 @@ player-budget:
   min-view-distance: 6
   memory-high-percent: 85
   memory-low-percent: 70
+  fast-mover-speed: 12.0
 offload:
   mode: 'off'
   secret: ''
@@ -65,6 +72,18 @@ See [[pregeneration]].
 | `worker-threads` | `-1` | Chunk worker threads while `/storia pregen` runs. `-1` = CPU cores − 1. Restored when it finishes. |
 | `max-in-flight` | `-1` | Chunks queued at once. `-1` = worker threads × 16. |
 
+## tick-guard
+
+See [[tick-guard]].
+
+| Option | Default | Description |
+| --- | --- | --- |
+| `enabled` | `true` | Thin out crowded mobs' AI when a region is overloaded. |
+| `target-mspt` | `40.0` | Keep each region's tick time below this (milliseconds; a tick has 50). |
+| `crowd-threshold` | `16` | Mobs in one chunk that count as a crowd. Only crowds are thinned out. |
+| `player-radius` | `8.0` | Mobs within this many blocks of a player always think every tick. |
+| `max-level` | `3` | How far to thin out: 1 = every 2nd tick, 2 = every 4th, 3 = every 8th. |
+
 ## player-budget
 
 See [[player-budget]].
@@ -73,10 +92,11 @@ See [[player-budget]].
 | --- | --- | --- |
 | `enabled` | `true` | Turn the budget on or off. |
 | `check-interval-ticks` | `100` | How often each player is checked (100 ticks = 5 seconds). |
-| `max-region-mspt` | `45.0` | A region whose tick takes longer than this (milliseconds) is over budget. |
+| `max-region-mspt` | `45.0` | A region whose tick takes longer than this (milliseconds) is over budget. Only fast movers in it are limited. |
 | `pool-saturated-percent` | `85` | When the tick threads are this busy, fair shares are enforced. |
 | `recover-below-percent` | `70` | A limited region is restored once it is below this percentage of its limits. |
-| `lower-simulation-distance` | `false` | Also lower simulation distance. **Leave `false` to keep farms and redstone running.** |
+| `fast-mover-speed` | `12.0` | Only players moving faster than this (blocks per second, on two checks in a row) are limited. |
+| `lower-simulation-distance` | `false` | Also lower the fast mover's simulation distance. **Leave `false` to keep farms and redstone running.** |
 | `min-simulation-distance` | `4` | Lowest simulation distance, only used when the option above is `true`. |
 | `min-view-distance` | `6` | Lowest view distance the budget will set. |
 | `memory-high-percent` | `85` | Heap usage after GC above this lowers everyone's view distance. |

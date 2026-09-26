@@ -47,6 +47,7 @@ DOCS_NAV = [
     (("Features", "機能"), [
         ("ram-world", "RAM world", "RAM ワールド"),
         ("pregeneration", "Chunk pregeneration", "チャンクの事前生成"),
+        ("tick-guard", "Tick guard", "Tick Guard"),
         ("player-budget", "Per-player budget", "プレイヤーごとの予算"),
         ("performance", "Performance & tuning", "パフォーマンスと調整"),
     ]),
@@ -114,7 +115,7 @@ e = html.escape
 # ---------------------------------------------------------------------------------------------
 # key, name, asset pattern, docs slug
 PRODUCTS = [
-    ("storia", "Storia", r"storia-[0-9][0-9.]*(-[0-9]+)?\.jar", "getting-started"),
+    ("storia", "Storia", r"storia-[0-9][0-9.]*(-[0-9A-Za-z.]+)*\.jar", "getting-started"),
     ("worker", "Storia Worker", r"storia-worker-.*\.zip", "worker"),
     ("relay", "Storia Relay", r"storia-relay-.*\.zip", "relay"),
     ("proxy", "Storia Proxy", r"storia-proxy-.*\.jar", "proxy"),
@@ -150,14 +151,14 @@ T = {
         "more": "How it works",
         "t_ram": ("RAM world", "Worlds live in memory", "Worlds are copied into RAM at startup and synced back to disk in the background, so disk speed stops mattering."),
         "t_pregen": ("Pregeneration", "Five times faster pregen", "/storia pregen puts every spare core to work and picks up where it left off after a restart."),
-        "t_budget": ("Player budget", "Everyone gets their share", "When the server is busy, only the region that is actually lagging is slowed down, and farms keep running."),
+        "t_budget": ("Tick guard", "A busy spawn, smooth for you", "When a farm or a crowd overloads an area, Storia thins out the crowd's thinking, not the players. People standing nearby are never limited."),
         "t_offload": ("Offload", "More machines, more terrain", "Workers on other machines compute the heaviest step of terrain generation. Identical results, encrypted, with instant local fallback."),
         "t_proxy": ("Storia Proxy", "50 placeholders built in", "A Velocity fork with a live tab list, MOTD and join messages for the whole network."),
         "t_vanilla": ("Vanilla-exact", "Faster, never different", "Every change is checked against the original code, sample by sample and push by push."),
         "bars": [("Folia default", "3m 21s", 100, False), ("Storia", "40s", 20, True)],
         "bars_note": "3,721 chunks on 6 cores. Lower is better.",
-        "people": [("Alice", 92, 40, True, "view 9"), ("Bob", 22, 40, False, "view 12"), ("Carol", 15, 40, False, "view 12")],
-        "people_note": "Share of a tick thread vs. each player's fair share (line)",
+        "people": [("Zombies", 100, 40, True, "AI 1/8"), ("Villagers", 60, 40, True, "AI 1/8"), ("Alice", 0, 40, False, "view 10"), ("Bob", 0, 40, False, "view 10")],
+        "people_note": "Spawn with 1,400 mobs: 55 ms → 33 ms per tick, TPS 20. Nobody limited.",
         "facts": [("0", "", "differences in 18M noise samples"), ("0", "", "in 500k entity pushes"), ("3", "×", "faster entity pushing"), ("0", "", "redstone changes")],
         "prog_k": "The family", "prog_t": "Four programs, one release",
         "prog_p": "Run the server on its own, or add helpers when you need them. All four ship together in every release.",
@@ -175,6 +176,9 @@ T = {
         "for_mc": "for Minecraft {mc}",
         "dl_btn": "Download", "dev": "Looking for the newest changes? Development builds are on", "history": "Release history",
         "no_release": "No release has been published yet.",
+        "beta": "Beta", "beta_head": "Try the beta",
+        "beta_note": "New features that are still being tested. Back up your server before trying it.",
+        "pill_beta": "Beta {v}: tick guard keeps busy spawns smooth",
         # docs
         "search": "Search docs", "search_empty": "No results", "on_page": "On this page", "prev": "Previous", "next": "Next",
         "docs_menu": "Documentation menu",
@@ -200,14 +204,14 @@ T = {
         "more": "仕組みを見る",
         "t_ram": ("RAM ワールド", "ワールドはメモリの上に", "起動時にワールドを RAM にコピーし、変更はバックグラウンドでディスクへ。ディスクの速さが気にならなくなります。"),
         "t_pregen": ("事前生成", "事前生成が約 5 倍速く", "/storia pregen は空いているコアをすべて使い、再起動しても続きから再開します。"),
-        "t_budget": ("プレイヤーごとの予算", "全員に、公平な取り分を", "サーバーが混んだときに遅くするのは、本当に重いリージョンだけ。トラップは動き続けます。"),
+        "t_budget": ("Tick Guard", "混んだ初期地点でも、快適に", "トラップや群れで場所が重くなったら、減らすのは群れの判断だけ。近くに立っている人は一切制限しません。"),
         "t_offload": ("処理の分担", "マシンを足せば、地形も速く", "ほかのマシンのワーカーが、地形生成で一番重い処理を計算します。結果は同一で、暗号化され、いつでも自分での生成に戻れます。"),
         "t_proxy": ("Storia Proxy", "50 個のプレースホルダー", "自動更新のタブリスト、MOTD、ネットワーク全体の参加メッセージを備えた Velocity のフォーク。"),
         "t_vanilla": ("バニラと同一", "速く、でも違わない", "すべての変更を、元のコードと 1 件ずつ照合しています。"),
         "bars": [("Folia の初期設定", "3分21秒", 100, False), ("Storia", "40秒", 20, True)],
         "bars_note": "3,721 チャンク・6 コア。短いほど高速です。",
-        "people": [("Alice", 92, 40, True, "描画 9"), ("Bob", 22, 40, False, "描画 12"), ("Carol", 15, 40, False, "描画 12")],
-        "people_note": "ティックスレッドの使用量と、1 人あたりの公平な取り分（線）",
+        "people": [("ゾンビ", 100, 40, True, "AI 1/8"), ("村人", 60, 40, True, "AI 1/8"), ("Alice", 0, 40, False, "描画 10"), ("Bob", 0, 40, False, "描画 10")],
+        "people_note": "モブ 1,400 体の初期地点：1 ティック 55 ms → 33 ms、TPS 20。誰も制限されません。",
         "facts": [("0", "件", "ノイズ 1,800 万件での差異"), ("0", "件", "押し合い 50 万回での差異"), ("3", "倍", "押し合いの計算の速さ"), ("0", "件", "レッドストーンへの変更")],
         "prog_k": "ファミリー", "prog_t": "4 つのソフトを、ひとつのリリースで",
         "prog_p": "サーバー単体でも動き、必要になったら手伝い役を足せます。4 つとも毎回のリリースにそろって入っています。",
@@ -224,6 +228,9 @@ T = {
         "for_mc": "Minecraft {mc} 向け",
         "dl_btn": "ダウンロード", "dev": "最新の変更を試したい場合は、開発版のビルドを入手できます：", "history": "リリース履歴",
         "no_release": "まだリリースがありません。",
+        "beta": "ベータ", "beta_head": "ベータ版を試す",
+        "beta_note": "テスト中の新機能が入っています。試す前にサーバーをバックアップしてください。",
+        "pill_beta": "ベータ {v}：混んだ初期地点も快適にする Tick Guard",
         "search": "ドキュメントを検索", "search_empty": "見つかりませんでした", "on_page": "このページの内容", "prev": "前へ", "next": "次へ",
         "docs_menu": "ドキュメントのメニュー",
         "tagline": "Folia をベースにした、大人数のコミュニティのための Minecraft サーバー。",
@@ -381,6 +388,14 @@ def diagram(lang):
 </svg>"""
 
 
+def pill(lang, v):
+    t = T[lang]
+    if RELEASES and RELEASES[0].get("prerelease"):
+        bv = RELEASES[0]["tag_name"].lstrip("v")
+        return f'<a class="pill" href="{url(lang, "downloads/")}#beta"><b>{t["beta"]}</b>{e(t["pill_beta"].format(v=bv))}{ICON["arrow"]}</a>'
+    return f'<a class="pill" href="{url(lang, "downloads/")}"><b>{t["pill_tag"]}</b>{e(t["pill"].format(v=v))}{ICON["arrow"]}</a>'
+
+
 def tile(lang, key, icon, visual, slug, width=""):
     t = T[lang]
     tag, title, text = t[key]
@@ -420,7 +435,7 @@ def home(lang):
     body = f"""
 <section class="hero">
   <div class="container">
-    <a class="pill" href="{url(lang, 'downloads/')}"><b>{t['pill_tag']}</b>{e(t['pill'].format(v=v))}{ICON['arrow']}</a>
+    {pill(lang, v)}
     <h1>{t['hero']}</h1>
     <p class="sub">{e(t['hero_sub'])}</p>
     <div class="actions">
@@ -438,7 +453,7 @@ def home(lang):
     <div class="bento">
       {tile(lang, 't_ram', 'ram', status, 'ram-world', 'w7')}
       {tile(lang, 't_pregen', 'bolt', pregen, 'pregeneration', 'w5')}
-      {tile(lang, 't_budget', 'users', budget, 'player-budget', 'w5')}
+      {tile(lang, 't_budget', 'users', budget, 'tick-guard', 'w5')}
       {tile(lang, 't_offload', 'net', offload, 'offload', 'w7')}
       {tile(lang, 't_proxy', 'proxy', proxy, 'placeholders')}
       {tile(lang, 't_vanilla', 'check', vanilla, 'performance')}
@@ -483,35 +498,43 @@ def fmt_date(s, lang="en-us"):
     return d.strftime("%b %-d, %Y") if lang == "en-us" else f"{d.year}年{d.month}月{d.day}日"
 
 
-def downloads(lang):
+def release_card(lang, rel, beta=False):
     t = T[lang]
-    if RELEASES:
-        rel = RELEASES[0]
-        v = rel["tag_name"].lstrip("v")
-        files = []
-        for k, name, pattern, doc in PRODUCTS:
-            asset = next((a for a in rel["assets"] if re.fullmatch(pattern, a["name"])), None)
-            if not asset:
-                continue
-            sha = (asset.get("digest") or "").replace("sha256:", "")
-            files.append(f"""<div class="file" id="{k}">{logo(k)}
+    v = rel["tag_name"].lstrip("v")
+    files = []
+    for k, name, pattern, doc in PRODUCTS:
+        asset = next((a for a in rel["assets"] if re.fullmatch(pattern, a["name"])), None)
+        if not asset:
+            continue
+        sha = (asset.get("digest") or "").replace("sha256:", "")
+        files.append(f"""<div class="file" id="{'beta-' if beta else ''}{k}">{logo(k)}
   <div><h3>{e(name)}</h3><p>{e(t['products'][k][1])}</p>
     <div class="meta"><span>{e(asset['name'])}</span><span>{fmt_size(asset['size'])}</span><span>{e(t['req'][k])}</span>{f'<span title="SHA-256 {e(sha)}">SHA-256 <code class="sha">{e(sha)}</code></span>' if sha else ''}<a href="{url(lang, f'docs/{doc}/')}" style="color:var(--accent);text-decoration:none;font-weight:700">{t['docs']}</a></div></div>
-  <a class="btn primary small" href="{e(asset['browser_download_url'])}">{ICON['dl']}{t['dl_btn']}</a></div>""")
-        release = f"""<div class="release">
-  <div class="rhead"><div><h2>{e(t['release'].format(v=v))}</h2><span>{e(t['for_mc'].format(mc=MC_VERSION))} · {e(t['released'].format(d=fmt_date(rel['published_at'], lang)))}</span></div>
+  <a class="btn {'secondary' if beta else 'primary'} small" href="{e(asset['browser_download_url'])}">{ICON['dl']}{t['dl_btn']}</a></div>""")
+    badge = f' <span class="beta">{t["beta"]}</span>' if beta else ""
+    note = f'<p class="beta-note">{e(t["beta_note"])}</p>' if beta else ""
+    return f"""<div class="release{' is-beta' if beta else ''}" id="{'beta' if beta else 'stable'}">
+  <div class="rhead"><div><h2>{e(t['release'].format(v=v))}{badge}</h2><span>{e(t['for_mc'].format(mc=MC_VERSION))} · {e(t['released'].format(d=fmt_date(rel['published_at'], lang)))}</span>{note}</div>
     <a class="link" href="{e(rel['html_url'])}">{t['notes']} {ICON['arrow']}</a></div>
   {''.join(files)}
 </div>"""
-    else:
-        v = MC_VERSION
-        release = f'<div class="release"><div class="rhead"><span>{t["no_release"]}</span></div></div>'
+
+
+def downloads(lang):
+    t = T[lang]
+    stable = next((r for r in RELEASES if not r.get("prerelease")), None)
+    beta = RELEASES[0] if RELEASES and RELEASES[0].get("prerelease") else None
+    v = stable["tag_name"].lstrip("v") if stable else MC_VERSION
+    release = release_card(lang, stable) if stable else f'<div class="release"><div class="rhead"><span>{t["no_release"]}</span></div></div>'
+    if beta:
+        release += f'<h2 class="beta-head">{e(t["beta_head"])}</h2>' + release_card(lang, beta, True)
     entries = []
     for rel in RELEASES:
         changes = rel.get("changes") or []
         lis = "".join(f'<li><a href="{GITHUB}/commit/{c["sha"]}">{c["sha"][:7]}</a><span>{linkify(e(c["message"]))}</span></li>' for c in changes)
         links = "".join(f'<a href="{e(a["browser_download_url"])}">{e(a["name"])}</a>' for a in rel["assets"])
-        entries.append(f"""<div class="entry"><div class="when"><b>{e(rel['tag_name'].lstrip('v'))}</b><time datetime="{e(rel['published_at'])}" data-time="{e(rel['published_at'])}">{fmt_date(rel['published_at'], lang)}</time></div>
+        tag = f' <span class="beta">{t["beta"]}</span>' if rel.get("prerelease") else ""
+        entries.append(f"""<div class="entry"><div class="when"><b>{e(rel['tag_name'].lstrip('v'))}</b>{tag}<time datetime="{e(rel['published_at'])}" data-time="{e(rel['published_at'])}">{fmt_date(rel['published_at'], lang)}</time></div>
   {f'<ul>{lis}</ul>' if lis else ''}<div class="files">{links}</div></div>""")
     body = f"""
 <section class="page-head"><div class="container">
@@ -694,6 +717,7 @@ def load_releases():
     cache = ROOT / "releases.json"
     try:
         data = [r for r in api(f"repos/{REPO}/releases?per_page=30") if not r.get("draft")]
+        data.sort(key=lambda r: r.get("published_at") or "", reverse=True)  # the API does not sort by date
         for i, rel in enumerate(data):
             tag = rel["tag_name"]
             if i + 1 < len(data):
@@ -718,7 +742,8 @@ def main():
     global RELEASES, LATEST, SITE_SHA
     RELEASES = load_releases()
     if RELEASES:
-        LATEST = {"version": RELEASES[0]["tag_name"].lstrip("v")}
+        stable = next((r for r in RELEASES if not r.get("prerelease")), RELEASES[0])
+        LATEST = {"version": stable["tag_name"].lstrip("v")}
     try:
         SITE_SHA = subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT, capture_output=True, text=True, check=True).stdout.strip()
     except Exception:
