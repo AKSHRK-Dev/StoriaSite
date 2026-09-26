@@ -1,5 +1,5 @@
 ---
-summary: Build Storia, Storia Relay and Storia Proxy from source, and how the patch-based project is organised.
+summary: Build Storia, Storia Relay and Storia Proxy from source, and how the patch-based project is organized.
 ---
 ## Storia server
 

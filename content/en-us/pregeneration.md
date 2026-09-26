@@ -11,9 +11,9 @@ chunks that already exist.
 /storia pregen start <radius> [world] [x z]
 ```
 
-- `radius`: in **blocks**. The square from −radius to +radius around the centre is generated.
+- `radius`: in **blocks**. The square from −radius to +radius around the center is generated.
 - `world`: the world's name. Defaults to the main world (the first one loaded, usually `world`).
-- `x z`: the centre in block coordinates. Defaults to the world spawn.
+- `x z`: the center in block coordinates. Defaults to the world spawn.
 
 ```text
 /storia pregen start 5000                 5000 blocks around spawn
@@ -23,7 +23,7 @@ chunks that already exist.
 /storia pregen resume                     continue, also after a restart
 ```
 
-Chunks are generated in a spiral from the centre outwards, so the area closest to spawn is ready first.
+Chunks are generated in a spiral from the center outwards, so the area closest to spawn is ready first.
 
 ## Why it is faster
 

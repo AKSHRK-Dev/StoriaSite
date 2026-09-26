@@ -23,7 +23,7 @@ the relay.
 You can, but Folia's threading model mainly pays off with many players spread across the world. For a small
 server, or one that depends on Paper-only plugins, Paper is simpler.
 
-### Does Storia change vanilla behaviour?
+### Does Storia change vanilla behavior?
 
 Storia's own changes keep vanilla results (terrain, entity physics, redstone). Folia, which Storia is built on,
 does behave differently from single-threaded servers in some edge cases, for example contraptions that span

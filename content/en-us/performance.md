@@ -1,7 +1,7 @@
 ---
-summary: The physics and world generation optimisations in Storia, how they are verified, and settings worth tuning.
+summary: The physics and world generation optimizations in Storia, how they are verified, and settings worth tuning.
 ---
-Storia's optimisations follow one rule: **the result must be exactly what vanilla would produce.** Each one is
+Storia's optimizations follow one rule: **the result must be exactly what vanilla would produce.** Each one is
 checked against the original code, and none of them touches redstone.
 
 ## Entity pushing

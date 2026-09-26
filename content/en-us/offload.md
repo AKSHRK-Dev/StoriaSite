@@ -3,7 +3,7 @@ summary: Let other machines compute the heaviest step of terrain generation for 
 ---
 Terrain generation happens in steps. The most expensive one, **noise**, decides the shape of the land: where
 there is stone, air, water and lava, caves and aquifers. It depends only on the seed, the world settings and
-nearby structures, not on neighbouring chunks or on anything players did. That makes it possible to compute it on
+nearby structures, not on neighboring chunks or on anything players did. That makes it possible to compute it on
 another machine.
 
 With offloading, your Storia server (the **client**) sends noise requests to one or more **workers**. Each
@@ -25,7 +25,7 @@ worker computes the noise and sends back the blocks. Everything else stays on th
 | Surface, carvers, features (trees, ores), light, spawning | Main server |
 | Everything that ticks | Main server |
 
-The steps after noise depend on neighbouring chunks or must finish within a 50 ms tick, so they stay on the main
+The steps after noise depend on neighboring chunks or must finish within a 50 ms tick, so they stay on the main
 server. The noise step is typically the largest single part of generation, so moving it frees a lot of CPU.
 
 ## Identical results, always
@@ -148,6 +148,6 @@ address and port (`203.0.113.5:10001`) on the main server.
 ## Network
 
 - Traffic uses one TCP connection per worker (or relay).
-- Traffic per chunk is small and compressed. A LAN or a VPN between data centres is ideal; high latency only
+- Traffic per chunk is small and compressed. A LAN or a VPN between data centers is ideal; high latency only
   makes each request slower, not the server.
 - Everything is encrypted and authenticated. See [[security]].

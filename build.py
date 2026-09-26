@@ -138,7 +138,7 @@ ICON.update({
 T = {
     "en-us": {
         "features": "Features", "downloads": "Downloads", "docs": "Docs", "github": "GitHub",
-        "theme": "Toggle theme", "menu": "Menu", "language": "Language", "documentation": "Documentation",
+        "theme": "Dark mode", "menu": "Menu", "skip": "Skip to main content", "copied": "Copied to clipboard", "results": "{n} results", "language": "Language", "documentation": "Documentation",
         "desc": "Storia is a Folia-based Minecraft server with RAM-backed worlds, fast chunk pregeneration, a fair share of the server for every player, redstone-safe physics optimizations and encrypted terrain offloading to other machines.",
         "pill": "Storia {v} is out", "pill_tag": "New",
         "hero": 'The finest server software. <span class="accent">Zero stutter.</span>',
@@ -146,7 +146,7 @@ T = {
         "get": "Download {v}", "read": "Read the docs",
         "meta": [("layers", "Minecraft " + MC_VERSION), ("java", "Java 25"), ("code", "Open source")],
         "why_k": "What's inside", "why_t": "Six things Storia does for your server",
-        "why_p": "Each one keeps vanilla behaviour: the same terrain for the same seed, the same physics, and redstone that never stops.",
+        "why_p": "Each one keeps vanilla behavior: the same terrain for the same seed, the same physics, and redstone that never stops.",
         "more": "How it works",
         "t_ram": ("RAM world", "Worlds live in memory", "Worlds are copied into RAM at startup and synced back to disk in the background, so disk speed stops mattering."),
         "t_pregen": ("Pregeneration", "Five times faster pregen", "/storia pregen puts every spare core to work and picks up where it left off after a restart."),
@@ -162,7 +162,7 @@ T = {
         "prog_k": "The family", "prog_t": "Four programs, one release",
         "prog_p": "Run the server on its own, or add helpers when you need them. All four ship together in every release.",
         "products": {
-            "storia": ("The server", "Folia's regionised multithreading plus RAM worlds, fast pregeneration and a per-player budget."),
+            "storia": ("The server", "Folia's regionized multithreading plus RAM worlds, fast pregeneration and a per-player budget."),
             "worker": ("Terrain helper", "Generates terrain for your server on a spare machine. No player port."),
             "relay": ("Work router", "Shares terrain work between any number of workers. No Minecraft files."),
             "proxy": ("Network proxy", "Velocity with placeholders, a live tab list and network messages."),
@@ -188,7 +188,7 @@ T = {
     },
     "ja-jp": {
         "features": "特長", "downloads": "ダウンロード", "docs": "ドキュメント", "github": "GitHub",
-        "theme": "テーマ切り替え", "menu": "メニュー", "language": "言語", "documentation": "ドキュメント",
+        "theme": "ダークモード", "menu": "メニュー", "skip": "本文へスキップ", "copied": "クリップボードにコピーしました", "results": "{n} 件見つかりました", "language": "言語", "documentation": "ドキュメント",
         "desc": "Storia は Folia ベースの Minecraft サーバーです。RAM 上のワールド、高速なチャンク事前生成、プレイヤーごとの公平な負荷分配、回路を止めない物理演算の最適化、暗号化された別マシンへの地形生成の分担を備えています。",
         "pill": "Storia {v} を公開しました", "pill_tag": "新着",
         "hero": '<span class="accent">カクつかない、</span>最高峰のサーバーソフトウェア。',
@@ -246,11 +246,12 @@ def url(lang, path=""):
 def header(lang, path, current):
     t = T[lang]
     cur = lambda k: ' aria-current="page"' if current == k else ""
-    lang_opts = "".join(f'<option value="{l}" data-href="{url(l, path)}"{" selected" if l == lang else ""}>{LANG_NAME[l]}</option>' for l in LANGS)
-    lang_links = " ".join(f'<a href="{url(l, path)}" hreflang="{HTML_LANG[l]}">{LANG_NAME[l]}</a>' for l in LANGS if l != lang)
+    lang_items = "".join(
+        f'<li><a href="{url(l, path)}" hreflang="{HTML_LANG[l]}" lang="{HTML_LANG[l]}" data-set-lang="{l}"{" aria-current=true" if l == lang else ""}>{LANG_NAME[l]}</a></li>'
+        for l in LANGS)
     return f"""<header class="site-header" id="site-header">
   <div class="container">
-    <a class="brand" href="{url(lang)}" aria-label="Storia">{logo("storia")}<span class="word">Storia</span></a>
+    <a class="brand" href="{url(lang)}" aria-label="StoriaMC">{logo("storia")}<span class="word">StoriaMC</span></a>
     <nav class="nav" id="site-nav" aria-label="Main">
       <a href="{url(lang)}#features">{t['features']}</a>
       <a href="{url(lang, 'downloads/')}"{cur('downloads')}>{t['downloads']}</a>
@@ -258,10 +259,11 @@ def header(lang, path, current):
     </nav>
     <div class="header-tools">
       <a class="icon-btn hide-sm" href="{GITHUB}" aria-label="GitHub">{ICON['github']}</a>
-      <label class="lang">{ICON['globe'].replace('<svg ', '<svg class="globe" ')}<span class="sr-only">{t['language']}</span>
-        <select id="lang-select" aria-label="{t['language']}">{lang_opts}</select>{ICON['chev']}</label>
-      <noscript>{lang_links}</noscript>
-      <button class="icon-btn" id="theme-toggle" type="button" title="{t['theme']}" aria-label="{t['theme']}">{ICON['sun']}</button>
+      <div class="lang">
+        <button type="button" id="lang-toggle" aria-expanded="false" aria-controls="lang-menu">{ICON['globe']}<span><span class="sr-only">{t['language']}: </span><span class="lang-long">{LANG_NAME[lang]}</span><span class="lang-short" aria-hidden="true">{HTML_LANG[lang].upper()}</span></span>{ICON['chev']}</button>
+        <ul id="lang-menu" hidden>{lang_items}</ul>
+      </div>
+      <button class="icon-btn" id="theme-toggle" type="button" title="{t['theme']}" aria-label="{t['theme']}" aria-pressed="false">{ICON['sun']}</button>
       <button class="icon-btn menu-btn" id="menu-toggle" type="button" aria-label="{t['menu']}" aria-controls="site-nav" aria-expanded="false">{ICON['menu']}</button>
     </div>
   </div>
@@ -271,18 +273,19 @@ def header(lang, path, current):
 def footer(lang):
     t = T[lang]
     d = lambda slug: f'<li><a href="{url(lang, f"docs/{slug}/")}">{e(doc_title(slug, lang))}</a></li>'
-    return f"""<footer class="site-footer">
+    return f"""<footer class="site-footer" aria-labelledby="footer-title">
+  <h2 id="footer-title" class="sr-only">Storia</h2>
   <div class="container">
     <div class="top">
       <div class="about"><a class="brand" href="{url(lang)}">{logo("storia")}<span class="word" style="color:var(--ink)">Storia</span></a><p>{e(t['tagline'])}</p></div>
-      <div><h4>{t['f_use']}</h4><ul>
+      <div><h2>{t['f_use']}</h2><ul>
         <li><a href="{url(lang, 'downloads/')}">{t['downloads']}</a></li>
         {d('getting-started')}{d('configuration')}{d('commands')}
       </ul></div>
-      <div><h4>{t['f_learn']}</h4><ul>
+      <div><h2>{t['f_learn']}</h2><ul>
         {d('offload')}{d('player-budget')}{d('placeholders')}{d('faq')}
       </ul></div>
-      <div><h4>{t['f_source']}</h4><ul>
+      <div><h2>{t['f_source']}</h2><ul>
         <li><a href="{GITHUB}">Storia</a></li>
         <li><a href="https://github.com/{PROXY_REPO}">Storia Proxy</a></li>
         <li><a href="https://github.com/{SITE_REPO}">{t['website_src']}</a></li>
@@ -323,11 +326,13 @@ def page(lang, path, title, description, body, current):
 <script>try{{var s=localStorage.getItem("storia-theme");if(s)document.documentElement.dataset.theme=s}}catch(e){{}}</script>
 </head>
 <body>
+<a class="skip" href="#main">{T[lang]['skip']}</a>
 {header(lang, path, current)}
-<main>
+<main id="main" tabindex="-1">
 {body}
 </main>
 {footer(lang)}
+<div id="live" class="sr-only" aria-live="polite"></div>
 <script src="/assets/main.js?v={BUILD_ID}" defer></script>
 </body>
 </html>
@@ -356,14 +361,16 @@ def terminal_lines(version):
 def diagram(lang):
     ja = lang == "ja-jp"
     labels = ["プレイヤー" if ja else "Players", "Proxy", "Storia", "Relay", "ワーカー" if ja else "Worker"]
+    desc = ("プレイヤーは Proxy を通って Storia サーバーに接続し、Storia は Relay を通して 3 台のワーカーに地形生成を暗号化して依頼します。" if ja
+            else "Players connect through the proxy to the Storia server, which sends encrypted terrain work through a relay to three workers.")
     box = lambda x, y, w, h, title, strong=False: (
-        f'<rect x="{x}" y="{y}" width="{w}" height="{h}" rx="8" fill="{"#c4552f" if strong else "#2a2724"}" stroke="{"#c4552f" if strong else "#45403a"}"/>'
+        f'<rect x="{x}" y="{y}" width="{w}" height="{h}" rx="8" fill="{"#ad4722" if strong else "#2a2724"}" stroke="{"#ad4722" if strong else "#45403a"}"/>'
         f'<text x="{x + w / 2}" y="{y + h / 2}" text-anchor="middle" dominant-baseline="middle" font-size="13" font-weight="700" fill="#fff" font-family="Manrope, sans-serif">{e(title)}</text>')
     line = lambda x1, y1, x2, y2, dash=False: (
         f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" stroke="#7a726a" stroke-width="1.5"{" stroke-dasharray=&quot;4 4&quot;" if dash else ""} marker-end="url(#arr)"/>')
     workers = "".join(box(468, 10 + i * 56, 96, 40, f"{labels[4]} {chr(65 + i)}") for i in range(3))
     wlines = "".join(line(436, 88, 466, 30 + i * 56, True) for i in range(3))
-    return f"""<svg class="diagram" viewBox="0 0 570 180" role="img" aria-label="offload">
+    return f"""<svg class="diagram" viewBox="0 0 570 180" role="img" aria-label="{e(desc)}">
 <defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 10 5 0 10z" fill="#7a726a"/></marker></defs>
 {box(0, 68, 88, 40, labels[0])}{line(90, 88, 112, 88)}
 {box(114, 68, 76, 40, labels[1])}{line(192, 88, 214, 88)}
@@ -470,8 +477,9 @@ def fmt_size(b):
     return f"{b / 1048576:.1f} MB" if b >= 1048576 else f"{max(1, round(b / 1024))} KB"
 
 
-def fmt_date(s):
-    return s[:10]
+def fmt_date(s, lang="en-us"):
+    d = datetime.strptime(s[:10], "%Y-%m-%d")
+    return d.strftime("%b %-d, %Y") if lang == "en-us" else f"{d.year}年{d.month}月{d.day}日"
 
 
 def downloads(lang):
@@ -490,7 +498,7 @@ def downloads(lang):
     <div class="meta"><span>{e(asset['name'])}</span><span>{fmt_size(asset['size'])}</span><span>{e(t['req'][k])}</span>{f'<span title="SHA-256 {e(sha)}">SHA-256 <code class="sha">{e(sha)}</code></span>' if sha else ''}<a href="{url(lang, f'docs/{doc}/')}" style="color:var(--accent);text-decoration:none;font-weight:700">{t['docs']}</a></div></div>
   <a class="btn primary small" href="{e(asset['browser_download_url'])}">{ICON['dl']}{t['dl_btn']}</a></div>""")
         release = f"""<div class="release">
-  <div class="rhead"><div><h2>{e(t['release'].format(v=v))}</h2><span>{e(t['for_mc'].format(mc=MC_VERSION))} · {e(t['released'].format(d=fmt_date(rel['published_at'])))}</span></div>
+  <div class="rhead"><div><h2>{e(t['release'].format(v=v))}</h2><span>{e(t['for_mc'].format(mc=MC_VERSION))} · {e(t['released'].format(d=fmt_date(rel['published_at'], lang)))}</span></div>
     <a class="link" href="{e(rel['html_url'])}">{t['notes']} {ICON['arrow']}</a></div>
   {''.join(files)}
 </div>"""
@@ -502,7 +510,7 @@ def downloads(lang):
         changes = rel.get("changes") or []
         lis = "".join(f'<li><a href="{GITHUB}/commit/{c["sha"]}">{c["sha"][:7]}</a><span>{linkify(e(c["message"]))}</span></li>' for c in changes)
         links = "".join(f'<a href="{e(a["browser_download_url"])}">{e(a["name"])}</a>' for a in rel["assets"])
-        entries.append(f"""<div class="entry"><div class="when"><b>{e(rel['tag_name'].lstrip('v'))}</b><span data-time="{e(rel['published_at'])}">{fmt_date(rel['published_at'])}</span></div>
+        entries.append(f"""<div class="entry"><div class="when"><b>{e(rel['tag_name'].lstrip('v'))}</b><time datetime="{e(rel['published_at'])}" data-time="{e(rel['published_at'])}">{fmt_date(rel['published_at'], lang)}</time></div>
   {f'<ul>{lis}</ul>' if lis else ''}<div class="files">{links}</div></div>""")
     body = f"""
 <section class="page-head"><div class="container">
@@ -563,7 +571,8 @@ def render_markdown(src, lang):
     src = re.sub(r"\[\[([^\]]+)\]\]", link, src)
     src = src.replace("](/en-us/", f"](/{lang}/")
     src = src.replace("{{VERSION}}", LATEST["version"]).replace("{{MC}}", MC_VERSION).replace("{{GITHUB}}", GITHUB)
-    return md.convert(src), md.toc_tokens
+    # tabindex lets keyboard users scroll long code blocks (WCAG 2.1.1)
+    return md.convert(src).replace("<pre>", '<pre tabindex="0">'), md.toc_tokens
 
 
 def plain(html_text):
@@ -625,7 +634,8 @@ def docs(lang):
   <button class="icon-btn docs-menu" id="docs-menu" type="button" aria-controls="sidebar" aria-expanded="false">{e(d.group)} › {e(d.title)} {ICON['menu']}</button>
   <aside class="sidebar" id="sidebar" aria-label="{t['docs_menu']}">
     <div class="search">{ICON['search']}
-      <input id="search" type="search" placeholder="{t['search']}  /" aria-label="{t['search']}" autocomplete="off"
+      <input id="search" type="search" placeholder="{t['search']}" aria-label="{t['search']}" autocomplete="off"
+        role="combobox" aria-expanded="false" aria-controls="search-results" aria-autocomplete="list" data-results="{t['results']}"
         data-index="{url(lang, 'docs/search-index.json')}?v={BUILD_ID}" data-empty="{t['search_empty']}">
       <div class="search-results" id="search-results" role="listbox"></div>
     </div>

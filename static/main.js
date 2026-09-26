@@ -5,14 +5,18 @@
   };
   const root = document.documentElement;
   const lang = root.dataset.lang;
+  const live = document.getElementById("live");
+  const announce = (msg) => { if (live) { live.textContent = ""; setTimeout(() => (live.textContent = msg), 50); } };
 
   // ---- theme ----
   const themeBtn = document.getElementById("theme-toggle");
+  const isDark = () => root.dataset.theme ? root.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
   if (themeBtn) {
+    themeBtn.setAttribute("aria-pressed", isDark());
     themeBtn.addEventListener("click", () => {
-      const dark = root.dataset.theme ? root.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
-      root.dataset.theme = dark ? "light" : "dark";
+      root.dataset.theme = isDark() ? "light" : "dark";
       store.set("storia-theme", root.dataset.theme);
+      themeBtn.setAttribute("aria-pressed", isDark());
     });
   }
 
@@ -22,14 +26,29 @@
       document.cookie = "storia_lang=" + a.dataset.setLang + "; path=/; max-age=31536000; SameSite=Lax";
     });
   });
-  const langSel = document.getElementById("lang-select");
-  if (langSel) {
-    langSel.addEventListener("change", () => {
-      const opt = langSel.selectedOptions[0];
-      document.cookie = "storia_lang=" + opt.value + "; path=/; max-age=31536000; SameSite=Lax";
-      location.href = opt.dataset.href + location.hash;
-    });
+  const langBtn = document.getElementById("lang-toggle");
+  const langMenu = document.getElementById("lang-menu");
+  if (langBtn && langMenu) {
+    const setOpen = (open, focus) => {
+      langMenu.hidden = !open;
+      langBtn.setAttribute("aria-expanded", open);
+      if (open && focus) langMenu.querySelector("a").focus();
+    };
+    langBtn.addEventListener("click", () => setOpen(langMenu.hidden, false));
+    langBtn.addEventListener("keydown", (e) => { if (e.key === "ArrowDown") { e.preventDefault(); setOpen(true, true); } });
+    langMenu.querySelectorAll("a").forEach((a) => a.addEventListener("click", (e) => {
+      // keep the part of the page the visitor was looking at
+      if (location.hash) { e.preventDefault(); location.href = a.href + location.hash; }
+    }));
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !langMenu.hidden) { setOpen(false); langBtn.focus(); } });
+    document.addEventListener("click", (e) => { if (!e.target.closest(".lang")) setOpen(false); });
+    langMenu.addEventListener("focusout", (e) => { if (!e.relatedTarget || !e.relatedTarget.closest(".lang")) setOpen(false); });
   }
+
+  // ---- skip link: move keyboard focus to the main content ----
+  const skip = document.querySelector(".skip");
+  const main = document.getElementById("main");
+  if (skip && main) skip.addEventListener("click", (e) => { e.preventDefault(); main.focus(); main.scrollIntoView(); });
 
   // ---- mobile menus ----
   const menuBtn = document.getElementById("menu-toggle");
@@ -64,6 +83,7 @@
       try {
         await navigator.clipboard.writeText(pre.innerText.replace(/\n$/, ""));
         btn.textContent = copyLabel[1];
+        announce(copyLabel[1]);
         setTimeout(() => (btn.textContent = copyLabel[0]), 1500);
       } catch (e) { /* clipboard unavailable */ }
     });
@@ -108,9 +128,15 @@
       terms.forEach((t) => { out = out.replace(new RegExp("(" + t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + ")", "gi"), "<mark>$1</mark>"); });
       return out;
     };
+    results.setAttribute("role", "listbox");
+    const close = () => {
+      results.classList.remove("open");
+      input.setAttribute("aria-expanded", "false");
+      input.removeAttribute("aria-activedescendant");
+    };
     const render = () => {
       const q = input.value.trim().toLowerCase();
-      if (!q) { results.classList.remove("open"); return; }
+      if (!q) { close(); return; }
       const terms = q.split(/\s+/).filter(Boolean);
       const hits = [];
       index.forEach((page) => {
@@ -131,10 +157,13 @@
       });
       hits.sort((a, b) => b.score - a.score);
       active = -1;
+      input.removeAttribute("aria-activedescendant");
       results.innerHTML = hits.length
-        ? hits.slice(0, 12).map((h) => `<a href="${h.url}"><div class="r-title">${mark(h.title, terms)}</div><div class="r-sec">${esc(h.sec)}</div><div class="r-text">${mark(h.snippet, terms)}</div></a>`).join("")
-        : `<div class="empty">${esc(input.dataset.empty)}</div>`;
+        ? hits.slice(0, 12).map((h, i) => `<a href="${h.url}" id="sr-${i}" role="option" aria-selected="false"><div class="r-title">${mark(h.title, terms)}</div><div class="r-sec">${esc(h.sec)}</div><div class="r-text">${mark(h.snippet, terms)}</div></a>`).join("")
+        : `<div class="empty" role="option" aria-disabled="true">${esc(input.dataset.empty)}</div>`;
       results.classList.add("open");
+      input.setAttribute("aria-expanded", "true");
+      announce(hits.length ? input.dataset.results.replace("{n}", Math.min(hits.length, 12)) : input.dataset.empty);
     };
     input.addEventListener("focus", load);
     input.addEventListener("input", () => load().then(render));
@@ -144,22 +173,16 @@
         e.preventDefault();
         if (!items.length) return;
         active = (active + (e.key === "ArrowDown" ? 1 : -1) + items.length) % items.length;
-        items.forEach((a, i) => a.classList.toggle("active", i === active));
+        items.forEach((a, i) => { a.classList.toggle("active", i === active); a.setAttribute("aria-selected", i === active); });
+        input.setAttribute("aria-activedescendant", items[active].id);
         items[active].scrollIntoView({ block: "nearest" });
       } else if (e.key === "Enter" && items.length) {
         location.href = items[Math.max(0, active)].href;
       } else if (e.key === "Escape") {
-        results.classList.remove("open");
-        input.blur();
+        close();
       }
     });
-    document.addEventListener("click", (e) => { if (!e.target.closest(".search")) results.classList.remove("open"); });
-    document.addEventListener("keydown", (e) => {
-      if (e.key === "/" && document.activeElement !== input && !/INPUT|TEXTAREA/.test(document.activeElement.tagName)) {
-        e.preventDefault();
-        input.focus();
-      }
-    });
+    document.addEventListener("click", (e) => { if (!e.target.closest(".search")) close(); });
   }
 
   // ---- header border once scrolled ----
@@ -212,6 +235,4 @@
     });
   }
 
-  // ---- software dropdown on touch ----
-  document.querySelectorAll(".dd > button").forEach((b) => b.addEventListener("click", () => b.parentElement.classList.toggle("open")));
 })();
