@@ -138,7 +138,7 @@ ICON.update({
 T = {
     "en-us": {
         "features": "Features", "downloads": "Downloads", "docs": "Docs", "github": "GitHub",
-        "theme": "Dark mode", "menu": "Menu", "skip": "Skip to main content", "copied": "Copied to clipboard", "results": "{n} results", "language": "Language", "documentation": "Documentation",
+        "theme": "Dark mode", "menu": "Menu", "skip": "Skip to main content", "title_tag": "The finest server software. Zero stutter.", "copied": "Copied to clipboard", "results": "{n} results", "language": "Language", "documentation": "Documentation",
         "desc": "Storia is a Folia-based Minecraft server with RAM-backed worlds, fast chunk pregeneration, a fair share of the server for every player, redstone-safe physics optimizations and encrypted terrain offloading to other machines.",
         "pill": "Storia {v} is out", "pill_tag": "New",
         "hero": 'The finest server software. <span class="accent">Zero stutter.</span>',
@@ -188,7 +188,7 @@ T = {
     },
     "ja-jp": {
         "features": "特長", "downloads": "ダウンロード", "docs": "ドキュメント", "github": "GitHub",
-        "theme": "ダークモード", "menu": "メニュー", "skip": "本文へスキップ", "copied": "クリップボードにコピーしました", "results": "{n} 件見つかりました", "language": "言語", "documentation": "ドキュメント",
+        "theme": "ダークモード", "menu": "メニュー", "skip": "本文へスキップ", "title_tag": "カクつかない、最高峰のサーバーソフトウェア", "copied": "クリップボードにコピーしました", "results": "{n} 件見つかりました", "language": "言語", "documentation": "ドキュメント",
         "desc": "Storia は Folia ベースの Minecraft サーバーです。RAM 上のワールド、高速なチャンク事前生成、プレイヤーごとの公平な負荷分配、回路を止めない物理演算の最適化、暗号化された別マシンへの地形生成の分担を備えています。",
         "pill": "Storia {v} を公開しました", "pill_tag": "新着",
         "hero": '<span class="accent">カクつかない、</span>最高峰のサーバーソフトウェア。',
@@ -274,10 +274,10 @@ def footer(lang):
     t = T[lang]
     d = lambda slug: f'<li><a href="{url(lang, f"docs/{slug}/")}">{e(doc_title(slug, lang))}</a></li>'
     return f"""<footer class="site-footer" aria-labelledby="footer-title">
-  <h2 id="footer-title" class="sr-only">Storia</h2>
+  <h2 id="footer-title" class="sr-only">StoriaMC</h2>
   <div class="container">
     <div class="top">
-      <div class="about"><a class="brand" href="{url(lang)}">{logo("storia")}<span class="word" style="color:var(--ink)">Storia</span></a><p>{e(t['tagline'])}</p></div>
+      <div class="about"><a class="brand" href="{url(lang)}" aria-label="StoriaMC">{logo("storia")}<span class="word" style="color:var(--ink)">StoriaMC</span></a><p>{e(t['tagline'])}</p></div>
       <div><h2>{t['f_use']}</h2><ul>
         <li><a href="{url(lang, 'downloads/')}">{t['downloads']}</a></li>
         {d('getting-started')}{d('configuration')}{d('commands')}
@@ -292,13 +292,13 @@ def footer(lang):
         <li><a href="{GITHUB}/issues">{t['issues']}</a></li>
       </ul></div>
     </div>
-    <div class="bottom"><span>© {datetime.now().year} Storia · {e(t['legal'])}</span><span>{e(t['thanks'])}</span></div>
+    <div class="bottom"><span>© {datetime.now().year} StoriaMC · {e(t['legal'])}</span><span>{e(t['thanks'])}</span></div>
   </div>
 </footer>"""
 
 
 def page(lang, path, title, description, body, current):
-    full_title = f"{title} | Storia" if title else "Storia"
+    full_title = f"{title} | StoriaMC" if title else "StoriaMC: " + T[lang]["title_tag"]
     alternates = "".join(f'<link rel="alternate" hreflang="{HTML_LANG[l]}" href="{url(l, path)}">' for l in LANGS)
     alternates += f'<link rel="alternate" hreflang="x-default" href="{url("en-us", path)}">'
     fonts = ("https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500"
@@ -314,6 +314,7 @@ def page(lang, path, title, description, body, current):
 <meta property="og:title" content="{e(full_title)}">
 <meta property="og:description" content="{e(description)}">
 <meta property="og:type" content="website">
+<meta property="og:site_name" content="StoriaMC">
 <meta property="og:image" content="/assets/storia.png">
 <meta name="theme-color" content="#c4552f">
 <link rel="icon" href="/assets/favicon.svg" type="image/svg+xml">
@@ -655,7 +656,7 @@ def docs(lang):
 
 
 def redirect_page(target):
-    return f'<!doctype html><meta charset="utf-8"><title>Storia</title><meta http-equiv="refresh" content="0; url={target}"><link rel="canonical" href="{target}"><a href="{target}">{target}</a>'
+    return f'<!doctype html><meta charset="utf-8"><title>StoriaMC</title><meta http-equiv="refresh" content="0; url={target}"><link rel="canonical" href="{target}"><a href="{target}">{target}</a>'
 
 
 def not_found(lang):
