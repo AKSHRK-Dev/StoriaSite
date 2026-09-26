@@ -10,7 +10,8 @@ world**: it only reads the world settings needed to produce the same terrain.
 - **Java 25**.
 - CPU cores: the more, the better. By default the worker uses all of them (`offload.threads: -1`).
 - Memory: 2–4 GB of heap is plenty for most worlds. Set it with `WORKER_MEMORY`.
-- Network access to the main server (or the relay) on port **25590/TCP**.
+- A TCP connection between the worker and the main server (or the relay). The port is **25590** by default and can
+  be any port you like (see [[offload#ports]]).
 
 ## Install
 

@@ -62,7 +62,7 @@ Pregenerate with `/storia pregen` (see [[pregeneration]]), raise `chunk-system.w
 
 ### `/storia offload` shows "disconnected"
 
-- Is the worker running, and is port 25590/TCP reachable from the server (`nc -zv worker-host 25590`)?
+- Is the worker running, and is its port reachable from the server (`nc -zv worker-host 25590`, with your port)?
 - Is the **secret identical** on both sides? A wrong secret is refused on the first message and logged.
 - Are both running the **same Storia release**? Different protocol versions are refused with a message saying so.
 

@@ -162,65 +162,56 @@
     });
   }
 
-  // ---- downloads: tabs + live release list from GitHub ----
-  const tabs = [...document.querySelectorAll(".tabs [role=tab]")];
-  if (tabs.length) {
-    const select = (tab, push) => {
-      tabs.forEach((t) => {
-        const on = t === tab;
-        t.setAttribute("aria-selected", on);
-        document.getElementById(t.getAttribute("aria-controls")).hidden = !on;
-      });
-      if (push) history.replaceState(null, "", "#" + tab.dataset.product);
-    };
-    tabs.forEach((t) => t.addEventListener("click", () => select(t, true)));
-    const fromHash = tabs.find((t) => "#" + t.dataset.product === location.hash);
-    if (fromHash) select(fromHash, false);
-
-    const i18n = JSON.parse(document.getElementById("dl-i18n").textContent);
-    const fmtSize = (b) => b >= 1048576 ? (b / 1048576).toFixed(1) + " MB" : Math.max(1, Math.round(b / 1024)) + " KB";
-    const fmtDate = (s) => new Date(s).toLocaleDateString(lang === "ja-jp" ? "ja-JP" : "en-US", { year: "numeric", month: "short", day: "numeric" });
-    fetch("https://api.github.com/repos/AKSHRK-Dev/Storia/releases?per_page=30")
-      .then((r) => (r.ok ? r.json() : Promise.reject(r.status)))
-      .then((releases) => {
-        releases = releases.filter((r) => !r.draft);
-        if (!releases.length) return;
-        document.querySelectorAll("[data-product-panel]").forEach((panel) => {
-          const product = panel.dataset.productPanel;
-          const re = new RegExp("^" + panel.dataset.pattern + "$");
-          const rows = [];
-          releases.forEach((rel) => {
-            const asset = rel.assets.find((a) => re.test(a.name));
-            if (asset) rows.push({ rel, asset });
-          });
-          if (!rows.length) return;
-          const { rel, asset } = rows[0];
-          panel.querySelector("[data-f=version]").textContent = rel.tag_name.replace(/^v/, "");
-          panel.querySelector("[data-f=file]").textContent = asset.name;
-          panel.querySelector("[data-f=size]").textContent = fmtSize(asset.size);
-          panel.querySelector("[data-f=date]").textContent = fmtDate(rel.published_at);
-          const sha = panel.querySelector("[data-f=sha]");
-          if (sha) sha.textContent = asset.digest ? asset.digest.replace(/^sha256:/, "") : "—";
-          const dl = panel.querySelector("[data-f=download]");
-          dl.href = asset.browser_download_url;
-          dl.querySelector("span").textContent = i18n.download + " " + rel.tag_name.replace(/^v/, "");
-          panel.querySelector("[data-f=notes]").href = rel.html_url;
-          const list = panel.querySelector("[data-f=list]");
-          list.innerHTML = "";
-          rows.forEach(({ rel: r, asset: a }) => {
-            const row = document.createElement("div");
-            row.className = "build-row";
-            row.innerHTML = `<span class="ver"></span><span class="date"></span><span class="size"></span><a></a>`;
-            row.children[0].textContent = r.tag_name.replace(/^v/, "") + (r.prerelease ? " (pre)" : "");
-            row.children[1].textContent = fmtDate(r.published_at);
-            row.children[2].textContent = fmtSize(a.size);
-            row.children[3].textContent = a.name;
-            row.children[3].href = a.browser_download_url;
-            list.appendChild(row);
-          });
-          panel.dataset.live = product;
-        });
-      })
-      .catch(() => { /* keep the list baked in at build time */ });
+  // ---- header border once scrolled ----
+  const head = document.getElementById("site-header");
+  if (head) {
+    const onScroll = () => head.classList.toggle("scrolled", scrollY > 4);
+    addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
   }
+
+  // ---- hero terminal: type commands, then print output lines ----
+  const term = document.getElementById("term");
+  if (term && !matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    const lines = [...term.querySelectorAll(".ln")];
+    const markup = lines.map((l) => l.innerHTML);
+    lines.forEach((l) => (l.hidden = true));
+    const cursor = document.createElement("span");
+    cursor.className = "cursor";
+    let n = 0;
+    const next = () => {
+      if (n >= lines.length) return;
+      const el = lines[n], html = markup[n];
+      n++;
+      el.hidden = false;
+      if (el.dataset.k !== "cmd") {
+        el.innerHTML = html;
+        el.appendChild(cursor);
+        setTimeout(next, 250 + Math.random() * 250);
+        return;
+      }
+      const text = new DOMParser().parseFromString(html, "text/html").body.textContent;
+      let i = 0;
+      const type = () => {
+        el.textContent = text.slice(0, ++i);
+        el.appendChild(cursor);
+        if (i < text.length) setTimeout(type, 30 + Math.random() * 40);
+        else setTimeout(() => { el.innerHTML = html; el.appendChild(cursor); setTimeout(next, 350); }, 200);
+      };
+      type();
+    };
+    setTimeout(next, 400);
+  }
+
+  // ---- relative dates ("2 days ago") ----
+  if ("RelativeTimeFormat" in Intl) {
+    const rtf = new Intl.RelativeTimeFormat(lang === "ja-jp" ? "ja" : "en", { numeric: "auto" });
+    document.querySelectorAll("[data-time]").forEach((el) => {
+      const days = Math.round((new Date(el.dataset.time) - Date.now()) / 86400000);
+      if (days > -8) el.textContent = rtf.format(days, "day");
+    });
+  }
+
+  // ---- software dropdown on touch ----
+  document.querySelectorAll(".dd > button").forEach((b) => b.addEventListener("click", () => b.parentElement.classList.toggle("open")));
 })();

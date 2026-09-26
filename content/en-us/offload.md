@@ -108,9 +108,46 @@ Pregenerating 3,721 chunks, main server on 3 cores, one worker on 3 other cores:
 The gain grows with more workers until the steps that stay on the main server become the limit. Offloading
 helps most with **new terrain**: exploration and pregeneration. It does not speed up entities or redstone.
 
+## Ports {#ports}
+
+Every machine can use its own port. **25590** is only the default.
+
+| Machine | Where the port is set |
+| --- | --- |
+| Worker (listening) | `offload.port` in its `storia.yml` |
+| Relay | `port=` in `relay.properties` |
+| Main server | Nothing to open: it connects out. Each entry in `offload.workers` carries its own `host:port`. |
+| Worker using a relay | Nothing to open: `offload.relay: "host:port"` points at the relay's port. |
+
+For example, two workers on different ports:
+
+```yaml
+# worker A (storia.yml)
+offload:
+  port: 10000
+```
+
+```yaml
+# worker B (storia.yml)
+offload:
+  port: 10001
+```
+
+```yaml
+# main server (storia.yml)
+offload:
+  mode: client
+  workers:
+  - 192.168.0.20:10000
+  - 192.168.0.21:10001
+```
+
+Port forwarding works too: if your router forwards external port 10001 to a worker's 25590, list the external
+address and port (`203.0.113.5:10001`) on the main server.
+
 ## Network
 
-- Default port **25590/TCP**, on the worker (or on the relay).
+- Traffic uses one TCP connection per worker (or relay).
 - Traffic per chunk is small and compressed. A LAN or a VPN between data centres is ideal; high latency only
   makes each request slower, not the server.
 - Everything is encrypted and authenticated. See [[security]].
