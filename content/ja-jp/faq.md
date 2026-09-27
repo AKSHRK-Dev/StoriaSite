@@ -14,7 +14,7 @@ Minecraft Java Edition の **{{MC}}** です。Storia は Folia の対応バー�
 ### バージョン番号の意味は？
 
 Storia のバージョンは Minecraft に合わせています。`26.2` は Minecraft 26.2 向けの最初のリリースで、同じ Minecraft バージョンの
-2 回目以降は `26.2-2`、`26.2-3` … となります。サーバー・ワーカー・リレーは必ず **同じバージョン** にそろえてください。
+2 回目以降は `26.2-2`、`26.2-3` … となります。ワーカー・Relay・Storia Proxy は必ず **同じバージョン** にそろえてください。
 
 ### 小さなサーバーでも使えますか？
 
@@ -55,28 +55,25 @@ Storia 独自の変更は、バニラと同じ結果を保ちます（地形、�
 
 ### 普段のプレイ中のチャンク生成が遅い
 
-`/storia pregen` で事前生成するか（[[pregeneration]] を参照）、`config/paper-global.yml` の `chunk-system.worker-threads` を増やすか、[[worker]] を追加してください。
+`/storia pregen` で事前生成するか（[[pregeneration]] を参照）、`config/paper-global.yml` の `chunk-system.worker-threads` を増やすか、[[cluster]] で複数のマシンに分けてください。
 
-## 処理の分担
+## Storia Cluster
 
-### `/storia offload` に「disconnected」と出る
+### ワーカーが「Cannot reach the cluster coordinator」で止まる
 
-- ワーカーは起動していますか？サーバーからそのポートに届きますか？（`nc -zv worker-host 25590`。ポートは自分の設定に合わせて）
-- 合言葉は **両方で同じ** ですか？違う合言葉は最初のメッセージで拒否され、ログに出ます。
+- Relay は起動していますか？ワーカーから 25590 番ポートに届きますか？（`nc -zv relay-host 25590`）
+- ワーカーと Relay の **合言葉は同じ** ですか？違うと最初のメッセージで拒否されます。
 - 両方とも **同じ Storia のリリース** ですか？プロトコルのバージョンが違うと、その旨のメッセージとともに拒否されます。
 
-### ワーカーがディメンションを断る：「terrain differs」
+### Relay に「an old Storia asked for terrain offload」と出る
 
-ワーカーのワールドの設定・データパック・Storia のバージョンが、サーバーと一致していません。ワールドフォルダを（`region`・`entities`・`poi` を除いて）コピーし直し、
-同じ Storia のリリースを使ってください。[[worker#keeping-the-worker-in-sync|ワーカーを同じ状態に保つ]] を参照してください。
+26.2-2-beta 以前の `offload:` 設定を持つサーバーが接続してきました。地形生成の分担は Cluster に置き換わりました。
+そのマシンの Storia を更新し、代わりに `cluster:` を設定してください（[[worker]] を参照）。
 
-### ワーカーがディメンションを断る：「no such dimension here」
+### ワーカー間の移動で一瞬読み込み画面が出る
 
-サーバーにはあるのに、ワーカーにはないディメンション（データパックやプラグインで作ったワールドなど）です。その中のチャンクはサーバーが自分で生成します。
-
-### ほとんどのチャンクが「generated locally (workers busy)」になる
-
-ワーカーが手いっぱいです。ワーカーを増やすか、スレッドを増やすか、`offload.max-in-flight` を大きくしてください。
+読み込み画面なしの移動は Minecraft 26.1・26.2 のクライアントが対象です。ViaVersion 経由の古いクライアントでは、
+普通のサーバー移動になります。
 
 ## Storia Proxy
 

@@ -14,7 +14,7 @@ operators have by default. They work in game and in the server console.
 | `/storia pregen resume` | Continue a stopped or interrupted run, also after a restart. |
 | `/storia budget` | Tick thread usage, heap after GC, share per player, and for each player: region load, speed and current view and simulation distance. |
 | `/storia region` | The busiest regions: thread usage, MSPT, TPS, players and chunks, plus the [[tick-guard]] state and the most crowded chunks. |
-| `/storia offload` | Offload mode, connections, chunks offloaded, and why chunks were generated locally. |
+| `/storia cluster` | Cluster connection, the cells this worker runs, players, shared time and scoreboard. |
 
 ## Examples
 

@@ -1,23 +1,17 @@
 ---
-summary: A small standalone program that shares terrain work between any number of Storia servers and workers.
+summary: The coordinator of a Storia Cluster. Stores the shared world and decides which worker runs which part of it.
 ---
-**Storia Relay** sits between Storia servers and Storia Workers. Servers send their terrain requests to the
-relay, and the relay hands each one to the least busy worker that can produce matching terrain.
+**Storia Relay** is the coordinator of a [[cluster|Storia Cluster]]. It:
 
-```text
-Storia server --\                  /-- Storia Worker A
-                 >-- Storia Relay <---- Storia Worker B
-Storia server --/                  \-- Storia Worker C   (join / leave any time)
-```
+- **stores the world** as a normal Minecraft world folder (Anvil region files), plus player data, advancements,
+  statistics and shared data such as maps and the scoreboard;
+- **hands out the world**: every cell (32 × 32 chunks) is run by one [[worker]] at a time;
+- **places players**: players who come close go to the same worker, busy workers hand groups to quiet ones,
+  and contraptions on a border keep their cells together;
+- **tells Storia Proxy** when a player should move to another worker.
 
-Why use one:
-
-- **Workers can join and leave at any time** without changing or restarting the server.
-- **Only the relay needs an open port.** Workers connect out, so they can sit behind NAT or a home router.
-- **Several servers can share the same workers.** Each request only goes to a worker whose terrain matches that
-  server exactly.
-
-The relay is tiny: it needs **Java 21 or newer**, about 256 MB of RAM and **no Minecraft files**.
+The relay needs **Java 21 or newer**, no Minecraft server, and disk space for the world. It is small; the work
+of running the world happens on the workers.
 
 ## Install
 
@@ -28,80 +22,37 @@ The relay is tiny: it needs **Java 21 or newer**, about 256 MB of RAM and **no M
     ./start-relay.sh        # Windows: start-relay.bat
     ```
 
-3. Edit `relay.properties` and set a secret (at least 8 characters, the same everywhere):
+3. Set a secret (see [[security]]) and put your world in `cluster-world/`:
 
     ```properties
     bind=0.0.0.0
     port=25590
-    secret=a long random secret
+    secret=choose-a-long-secret
     compress=true
-    in-flight-per-thread=4
-    timeout-ms=20000
+    cluster-world=cluster-world
     ```
 
-4. Start it again.
-
-## relay.properties
-
-| Key | Default | Description |
-| --- | --- | --- |
-| `bind` | `0.0.0.0` | Address to listen on. |
-| `port` | `25590` | Port to listen on, for servers and workers alike. |
-| `secret` | *(empty)* | Shared secret. The relay refuses to start with fewer than 8 characters. |
-| `compress` | `true` | Compress traffic before encryption. |
-| `in-flight-per-thread` | `4` | Requests queued per worker thread. |
-| `timeout-ms` | `20000` | Give up on a worker's answer after this long and retry elsewhere or return it. |
-
-## Connecting servers and workers
-
-Storia server (`storia.yml`):
-
-```yaml
-offload:
-  mode: client
-  secret: "a long random secret"
-  workers:
-  - relay.example.lan:25590
-```
-
-Each Storia Worker (`storia.yml`):
-
-```yaml
-offload:
-  mode: worker
-  secret: "a long random secret"
-  relay: "relay.example.lan:25590"
-```
+4. Start it again. From now on **only the relay writes to `cluster-world/`**: back it up from here.
 
 ## Console
 
-| Command | Description |
+| Command | What it does |
 | --- | --- |
-| `status` | Connected workers and servers, requests in flight, completed and failed counts. |
-| `stop` | Shut the relay down. |
+| `status` | Workers, the cells each one runs, players, moves, contraption links, reads and writes. |
+| `stop` | Stops the relay. |
 
-## Failure handling
+## When the relay is away
 
-- If a worker disconnects, its pending requests are retried on another worker with matching terrain.
-- If no other worker can take them, they are returned to the server, which generates those chunks itself.
-- If the relay itself goes down, servers generate everything locally and reconnect automatically when it is back.
+Workers keep running. Writes they cannot send are kept in `cluster-spool/` on their disk, in order, and sent
+when the relay is back (also after a worker restart). Workers claim their parts of the world again when they
+reconnect. New players cannot join and nobody is moved until the relay is back.
 
-## Running as a service
+## Settings
 
-```ini
-# /etc/systemd/system/storia-relay.service
-[Unit]
-Description=Storia Relay
-After=network-online.target
-
-[Service]
-User=storia
-WorkingDirectory=/srv/storia-relay
-ExecStart=/usr/bin/java -Xmx256M -jar storia-relay.jar relay.properties
-Restart=on-failure
-
-[Install]
-WantedBy=multi-user.target
-```
-
-The relay reads commands from standard input, so under systemd use `systemctl stop` to stop it.
+| Key | Default | Meaning |
+| --- | --- | --- |
+| `bind` | `0.0.0.0` | Address to listen on. |
+| `port` | `25590` | Port for workers and Storia Proxy. |
+| `secret` | *(empty)* | Shared secret, at least 8 characters. Required. |
+| `compress` | `true` | Deflate messages before encryption. |
+| `cluster-world` | `cluster-world` | The shared world folder. |

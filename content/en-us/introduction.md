@@ -19,7 +19,7 @@ single player for everyone on it.
 | Per-player budget | Only players who add load themselves (flying fast) get a shorter view distance while it is busy. | [[player-budget]] |
 | Faster physics | Entity pushing is about 3× faster with identical results. Redstone is untouched. | [[performance]] |
 | Faster world generation | Optimized noise sampling; terrain is identical to vanilla for the same seed. | [[performance]] |
-| Terrain offload | The heaviest step of terrain generation can run on other machines, encrypted. | [[offload]] |
+| Storia Cluster (beta) | One world on several servers; players move between them without a loading screen. | [[cluster]] |
 | Storia Proxy | A Velocity fork with 50 placeholders for MOTD, tab list and messages. | [[proxy]] |
 
 ## Design rules
@@ -30,8 +30,8 @@ Everything in Storia follows three rules:
    the same random rolls. Changes to terrain and physics are verified bit for bit against the original code.
 2. **Redstone never stops.** No optimization pauses, slows or skips redstone, and by default nothing lowers the
    simulation distance, so farms and machines near players keep running.
-3. **Safe fallbacks.** If RAM is short, worlds load from disk. If a worker is slow or gone, the server generates
-   terrain itself. A feature failing never takes the server down with it.
+3. **Safe fallbacks.** If RAM is short, worlds load from disk. If the cluster's relay is briefly away, workers keep
+   running and keep their writes on disk. A feature failing never takes the server down with it.
 
 ## The programs
 
@@ -40,8 +40,8 @@ For the full picture of how they connect, see [How Storia works](/en-us/how-it-w
 | Program | What it does | Java |
 | --- | --- | --- |
 | **Storia** | The Minecraft server. | 25 |
-| **Storia Worker** | Computes terrain for a Storia server on another machine. | 25 |
-| **Storia Relay** | Shares terrain work between any number of workers. | 21+ |
+| **Storia Worker** | One server of a Storia Cluster: runs the part of the world where its players are. | 25 |
+| **Storia Relay** | The cluster's coordinator: stores the world and decides which worker runs which part. | 21+ |
 | **Storia Proxy** | Velocity with built-in placeholders, tab list and MOTD. | 21+ |
 
 All four are published on the [downloads page](/en-us/downloads/) and on

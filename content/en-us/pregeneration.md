@@ -37,8 +37,7 @@ room for the region tick threads. While `/storia pregen` runs, Storia raises the
 | Folia default (1 worker thread) | 3m 21s | 18.5 |
 | Storia `/storia pregen` (5 worker threads) | 40s | 94 |
 
-Terrain generation itself is also faster in Storia (see [[performance]]), and with [[offload]] other machines
-can share the work.
+Terrain generation itself is also faster in Storia (see [[performance]]).
 
 ## Progress and restarts
 

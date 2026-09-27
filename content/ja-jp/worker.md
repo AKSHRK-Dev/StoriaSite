@@ -1,123 +1,61 @@
 ---
-summary: 手伝う側のマシンに Storia Worker を用意して、メインサーバーの地形を生成してもらう。
+summary: Storia Cluster のサーバー 1 台分。ワーカーを足すと 1 つのワールドを複数のマシンで動かせ、プレイヤーは読み込み画面なしで移動します。
 ---
-**Storia Worker** は、Storia サーバーを特別なモード（`-Dstoria.worker=true`）で起動したもので、ほかの Storia サーバーのために地形を計算するだけです。
-**プレイヤー用ポート・query・RCON は開かず**、**ワールドも変更しません**。同じ地形を作るのに必要なワールドの設定を読むだけです。
+**Storia Worker** は [[cluster|Storia Cluster]] のサーバー 1 台分です。各ワーカーは、自分のプレイヤーがいる場所
+（チャンク・モブ・回路・プレイヤー）を動かし、どのワーカーがどこを動かすかは [[relay|Storia Relay]] が決めます。
+プレイヤーは Storia Proxy を通してワーカーに入り、読み込み画面なしでワーカー間を移動します。1 台で足りなくなったら、
+ワーカーを足してください。
 
-## 必要なもの
+```text
+プレイヤー --> Storia Proxy --> Storia Worker A --\
+                            \-> Storia Worker B ---> Storia Relay：ワールドと、どこを誰が動かすか
+                             \-> Storia Worker C --/
+```
 
-- **Java 25**
-- CPU コアは多いほど良い（初期設定ではすべて使います：`offload.threads: -1`）
-- メモリ：たいていのワールドならヒープ 2〜4 GB で十分です。`WORKER_MEMORY` で指定します。
-- ワーカーとメインサーバー（またはリレー）が TCP で通信できること。ポートは初期設定で **25590** ですが、好きな番号に変えられます（[[offload#ports|ポート]] を参照）
+ワーカーは普通の Storia サーバーと同じものです。普通の Storia サーバーと同じくらいの CPU と RAM を用意してください。
+ワーカーは**自分のワールドを持ちません**。チャンクは Relay から読み書きします。
 
-## インストール
+## 導入
 
-1. [ダウンロードページ](/en-us/downloads/) から `storia-worker-{{VERSION}}.zip` を入手して展開します。
-
-    ```text
-    storia-worker-{{VERSION}}/
-      storia.jar
-      storia.yml
-      start-worker.sh
-      start-worker.bat
-      README.md
-    ```
-
-2. **ワールドの設定をコピーします。** メインサーバーのワールドフォルダを、チャンクのフォルダ（`region`・`entities`・`poi`）を
-   **除いて**、`storia.jar` の隣の `world/` フォルダにコピーします。残るのは小さなファイルだけです：`level.dat`、`datapacks/`、
-   そして Minecraft {{MC}} でシードやワールド生成の設定が入っている `data/` フォルダです。
-
-    ```bash
-    rsync -a --exclude region --exclude entities --exclude poi \
-      main-server:/srv/storia/world/ world/
-    ```
-
-    Windows では、ワールドフォルダを丸ごとコピーしてから、`world/dimensions/*/*/` の中の `region`・`entities`・`poi` フォルダを削除してください。
-
-    !!! warning "data フォルダも必要です"
-        Minecraft {{MC}} では `level.dat` だけでは足りません。シードは
-        `dimensions/minecraft/overworld/data/minecraft/world_gen_settings.dat` にあり、これがないとワーカーは起動できません。
-
-3. **EULA に同意します。** [Minecraft EULA](https://aka.ms/MinecraftEULA) を読み、同意する場合は：
-
-    ```bash
-    echo "eula=true" > eula.txt
-    ```
-
-4. `storia.yml` に、メインサーバーと同じ **合言葉を設定** します。
+1. `storia-worker-{{VERSION}}.zip` をダウンロードして展開します。Java 25 が必要です。
+2. [Minecraft EULA](https://aka.ms/MinecraftEULA) を読み、同意する場合は `eula=true` と書いた `eula.txt` を作ります。
+3. `storia.yml` で Relay を指定します。
 
     ```yaml
-    offload:
-      mode: worker
-      secret: "長くてランダムな合言葉"
-      bind: 0.0.0.0
-      port: 25590
-      relay: ""
-      threads: -1
-      compress: true
+    cluster:
+      enabled: true
+      coordinator: "relay-host:25590"
+      node-name: worker-1        # ワーカーごとに別の名前。velocity.toml の名前と同じにする
+      secret: "Relay と同じ合言葉"
     ```
 
-5. **起動します。**
+4. 一度起動します：`./start-worker.sh`（Windows は `start-worker.bat`）。メモリは `WORKER_MEMORY=8G ./start-worker.sh`。
+   初回起動時に、ワーカーは **Relay からワールドの設定を取り寄せます**（`level.dat`、ワールド生成の設定、データパック）。
+   ワールドを自分でコピーする必要はありません。
+5. ワーカーは Velocity のバックエンドです。`config/paper-global.yml` で `proxies.velocity.enabled: true` にし、
+   `proxies.velocity.secret` をプロキシの `forwarding.secret` にして再起動します。同梱の `server.properties` は
+   `online-mode=false` になっています。
+6. Storia Proxy の `velocity.toml` に、ワーカーを node-name と同じ名前で登録し、`try` にも入れます。
 
-    ```bash
-    ./start-worker.sh                    # Linux / macOS
-    WORKER_MEMORY=6G ./start-worker.sh   # ヒープを 6 GB にする場合
+    ```toml
+    [servers]
+    worker-1 = "10.0.0.11:25565"
+    worker-2 = "10.0.0.12:25565"
+    try = ["worker-1", "worker-2"]
     ```
 
-    Windows では `start-worker.bat` を実行します。
+ワーカーの `/storia cluster` で、そのワーカーが動かしている場所とプレイヤーが見られます。
 
-6. **メインサーバー** の `offload.workers` にワーカーを追加し（[[offload]] を参照）、再起動します。
+## ワーカーの追加と削除
 
-メインサーバーが接続すると、どのディメンションを受け付けたかがワーカーのログに出ます。ワーカーのコンソールで `/storia offload` を実行すると状態を見られます。
+- **追加**：上と同じように新しいワーカーを用意して起動します。数秒で Relay がプレイヤーを割り当て始めます。
+- **削除**：ワーカーで `stop` と入力します。先にプレイヤーをほかのワーカーへ移し（キックなし）、保存して止まります。
+  そのあと `velocity.toml` から外してください。
+- ワーカーが落ちた場合、その場所は Relay が気づくまで（15 秒）止まり、そのあとは最後に保存された状態から別のワーカーが
+  動かします。
 
-## 待ち受けるか、自分から接続するか
+## 以前のバージョン
 
-ワーカーの動き方は 2 通りあります。
-
-| | 設定 | 誰が接続するか | ポートを開ける場所 |
-| --- | --- | --- | --- |
-| **待ち受け**（初期設定） | `relay: ""` | メインサーバーがワーカーに接続 | ワーカー |
-| **リレー** | `relay: "relay-host:25590"` | ワーカーがリレーに接続 | リレー |
-
-ワーカーが NAT の内側にある、よく入れ替わる、複数のサーバーでワーカーを共有する、といった場合はリレーを使います。[[relay]] を参照してください。
-
-## ワーカーを同じ状態に保つ {#keeping-the-worker-in-sync}
-
-ワーカーは、メインサーバーと **まったく同じ** 地形を作る必要があります。次のことをしたら、
-
-- シードやワールド生成の設定を変えた
-- ワールド生成に関わるデータパックを追加・削除・更新した
-- メインサーバーの Storia を更新した
-
-ワールドの設定（手順 2）をもう一度コピーし、ワーカーの `storia.jar` も **同じバージョン** にしてください。違っていると、ワーカーは該当する
-ディメンションを断り（ログに `terrain differs: check seed, datapacks and Storia build` と出ます）、メインサーバーが自分で生成します。
-何も壊れませんが、分担されなくなります。
-
-## サービスとして動かす（Linux）
-
-```ini
-# /etc/systemd/system/storia-worker.service
-[Unit]
-Description=Storia Worker
-After=network-online.target
-
-[Service]
-User=minecraft
-WorkingDirectory=/srv/storia-worker
-Environment=WORKER_MEMORY=4G
-ExecStart=/srv/storia-worker/start-worker.sh
-Restart=on-failure
-
-[Install]
-WantedBy=multi-user.target
-```
-
-```bash
-sudo systemctl enable --now storia-worker
-journalctl -u storia-worker -f
-```
-
-## 止める
-
-コンソールで `stop` と入力するか、サービスを止めます。処理中の依頼は返却され、そのチャンクはメインサーバーが自分で生成します。
+26.2-2-beta までの「Storia Worker」は、1 台のサーバーのために新しいチャンクのノイズの段階だけを計算する、地形専用の
+手伝い役でした（`storia.yml` の `offload.*`）。このモードは Cluster に置き換わって削除されました。コードは GitHub の
+`archive/terrain-offload` ブランチに残しています。

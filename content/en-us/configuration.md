@@ -37,18 +37,11 @@ player-budget:
   memory-high-percent: 85
   memory-low-percent: 70
   fast-mover-speed: 12.0
-offload:
-  mode: 'off'
+cluster:
+  enabled: false
+  coordinator: 127.0.0.1:25590
+  node-name: ''
   secret: ''
-  workers:
-  - 127.0.0.1:25590
-  max-in-flight: -1
-  timeout-ms: 10000
-  compress: true
-  bind: 0.0.0.0
-  port: 25590
-  threads: -1
-  relay: ''
 ```
 
 ## ram-world
@@ -102,24 +95,18 @@ See [[player-budget]].
 | `memory-high-percent` | `85` | Heap usage after GC above this lowers everyone's view distance. |
 | `memory-low-percent` | `70` | Heap usage after GC below this restores it. |
 
-## offload
+## cluster
 
-See [[offload]], [[worker]] and [[relay]].
+Makes this server a [[worker|Storia Worker]] in a [[cluster|Storia Cluster]]. See [[worker]] and [[relay]].
 
-| Option | Default | Used by | Description |
-| --- | --- | --- | --- |
-| `mode` | `off` | all | `off`, `client` (the main server) or `worker` (a helper). |
-| `secret` | `''` | all | Shared secret, at least 8 characters, identical on every machine. Never sent over the network. |
-| `workers` | `[127.0.0.1:25590]` | client | Workers or relays to use, as `host:port`. |
-| `max-in-flight` | `-1` | client | Requests waiting per connection. `-1` = the worker's threads × 4. |
-| `timeout-ms` | `10000` | client | Give up on an answer after this long and generate the chunk locally. |
-| `compress` | `true` | all | Compress traffic (deflate) before encryption. Turn off on very fast networks to save CPU. |
-| `bind` | `0.0.0.0` | worker | Address a worker listens on. |
-| `port` | `25590` | worker | Port a worker listens on. |
-| `threads` | `-1` | worker | Threads for terrain computation. `-1` = all cores. |
-| `relay` | `''` | worker | If set (`host:port`), the worker connects out to this relay instead of listening. |
+| Option | Default | Description |
+| --- | --- | --- |
+| `enabled` | `false` | Join a cluster. The world then lives on the relay; this server keeps no world of its own. |
+| `coordinator` | `127.0.0.1:25590` | The [[relay|Storia Relay]], as `host:port`. |
+| `node-name` | `''` | A unique name for this worker; use the same name for it in the proxy's `velocity.toml`. |
+| `secret` | `''` | The relay's secret, at least 8 characters. Never sent over the network. |
 
-Any `mode` other than `client` or `worker` means off (a bare `off` is read by YAML as `false`, which is also off).
+If an older `storia.yml` still has an `offload:` section, it is ignored and can be deleted.
 
 ## Java system properties
 
@@ -127,6 +114,4 @@ These are set on the command line with `-D...` before `-jar`:
 
 | Property | Description |
 | --- | --- |
-| `-Dstoria.worker=true` | Start as a dedicated worker: no player port, no query or RCON. Used by the [[worker]] package. |
-| `-Dstoria.verifyOffload=true` | Also generate every offloaded chunk locally and compare. For testing; costs CPU. |
 | `-Dstoria.verifyPush=true` | Also compute every entity push the vanilla way and compare. For testing; costs CPU. |

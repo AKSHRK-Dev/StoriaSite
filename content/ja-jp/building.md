@@ -20,7 +20,7 @@ Storia は、Paper のフォークである Folia を、[paperweight](https://gi
 
 | 場所 | 中身 |
 | --- | --- |
-| `folia-server/src/main/java/dev/storia/` | Storia 独自のクラス（RAM ワールド、事前生成、予算、分担、コマンド）。 |
+| `folia-server/src/main/java/dev/storia/` | Storia 独自のクラス（RAM ワールド、事前生成、予算、Tick Guard、Cluster、コマンド）。 |
 | `folia-server/minecraft-patches/features/` | Minecraft のコードへのパッチ（`0012-Storia-...`）。 |
 | `folia-server/paper-patches/features/` | Paper のコードへのパッチ。 |
 | `storia-relay/` | Storia Relay。 |
@@ -50,7 +50,7 @@ Storia は、Paper のフォークである Folia を、[paperweight](https://gi
 # storia-relay/build/libs/storia-relay-*.jar
 ```
 
-リレーは、サーバーと共通の `dev/storia/offload/protocol/` のクラスを使い、ほかに依存するものはありません。
+Relay は、サーバーと共通の `dev/storia/net/` と `dev/storia/cluster/protocol/` のクラスを使い、ほかに依存するものはありません。
 
 ## Storia Proxy
 

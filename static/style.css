@@ -545,3 +545,14 @@ table.plain tr:last-child th, table.plain tr:last-child td { border-bottom: 0; }
 @supports not (word-break: auto-phrase) {
   :lang(ja) :is(h1, h2, h3, .pill, .btn) { word-break: keep-all; overflow-wrap: anywhere; }
 }
+.pb { display: grid; gap: 8px; font-family: var(--sans); }
+.pb-row { display: grid; grid-template-columns: 70px 1fr auto; gap: 12px; align-items: center; font-size: 13px; padding: 8px 12px; border-radius: 8px; background: var(--panel-2); }
+.pb-row span { color: var(--panel-muted); }
+.pb-row em { font-style: normal; font-family: var(--mono); font-size: 12px; color: #9bd49b; }
+.pb-row.over em { color: #f5c16c; }
+.pb-row.over { outline: 1px solid #f5c16c55; }
+/* architecture diagram: wide on large screens, tall on phones */
+.arch-tall { display: none; min-width: 0; max-width: 420px; margin: 0 auto; }
+.arch .mv { fill: none; stroke: var(--accent); stroke-width: 1.8; stroke-dasharray: 5 5; }
+@media (max-width: 760px) { .arch-wide { display: none; } .arch-tall { display: block; } .arch-wrap { overflow: visible; } }
+.who-proxy { background: var(--surface); color: var(--ink); border: 1px dashed var(--control); }

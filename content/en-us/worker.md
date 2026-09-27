@@ -1,128 +1,61 @@
 ---
-summary: Set up Storia Worker on a helper machine to generate terrain for your main server.
+summary: One server of a Storia Cluster. Add workers to run one world on several machines; players move between them without a loading screen.
 ---
-**Storia Worker** is the Storia server started in a special mode (`-Dstoria.worker=true`) that only computes
-terrain for other Storia servers. It opens **no player port**, no query and no RCON, and it **never changes your
-world**: it only reads the world settings needed to produce the same terrain.
+A **Storia Worker** is one server of a [[cluster|Storia Cluster]]. Each worker runs the part of the world where
+its players are (chunks, mobs, redstone and the players themselves), and [[relay|Storia Relay]] decides which
+worker runs which part. Players reach the workers through Storia Proxy and move between them without a loading
+screen. When your players outgrow one machine, add a worker.
 
-## Requirements
+```text
+players --> Storia Proxy --> Storia Worker A --\
+                         \-> Storia Worker B ---> Storia Relay: the world, who runs what
+                          \-> Storia Worker C --/
+```
 
-- **Java 25**.
-- CPU cores: the more, the better. By default the worker uses all of them (`offload.threads: -1`).
-- Memory: 2–4 GB of heap is plenty for most worlds. Set it with `WORKER_MEMORY`.
-- A TCP connection between the worker and the main server (or the relay). The port is **25590** by default and can
-  be any port you like (see [[offload#ports]]).
+A worker is a full Storia server: give it about the CPU and RAM you would give a normal Storia server. It keeps
+**no world of its own**: chunks are read from and written to the relay.
 
 ## Install
 
-1. Download `storia-worker-{{VERSION}}.zip` from the [downloads page](/en-us/downloads/) and unzip it:
-
-    ```text
-    storia-worker-{{VERSION}}/
-      storia.jar
-      storia.yml
-      start-worker.sh
-      start-worker.bat
-      README.md
-    ```
-
-2. **Copy the world settings.** Copy the main server's world folder into a `world/` folder next to
-   `storia.jar`, **without** the chunk folders (`region`, `entities`, `poi`). What is left is small: `level.dat`,
-   `datapacks/` and the `data/` folders, which in Minecraft {{MC}} hold the seed and world generation settings.
-
-    ```bash
-    rsync -a --exclude region --exclude entities --exclude poi \
-      main-server:/srv/storia/world/ world/
-    ```
-
-    On Windows, copy the whole world folder and delete the `region`, `entities` and `poi` folders inside
-    `world/dimensions/*/*/`.
-
-    !!! warning "Copy the data folders too"
-        Copying only `level.dat` is not enough in Minecraft {{MC}}: the seed lives in
-        `dimensions/minecraft/overworld/data/minecraft/world_gen_settings.dat`. Without it the worker cannot start.
-
-3. **Accept the EULA.** Read the [Minecraft EULA](https://aka.ms/MinecraftEULA) and, if you agree:
-
-    ```bash
-    echo "eula=true" > eula.txt
-    ```
-
-4. **Set the secret** in `storia.yml`, identical to the main server's:
+1. Download `storia-worker-{{VERSION}}.zip` and unzip it. Java 25 is required.
+2. Read the [Minecraft EULA](https://aka.ms/MinecraftEULA) and, if you agree, create `eula.txt` with `eula=true`.
+3. In `storia.yml`, point the worker at your relay:
 
     ```yaml
-    offload:
-      mode: worker
-      secret: "a long random secret"
-      bind: 0.0.0.0
-      port: 25590
-      relay: ""
-      threads: -1
-      compress: true
+    cluster:
+      enabled: true
+      coordinator: "relay-host:25590"
+      node-name: worker-1        # unique per worker; the same name as in velocity.toml
+      secret: "the relay's secret"
     ```
 
-5. **Start it:**
+4. Start it once: `./start-worker.sh` (Windows: `start-worker.bat`). Memory: `WORKER_MEMORY=8G ./start-worker.sh`.
+   On the first start the worker **fetches the world settings from the relay** (`level.dat`, world generation
+   settings, data packs), so you do not copy the world yourself.
+5. Workers are Velocity backends: in `config/paper-global.yml` set `proxies.velocity.enabled: true` and
+   `proxies.velocity.secret` to the proxy's `forwarding.secret`, then restart. `server.properties` in the package
+   already has `online-mode=false`.
+6. Add the worker to Storia Proxy's `velocity.toml` under its node name, and to `try`:
 
-    ```bash
-    ./start-worker.sh                    # Linux / macOS
-    WORKER_MEMORY=6G ./start-worker.sh   # with a 6 GB heap
+    ```toml
+    [servers]
+    worker-1 = "10.0.0.11:25565"
+    worker-2 = "10.0.0.12:25565"
+    try = ["worker-1", "worker-2"]
     ```
 
-    On Windows, run `start-worker.bat`.
+`/storia cluster` on the worker shows the parts of the world it runs and its players.
 
-6. On the **main server**, add the worker to `offload.workers` (see [[offload]]) and restart it.
+## Adding and removing workers
 
-When the main server connects, the worker log shows which dimensions were accepted. Run `/storia offload` in the
-worker console to see its state.
+- **Adding**: set up a new worker as above and start it. The relay starts giving it players within seconds.
+- **Removing**: type `stop` on the worker. It first moves its players to the other workers (nobody is kicked),
+  saves and stops. Remove it from `velocity.toml` afterwards.
+- A worker that crashes loses its part of the world only until the relay notices (15 seconds); the part is then
+  given to another worker, starting from the last saved state.
 
-## Listening or connecting out
+## Earlier versions
 
-A worker works in one of two ways:
-
-| | Setting | Who connects | Open port on |
-| --- | --- | --- | --- |
-| **Listen** (default) | `relay: ""` | The main server connects to the worker | the worker |
-| **Relay** | `relay: "relay-host:25590"` | The worker connects to the relay | the relay |
-
-Use a relay when workers are behind NAT, change often, or when several servers share workers. See [[relay]].
-
-## Keeping the worker in sync
-
-The worker must produce **exactly** the same terrain as the main server. After you:
-
-- change the seed or world generation settings,
-- add, remove or update a datapack that affects world generation,
-- update Storia on the main server,
-
-copy the world settings again (step 2) and update the worker's `storia.jar` to the **same version**. If they
-differ, the worker refuses the affected dimensions (the log says `terrain differs: check seed, datapacks and
-Storia build`), and the main server generates them locally. Nothing breaks, it is just not offloaded.
-
-## Running as a service (Linux)
-
-```ini
-# /etc/systemd/system/storia-worker.service
-[Unit]
-Description=Storia Worker
-After=network-online.target
-
-[Service]
-User=minecraft
-WorkingDirectory=/srv/storia-worker
-Environment=WORKER_MEMORY=4G
-ExecStart=/srv/storia-worker/start-worker.sh
-Restart=on-failure
-
-[Install]
-WantedBy=multi-user.target
-```
-
-```bash
-sudo systemctl enable --now storia-worker
-journalctl -u storia-worker -f
-```
-
-## Stopping
-
-Type `stop` in the console or stop the service. Requests in progress are handed back and the main server
-generates those chunks itself.
+Up to 26.2-2-beta, "Storia Worker" was a terrain-only helper that computed the noise step of new chunks for one
+server (`offload.*` in `storia.yml`). That mode was replaced by the cluster and removed; its code is kept in the
+`archive/terrain-offload` branch on GitHub.

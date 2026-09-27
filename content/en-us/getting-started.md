@@ -78,5 +78,5 @@ Recommended next reads:
 
 - [[configuration]] for every option in `storia.yml`.
 - [[pregeneration]] to generate terrain before players arrive.
-- [[offload]] if you have a second machine to help.
+- [[cluster]] when your players outgrow one machine.
 - [[proxy]] if you run several servers behind one address.

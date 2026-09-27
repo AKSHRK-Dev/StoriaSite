@@ -1,8 +1,8 @@
 ---
-summary: How offload traffic is encrypted and authenticated, and how to run workers and relays safely.
+summary: How cluster traffic is encrypted and authenticated, and how to run a relay and workers safely.
 ---
-All traffic between Storia servers, workers and relays is **encrypted and authenticated** with the shared
-`secret`. The secret itself is never sent over the network.
+All traffic between Storia Workers, Storia Relay and Storia Proxy is **encrypted and authenticated** with the
+shared `secret`. The secret itself is never sent over the network.
 
 ## How it works
 
@@ -38,36 +38,30 @@ Storia release.
     openssl rand -base64 24
     ```
 
-- Use the same secret on the server, every worker and the relay.
-- Treat it like a password: keep `storia.yml` and `relay.properties` readable only by the service user.
+- Use the same secret on the relay, every worker and Storia Proxy (`[cluster]` in `storia-proxy.toml`).
+- Treat it like a password: keep `storia.yml`, `relay.properties` and `storia-proxy.toml` readable only by the
+  service user.
 
 !!! warning "If the secret leaks"
     Keys are derived from the secret and the (public) nonces, so someone who recorded the traffic *and* later
-    learns the secret could decrypt that recording. Change the secret everywhere if you think it has leaked.
-    What they could read is terrain data only: no player data, chat or credentials ever go over this link.
+    learns the secret could decrypt that recording. Anyone holding the secret can also join the cluster as a
+    worker and read or change the world. Change the secret everywhere if you think it has leaked.
 
-## What a worker can and cannot do
+## What travels over the link
 
-The main server treats worker answers as untrusted input:
-
-- Every answer is **validated** (section layout, block data, heightmap sizes) before it is applied. A malformed answer is
-  discarded and the chunk is generated locally.
-- A worker only ever receives chunk coordinates, the dimension and nearby structure outlines. It never sees
-  players, inventories, chat or the world files.
-- A worker cannot send commands or change anything on the main server.
-
-A worker holding the correct secret *could* still return valid-looking but different terrain. Only run workers on
-machines you control. `-Dstoria.verifyOffload=true` lets you audit a worker by regenerating every chunk locally.
+Chunks, entities, player data (inventories, positions), advancements, statistics, maps and the scoreboard: the
+relay stores the whole world. Only run workers and the relay on machines you control.
 
 ## Network recommendations
 
-- Keep port **25590** off the public internet where you can: use a LAN, a VPN (WireGuard, Tailscale) or firewall
-  rules that only allow your own machines.
+- Keep port **25590** off the public internet: use a LAN, a VPN (WireGuard, Tailscale) or firewall rules that only
+  allow your own workers and proxy.
 
     ```bash
-    # ufw: only allow the main server to reach the worker
-    sudo ufw allow from 192.168.0.10 to any port 25590 proto tcp
+    # ufw: only allow the workers and the proxy to reach the relay
+    sudo ufw allow from 10.0.0.0/24 to any port 25590 proto tcp
     ```
 
-- With a [[relay]], only the relay needs an open port. Workers connect out.
-- Workers started with `-Dstoria.worker=true` open **no** Minecraft, query or RCON port.
+- Only the relay listens on 25590; workers and Storia Proxy connect out to it.
+- Players never reach workers directly: keep the workers' Minecraft ports private and use modern forwarding
+  from Storia Proxy.

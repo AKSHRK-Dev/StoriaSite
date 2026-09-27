@@ -22,7 +22,7 @@ Changes are kept as patches:
 
 | Path | Contents |
 | --- | --- |
-| `folia-server/src/main/java/dev/storia/` | Storia's own classes (RAM world, pregen, budget, offload, command). |
+| `folia-server/src/main/java/dev/storia/` | Storia's own classes (RAM world, pregen, budget, tick guard, cluster, command). |
 | `folia-server/minecraft-patches/features/` | Patches to Minecraft's code (`0012-Storia-...`). |
 | `folia-server/paper-patches/features/` | Patches to Paper's code. |
 | `storia-relay/` | Storia Relay. |
@@ -52,7 +52,7 @@ Commit the updated patch files in the main repository.
 # storia-relay/build/libs/storia-relay-*.jar
 ```
 
-The relay shares the protocol classes in `dev/storia/offload/protocol/` with the server and has no other
+The relay shares the classes in `dev/storia/net/` and `dev/storia/cluster/protocol/` with the server and has no other
 dependencies.
 
 ## Storia Proxy

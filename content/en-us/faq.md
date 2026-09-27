@@ -15,8 +15,8 @@ Minecraft **{{MC}}**, Java Edition. Storia follows Folia's supported versions.
 ### What do the version numbers mean?
 
 Storia versions follow Minecraft. `26.2` is the first Storia release for Minecraft 26.2; later builds for the same
-Minecraft version are `26.2-2`, `26.2-3`, and so on. Always run the **same version** on the server, the workers and
-the relay.
+Minecraft version are `26.2-2`, `26.2-3`, and so on. Always run the **same version** on the workers, the relay and
+Storia Proxy.
 
 ### Can I use Storia for a small server?
 
@@ -61,29 +61,24 @@ stand or walk are never limited. To disable it, set `player-budget.enabled: fals
 ### Chunk generation is slow during normal play
 
 Pregenerate with `/storia pregen` (see [[pregeneration]]), raise `chunk-system.worker-threads` in
-`config/paper-global.yml`, or add [[worker]]s.
+`config/paper-global.yml`, or spread players over several machines with a [[cluster]].
 
-## Offload
+## Storia Cluster
 
-### `/storia offload` shows "disconnected"
+### A worker stops with "Cannot reach the cluster coordinator"
 
-- Is the worker running, and is its port reachable from the server (`nc -zv worker-host 25590`, with your port)?
-- Is the **secret identical** on both sides? A wrong secret is refused on the first message and logged.
+- Is the relay running, and is port 25590 reachable from the worker (`nc -zv relay-host 25590`)?
+- Is the **secret identical** on the worker and the relay? A wrong secret is refused on the first message.
 - Are both running the **same Storia release**? Different protocol versions are refused with a message saying so.
 
-### The worker refuses a dimension: "terrain differs"
+### The relay logs "an old Storia asked for terrain offload"
 
-The worker's world settings, datapacks or Storia version do not match the server. Copy the world folder again
-(without `region`, `entities` and `poi`) and use the same Storia release. See [[worker#keeping-the-worker-in-sync]].
+A server with an `offload:` section from 26.2-2-beta or earlier connected. Terrain offload was replaced by the
+cluster: update Storia on that machine and set up `cluster:` instead (see [[worker]]).
 
-### The worker refuses a dimension: "no such dimension here"
+### Players see a short loading screen when moving between workers
 
-The server has a dimension (for example from a datapack or a plugin-created world) that the worker does not.
-Chunks in it are generated locally.
-
-### Most chunks are "generated locally (workers busy)"
-
-Your workers are at capacity. Add workers, give them more threads, or raise `offload.max-in-flight`.
+Seamless moves need Minecraft 26.1 or 26.2 clients. Older clients through ViaVersion get a normal server switch.
 
 ## Storia Proxy
 

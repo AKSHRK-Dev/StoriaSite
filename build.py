@@ -57,14 +57,11 @@ DOCS_NAV = [
         ("player-budget", "Per-player budget", "プレイヤーごとの予算"),
         ("performance", "Performance & tuning", "パフォーマンスと調整"),
     ]),
-    (("Offload", "処理の分担"), [
-        ("offload", "Offloading terrain", "地形生成の分担"),
+    (("Storia Cluster (Beta)", "Storia Cluster (Beta)"), [
+        ("cluster", "One world on several servers", "複数サーバーで 1 つのワールド"),
         ("worker", "Storia Worker", "Storia Worker"),
         ("relay", "Storia Relay", "Storia Relay"),
         ("security", "Encryption & security", "暗号化とセキュリティ"),
-    ]),
-    (("Storia Cluster (Beta)", "Storia Cluster (Beta)"), [
-        ("cluster", "One world on several servers", "複数サーバーで 1 つのワールド"),
     ]),
     (("Storia Proxy", "Storia Proxy"), [
         ("proxy", "Proxy setup", "プロキシの導入"),
@@ -162,7 +159,9 @@ T = {
         "t_ram": ("RAM world", "Worlds live in memory", "Worlds are copied into RAM at startup and synced back to disk in the background, so disk speed stops mattering."),
         "t_pregen": ("Pregeneration", "Five times faster pregen", "/storia pregen puts every spare core to work and picks up where it left off after a restart."),
         "t_budget": ("Tick guard", "A busy spawn, smooth for you", "When a farm or a crowd overloads an area, Storia thins out the crowd's thinking, not the players. People standing nearby are never limited."),
-        "t_offload": ("Offload", "More machines, more terrain", "Workers on other machines compute the heaviest step of terrain generation. Identical results, encrypted, with instant local fallback."),
+        "t_pbud": ("Player budget", "Only the fast flier waits", "While an area is busy, players flying faster than 12 blocks/s get a shorter view until they slow down. People who stand, build or walk there are never limited."),
+        "pbud": [("Alice", "elytra · 38 b/s", "view 6", True), ("Bob", "building", "view 10", False), ("Carol", "walking", "view 10", False)],
+        "pbud_note": "Region over its budget: only the fast mover is limited.",
         "t_proxy": ("Storia Proxy", "50 placeholders built in", "A Velocity fork with a live tab list, MOTD and join messages for the whole network."),
         "t_vanilla": ("Vanilla-exact", "Faster, never different", "Every change is checked against the original code, sample by sample and push by push."),
         "bars": [("Folia default", "3m 21s", 100, False), ("Storia", "40s", 20, True)],
@@ -174,7 +173,7 @@ T = {
         "prog_p": "Run the server on its own, or add helpers when you need them. All four ship together in every release.",
         "products": {
             "storia": ("The server", "Folia's regionized multithreading plus RAM worlds, fast pregeneration and a per-player budget."),
-            "worker": ("Terrain helper", "Generates terrain for your server on a spare machine. No player port."),
+            "worker": ("Cluster server", "Runs part of a shared world. Add workers when your players outgrow one machine."),
             "relay": ("Coordinator", "Keeps a cluster's world and decides which server runs which part. Also shares terrain work between workers."),
             "proxy": ("Network proxy", "Velocity with placeholders, a live tab list and network messages."),
         },
@@ -228,7 +227,9 @@ T = {
         "t_ram": ("RAM world", "ワールドはメモリの上に", "起動時にワールドを RAM にコピーし、変更はバックグラウンドでディスクへ。ディスクの速さが気にならなくなります。"),
         "t_pregen": ("Pregeneration", "事前生成が約 5 倍速く", "/storia pregen は空いているコアをすべて使い、再起動しても続きから再開します。"),
         "t_budget": ("Tick Guard", "混んだ初期地点でも、快適に", "トラップや群れで場所が重くなったら、減らすのは群れの判断だけ。近くに立っている人は一切制限しません。"),
-        "t_offload": ("Offload", "マシンを足せば、地形も速く", "ほかのマシンのワーカーが、地形生成で一番重い処理を計算します。結果は同一で、暗号化され、いつでも自分での生成に戻れます。"),
+        "t_pbud": ("Player budget", "制限されるのは、飛ばしている人だけ", "場所が重い間、秒速 12 ブロックより速く飛んでいる人だけ描画距離を短くし、速度を落とせば戻します。立っている人・建築している人・歩いている人は制限しません。"),
+        "pbud": [("Alice", "エリトラ · 秒速 38", "view 6", True), ("Bob", "建築中", "view 10", False), ("Carol", "歩き", "view 10", False)],
+        "pbud_note": "予算を超えたリージョンでも、制限されるのは速く動く人だけ。",
         "t_proxy": ("Storia Proxy", "50 個のプレースホルダー", "自動更新のタブリスト、MOTD、ネットワーク全体の参加メッセージを備えた Velocity のフォーク。"),
         "t_vanilla": ("Vanilla-exact", "速く、でも違わない", "すべての変更を、元のコードと 1 件ずつ照合しています。"),
         "bars": [("Folia の初期設定", "3分21秒", 100, False), ("Storia", "40秒", 20, True)],
@@ -240,7 +241,7 @@ T = {
         "prog_p": "サーバー単体でも動き、必要になったら手伝い役を足せます。4 つとも毎回のリリースにそろって入っています。",
         "products": {
             "storia": ("サーバー本体", "Folia のリージョン並列処理に、RAM ワールド・高速な事前生成・プレイヤーごとの予算を加えたもの。"),
-            "worker": ("地形のお手伝い", "空いているマシンで地形を生成します。プレイヤー用ポートは開きません。"),
+            "worker": ("Cluster の 1 台", "共有するワールドの一部を動かします。1 台で足りなくなったら足します。"),
             "relay": ("まとめ役", "Cluster のワールドを保管し、どのサーバーがどこを動かすかを決めます。ワーカーへの地形生成の仕事も配ります。"),
             "proxy": ("ネットワーク用プロキシ", "プレースホルダー、自動更新のタブリスト、ネットワークのメッセージを備えた Velocity。"),
         },
@@ -329,7 +330,7 @@ def footer(lang):
       </ul></div>
       <div><h2>{t['f_learn']}</h2><ul>
         <li><a href="{url(lang, 'how-it-works/')}">{e(HOW[lang]['nav'])}</a></li>
-        {d('offload')}{d('player-budget')}{d('placeholders')}{d('faq')}
+        {d('cluster')}{d('player-budget')}{d('placeholders')}{d('faq')}
       </ul></div>
       <div><h2>{t['f_source']}</h2><ul>
         <li><a href="{GITHUB}">Storia</a></li>
@@ -403,28 +404,6 @@ def terminal_lines(version):
         ("cmd", '<span class="p">&gt;</span> status'),
         ("out", '<span class="g">3 node(s), 214 owned cell(s), 1 proxy, 38 player move(s)</span>'),
     ]
-
-
-def diagram(lang):
-    ja = lang == "ja-jp"
-    labels = ["Players", "Proxy", "Storia", "Relay", "Worker"]
-    desc = ("プレイヤーは Proxy を通って Storia サーバーに接続し、Storia は Relay を通して 3 台のワーカーに地形生成を暗号化して依頼します。" if ja
-            else "Players connect through the proxy to the Storia server, which sends encrypted terrain work through a relay to three workers.")
-    box = lambda x, y, w, h, title, strong=False: (
-        f'<rect x="{x}" y="{y}" width="{w}" height="{h}" rx="8" fill="{"#ad4722" if strong else "#2a2724"}" stroke="{"#ad4722" if strong else "#45403a"}"/>'
-        f'<text x="{x + w / 2}" y="{y + h / 2}" text-anchor="middle" dominant-baseline="middle" font-size="13" font-weight="700" fill="#fff" font-family="Manrope, sans-serif">{e(title)}</text>')
-    line = lambda x1, y1, x2, y2, dash=False: (
-        f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" stroke="#7a726a" stroke-width="1.5"{" stroke-dasharray=&quot;4 4&quot;" if dash else ""} marker-end="url(#arr)"/>')
-    workers = "".join(box(468, 10 + i * 56, 96, 40, f"{labels[4]} {chr(65 + i)}") for i in range(3))
-    wlines = "".join(line(436, 88, 466, 30 + i * 56, True) for i in range(3))
-    return f"""<svg class="diagram" viewBox="0 0 570 180" role="img" aria-label="{e(desc)}">
-<defs><marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 10 5 0 10z" fill="#7a726a"/></marker></defs>
-{box(0, 68, 88, 40, labels[0])}{line(90, 88, 112, 88)}
-{box(114, 68, 76, 40, labels[1])}{line(192, 88, 214, 88)}
-{box(216, 62, 100, 52, labels[2], True)}{line(318, 88, 344, 88, True)}
-{box(346, 68, 88, 40, labels[3])}{wlines}{workers}
-<text x="285" y="170" text-anchor="middle" font-size="10.5" letter-spacing="1.5" fill="#9c948b" font-family="JetBrains Mono, monospace">AES-256-GCM</text>
-</svg>"""
 
 
 def cluster_map(lang):
@@ -528,7 +507,8 @@ def home(lang):
     people = "".join(f"""<div class="person{' over' if over else ''}"><span>{e(n)}</span>
       <div class="track"><i style="width:{min(use, 100)}%"></i><s style="left:{share}%"></s></div><em>{e(state)}</em></div>""" for n, use, share, over, state in t["people"])
     budget = f'<div class="screen"><div class="people">{people}</div><p class="bar-note">{e(t["people_note"])}</p></div>'
-    offload = f'<div class="screen">{diagram(lang)}</div>'
+    pbud_rows = "".join(f"""<div class="pb-row{' over' if over else ''}"><b>{e(n)}</b><span>{e(what)}</span><em>{e(view)}</em></div>""" for n, what, view, over in t["pbud"])
+    pbud = f'<div class="screen"><div class="pb">{pbud_rows}</div><p class="bar-note">{e(t["pbud_note"])}</p></div>'
     proxy = """<div class="screen" style="padding:14px"><div class="mc"><b style="color:#fff">My Network</b><br><span style="color:#aaa">42/200 online · 21:37</span>
 <div class="rows"><span>Alice <i>12ms</i></span><span>Bob <i>34ms</i></span><span>Carol <i style="color:#f5c16c">96ms</i></span><span>Dave <i>18ms</i></span></div>
 <span style="color:#aaa">survival (28) · ping <span style="color:#9bd49b">12ms</span></span></div></div>"""
@@ -560,7 +540,7 @@ def home(lang):
       {tile(lang, 't_ram', 'ram', status, 'ram-world', 'w7')}
       {tile(lang, 't_pregen', 'bolt', pregen, 'pregeneration', 'w5')}
       {tile(lang, 't_budget', 'users', budget, 'tick-guard', 'w5')}
-      {tile(lang, 't_offload', 'net', offload, 'offload', 'w7')}
+      {tile(lang, 't_pbud', 'users', pbud, 'player-budget', 'w7')}
       {tile(lang, 't_proxy', 'proxy', proxy, 'placeholders')}
       {tile(lang, 't_vanilla', 'check', vanilla, 'performance')}
     </div>
@@ -596,9 +576,11 @@ java -Xmx8G -jar storia-{e(v)}.jar nogui</pre>
 # ---------------------------------------------------------------------------------------------
 # How it works
 # ---------------------------------------------------------------------------------------------
-def arch_svg(lang):
+def arch_svg(lang, tall=False):
+    """The cluster: players -> Storia Proxy -> workers -> Storia Relay. A wide version, and a tall one for phones."""
     h = HOW[lang]
     d = h["d"]
+    uid = "t" if tall else "w"
 
     def node(x, y, w, label, sub="", main=False, hgt=56):
         cls = "n main" if main else "n"
@@ -609,30 +591,36 @@ def arch_svg(lang):
         return t + "</g>"
 
     def edge(x1, y1, x2, y2, dash=False):
-        return f'<line class="e{" dash" if dash else ""}" x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" marker-end="url(#ah)"/>'
+        return f'<line class="e{" dash" if dash else ""}" x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" marker-end="url(#ah-{uid})"/>'
 
-    def label(x, y, text):
-        return f'<text class="el" x="{x}" y="{y}">{e(text)}</text>'
+    def label(x, y, text, anchor="middle"):
+        return f'<text class="el" x="{x}" y="{y}" text-anchor="{anchor}">{e(text)}</text>'
 
-    workers = "".join(node(930, 196 + i * 92, 150, f"{d['worker']} {chr(65 + i)}", d['wsub']) for i in range(3))
-    wedges = "".join(edge(850, 316, 928, 224 + i * 92, True) for i in range(3))
-    return f"""<svg class="arch" viewBox="0 0 1090 440" role="img" aria-labelledby="arch-title arch-desc">
-<title id="arch-title">{e(h['diagram_label'])}</title>
-<desc id="arch-desc">{e(' '.join(h['diagram_desc']))}</desc>
-<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 10 5 0 10z" class="ah"/></marker></defs>
-<text class="gh" x="185" y="40">{e(d['net'])}</text>
-<text class="gh" x="555" y="40">{e(d['game'])}</text>
-<text class="gh" x="905" y="40">{e(d['help'])}</text>
-<line class="sep" x1="410" y1="60" x2="410" y2="430"/><line class="sep" x1="690" y1="60" x2="690" y2="430"/>
-{node(10, 192, 130, d['players'])}
-{edge(140, 220, 218, 220)}{label(179, 208, 'MC')}
-{node(220, 192, 150, d['proxy'], ':25565')}
-{edge(370, 210, 468, 128)}{edge(370, 230, 468, 312)}{label(446, 224, d['fwd'])}
-{node(470, 96, 180, d['lobby'], 'Folia')}
-{node(470, 288, 180, d['survival'], 'Folia', True)}
-{edge(650, 316, 718, 316, True)}{label(684, 304, 'AES-GCM')}
-{node(720, 288, 130, d['relay'], ':25590')}
-{wedges}{workers}
+    head = (f'<title id="arch-title-{uid}">{e(h["diagram_label"])}</title><desc id="arch-desc-{uid}">{e(" ".join(h["diagram_desc"]))}</desc>'
+            f'<defs><marker id="ah-{uid}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 10 5 0 10z" class="ah"/></marker></defs>')
+    names = [f"{d['worker']} {c}" for c in "ABC"]
+    if not tall:
+        ys = [96, 196, 296]
+        workers = "".join(node(470, y, 180, n, d["wsub"], main=(k == 1)) for k, (y, n) in enumerate(zip(ys, names)))
+        to_workers = "".join(edge(370, 220, 468, y + 28) for y in ys)
+        to_relay = "".join(edge(650, y + 28, 818, 220, True) for y in ys)
+        return f"""<svg class="arch arch-wide" viewBox="0 0 1090 400" role="img" aria-labelledby="arch-title-{uid} arch-desc-{uid}">{head}
+<text class="gh" x="185" y="40">{e(d['net'])}</text><text class="gh" x="560" y="40">{e(d['game'])}</text><text class="gh" x="905" y="40">{e(d['help'])}</text>
+<line class="sep" x1="410" y1="60" x2="410" y2="390"/><line class="sep" x1="770" y1="60" x2="770" y2="390"/>
+{node(10, 192, 130, d['players'])}{edge(140, 220, 218, 220)}{label(179, 208, 'MC')}
+{node(220, 192, 150, d['proxy'], ':25565')}{to_workers}{label(300, 300, d['fwd'])}
+{workers}{to_relay}{label(735, 360, d['enc'])}
+{node(820, 188, 170, d['relay'], d['rsub'], hgt=64)}
+</svg>"""
+    xs = [12, 128, 244]
+    workers = "".join(node(x, 250, 104, n, main=(k == 1), hgt=60) for k, (x, n) in enumerate(zip(xs, names)))
+    to_workers = "".join(edge(180, 176, x + 52, 248) for x in xs)
+    to_relay = "".join(edge(x + 52, 310, 180, 388, True) for x in xs)
+    return f"""<svg class="arch arch-tall" viewBox="0 0 360 470" role="img" aria-labelledby="arch-title-{uid} arch-desc-{uid}">{head}
+{node(115, 10, 130, d['players'], hgt=48)}{edge(180, 58, 180, 118)}{label(190, 94, 'MC', 'start')}
+{node(100, 120, 160, d['proxy'], ':25565')}{label(270, 214, d['fwd'], 'start')}
+{to_workers}{workers}{to_relay}{label(270, 356, d['enc'], 'start')}
+{node(90, 390, 180, d['relay'], d['rsub'], hgt=64)}
 </svg>"""
 
 
@@ -682,7 +670,7 @@ def how_it_works(lang):
 
 <div class="container">
   <figure class="arch-fig">
-    <div class="arch-wrap" tabindex="0" aria-label="{e(h['diagram_label'])}">{arch_svg(lang)}</div>
+    <div class="arch-wrap">{arch_svg(lang)}{arch_svg(lang, tall=True)}</div>
     <figcaption><ol class="arch-steps">{desc}</ol></figcaption>
   </figure>
 </div>
@@ -1031,6 +1019,7 @@ def main():
         for key in ("worker", "relay", "proxy"):  # old per-product pages
             write(lang, f"downloads/{key}/", redirect_page(url(lang, f"downloads/#{key}")))
         docs(lang)
+        write(lang, "docs/offload/", redirect_page(url(lang, "docs/cluster/")))  # terrain offload was replaced by the cluster
         write(lang, "404.html", not_found(lang))
     (DIST / "index.html").write_text(redirect_page(url("en-us")), encoding="utf-8")
     (DIST / "robots.txt").write_text("User-agent: *\nAllow: /\n", encoding="utf-8")

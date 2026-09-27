@@ -37,18 +37,11 @@ player-budget:
   memory-high-percent: 85
   memory-low-percent: 70
   fast-mover-speed: 12.0
-offload:
-  mode: 'off'
+cluster:
+  enabled: false
+  coordinator: 127.0.0.1:25590
+  node-name: ''
   secret: ''
-  workers:
-  - 127.0.0.1:25590
-  max-in-flight: -1
-  timeout-ms: 10000
-  compress: true
-  bind: 0.0.0.0
-  port: 25590
-  threads: -1
-  relay: ''
 ```
 
 ## ram-world
@@ -102,24 +95,18 @@ offload:
 | `memory-high-percent` | `85` | GC 後のヒープ使用率がこれを超えると、全員の描画距離を下げます。 |
 | `memory-low-percent` | `70` | GC 後のヒープ使用率がこれを下回ると元に戻します。 |
 
-## offload
+## cluster
 
-[[offload]]、[[worker]]、[[relay]] を参照してください。
+このサーバーを [[cluster|Storia Cluster]] の [[worker|Storia Worker]] にします。[[worker]] と [[relay]] を参照してください。
 
-| 項目 | 初期値 | 使う側 | 説明 |
-| --- | --- | --- | --- |
-| `mode` | `off` | 全員 | `off`、`client`（メインサーバー）、`worker`（手伝う側）。 |
-| `secret` | `''` | 全員 | 合言葉。8 文字以上で、すべてのマシンで同じにします。ネットワークには送られません。 |
-| `workers` | `[127.0.0.1:25590]` | client | 使うワーカーまたはリレー（`host:port`）。 |
-| `max-in-flight` | `-1` | client | 接続ごとに待たせるリクエスト数。`-1` はワーカーのスレッド数 × 4。 |
-| `timeout-ms` | `10000` | client | この時間内に返事がなければ、そのチャンクは自分で生成します。 |
-| `compress` | `true` | 全員 | 暗号化の前に通信を圧縮（deflate）します。とても速いネットワークでは切ると CPU を節約できます。 |
-| `bind` | `0.0.0.0` | worker | ワーカーが待ち受けるアドレス。 |
-| `port` | `25590` | worker | ワーカーが待ち受けるポート。 |
-| `threads` | `-1` | worker | 地形計算に使うスレッド数。`-1` は全コア。 |
-| `relay` | `''` | worker | 設定すると（`host:port`）、待ち受けずにそのリレーへ自分から接続します。 |
+| 項目 | 初期値 | 説明 |
+| --- | --- | --- |
+| `enabled` | `false` | Cluster に参加します。ワールドは Relay に置かれ、このサーバーは自分のワールドを持ちません。 |
+| `coordinator` | `127.0.0.1:25590` | [[relay|Storia Relay]] の `host:port`。 |
+| `node-name` | `''` | このワーカーの名前。ワーカーごとに変え、プロキシの `velocity.toml` でも同じ名前にします。 |
+| `secret` | `''` | Relay と同じ合言葉。8 文字以上。ネットワークには流れません。 |
 
-`mode` が `client` と `worker` 以外なら、すべてオフの扱いです（引用符なしの `off` は YAML では `false` と読まれますが、これもオフです）。
+古い `storia.yml` に `offload:` の項目が残っていても無視されます。消してかまいません。
 
 ## Java のシステムプロパティ
 
@@ -127,6 +114,4 @@ offload:
 
 | プロパティ | 説明 |
 | --- | --- |
-| `-Dstoria.worker=true` | 専用ワーカーとして起動します。プレイヤー用ポート・query・RCON は開きません。[[worker]] のパッケージで使っています。 |
-| `-Dstoria.verifyOffload=true` | 分担したチャンクを自分でも生成して照合します。テスト用で、CPU を使います。 |
 | `-Dstoria.verifyPush=true` | エンティティの押し合いをバニラの方法でも計算して照合します。テスト用で、CPU を使います。 |
