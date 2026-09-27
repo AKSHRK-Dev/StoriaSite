@@ -6,6 +6,7 @@ summary: Java を入れ、Storia をダウンロードして最初のサーバ�
 - **Java 25** 以上。ディストリビューションは何でもかまいません。迷ったら [Eclipse Temurin](https://adoptium.net) がおすすめです。
 - 64 ビットの OS：Linux（推奨）、Windows、macOS。
 - [[ram-world]] を使う場合：Java のヒープとは **別に**、ワールドフォルダ以上の空き RAM。
+- CPU・メモリ・ディスク：[[requirements|必要なスペック]] を参照。
 
 Java のバージョンを確認します。
 

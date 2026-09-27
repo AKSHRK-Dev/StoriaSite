@@ -6,6 +6,7 @@ summary: Install Java, download Storia and start your first server, or switch an
 - **Java 25** or newer. Any distribution works; [Eclipse Temurin](https://adoptium.net) is a good default.
 - A 64-bit OS: Linux (recommended), Windows or macOS.
 - For the [[ram-world]]: free RAM at least as large as your world folder, **in addition to** the Java heap.
+- CPU, memory and disk: see [[requirements|System requirements]].
 
 Check your Java version:
 

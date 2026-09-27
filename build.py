@@ -47,6 +47,7 @@ DOCS_NAV = [
     (("Storia", "Storia"), [
         ("introduction", "Introduction", "はじめに"),
         ("getting-started", "Getting started", "導入ガイド"),
+        ("requirements", "System requirements", "必要なスペック"),
         ("configuration", "Configuration", "設定 (storia.yml)"),
         ("commands", "Commands & permissions", "コマンドと権限"),
     ]),
