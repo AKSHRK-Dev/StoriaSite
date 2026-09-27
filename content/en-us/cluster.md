@@ -1,9 +1,9 @@
 ---
-summary: Beta. Several Storia servers run one world together, each ticking a different part of it, and players move between them without a loading screen.
+summary: Several Storia servers run one world together, each ticking a different part of it, and players move between them without a loading screen.
 ---
-!!! warning "Beta"
-    Storia Cluster is new in **26.2-2-beta** and still being tested. Releases before it (26.2, 26.2-1-beta)
-    do not include it. Back up your world before you try it, and do not run it on your only copy.
+!!! note "Version"
+    Storia Cluster is part of Storia **26.2-2** and later; the first 26.2 release does not include it. Back up your
+    world before you move it into a cluster.
 
 **Storia Cluster** splits one world over several Storia servers, the [[worker|Storia Workers]]. Each worker runs
 the part of the world where its players are: chunks, mobs, redstone and the players themselves. When players come close to each other,
@@ -74,7 +74,7 @@ worker show who runs what; `/storiaproxy cluster` shows the proxy's view.
   they send them when the relay is back, also after a worker restart.
 - If every worker stops, players are disconnected as on any server.
 
-## Limits in this beta
+## Current limits
 
 - Seamless switching needs **Minecraft 26.1 or 26.2** clients. Older clients through ViaVersion may see a
   normal server switch (a short loading screen) instead.

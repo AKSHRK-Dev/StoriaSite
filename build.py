@@ -57,7 +57,7 @@ DOCS_NAV = [
         ("player-budget", "Per-player budget", "プレイヤーごとの予算"),
         ("performance", "Performance & tuning", "パフォーマンスと調整"),
     ]),
-    (("Storia Cluster (Beta)", "Storia Cluster (Beta)"), [
+    (("Storia Cluster", "Storia Cluster"), [
         ("cluster", "One world on several servers", "複数サーバーで 1 つのワールド"),
         ("worker", "Storia Worker", "Storia Worker"),
         ("relay", "Storia Relay", "Storia Relay"),
@@ -186,9 +186,9 @@ T = {
         "dl_btn": "Download", "dev": "Looking for the newest changes? Development builds are on", "history": "Release history",
         "no_release": "No release has been published yet.",
         "beta": "Beta", "beta_head": "Try the beta",
-        "cl_nav": "Cluster", "cl_k": "Storia Cluster · Beta", "cl_t": "One world, many servers.",
+        "cl_nav": "Cluster", "cl_k": "Storia Cluster", "cl_t": "One world, many servers.",
         "cl_p": "Folia splits a world across the cores of one machine. Storia splits it across machines. When your players outgrow one server, add another: they keep playing in the same world.",
-        "cl_try": "Try the beta", "cl_guide": "Read the guide",
+        "cl_try": "Download", "cl_guide": "Read the guide",
         "cl_points": [
             ("Automatic placement", "Every part of the world where people play is given to a server. Players who meet end up on the same one; busy servers hand work to quiet ones."),
             ("No loading screen", "Crossing to another server keeps the connection. Inventory, advancements and statistics come along."),
@@ -197,7 +197,7 @@ T = {
         ],
         "cl_fig": "A world split between three servers. Each colored area is run by one server; a player flying from one area into another moves to that server without a loading screen.",
         "cl_legend": ["Server alpha", "Server beta", "Server gamma", "Not in use"],
-        "cl_note": "Seamless moves need Minecraft 26.1 or 26.2 clients. Beta: back up your world first.",
+        "cl_note": "Seamless moves need Minecraft 26.1 or 26.2 clients. Back up your world before you move it into a cluster.",
         "beta_note": "New features that are still being tested. Back up your server before trying it.",
         "pill_beta": "Beta {v}: tick guard keeps busy spawns smooth",
         "dl_count": "{n} downloads", "dl_total": "total downloads across all releases", "dl_total_short": "{n} downloads",
@@ -253,9 +253,9 @@ T = {
         "dl_btn": "ダウンロード", "dev": "最新の変更を試したい場合は、開発版のビルドを入手できます：", "history": "リリース履歴",
         "no_release": "まだリリースがありません。",
         "beta": "Beta", "beta_head": "Beta 版を試す",
-        "cl_nav": "Cluster", "cl_k": "Storia Cluster · Beta", "cl_t": "1 つのワールドを、何台ものサーバーで。",
+        "cl_nav": "Cluster", "cl_k": "Storia Cluster", "cl_t": "1 つのワールドを、何台ものサーバーで。",
         "cl_p": "Folia は 1 台のマシンの中で、ワールドを CPU コアごとに分けました。Storia はそれをマシンごとに分けます。プレイヤーが 1 台に収まらなくなったら、サーバーを足すだけ。みんな同じワールドで遊び続けられます。",
-        "cl_try": "Beta を試す", "cl_guide": "ガイドを読む",
+        "cl_try": "ダウンロード", "cl_guide": "ガイドを読む",
         "cl_points": [
             ("自動で振り分け", "人が遊んでいる場所ごとに、サーバーを自動で割り当てます。近づいたプレイヤーは同じサーバーにまとめ、忙しいサーバーの仕事は空いているサーバーへ移します。"),
             ("読み込み画面なしで移動", "別のサーバーへ移っても接続はそのまま。インベントリ・進捗・統計も一緒に移ります。"),
@@ -264,7 +264,7 @@ T = {
         ],
         "cl_fig": "3 台のサーバーで分担しているワールド。色の付いた場所をそれぞれ 1 台が動かし、別の場所へ飛んでいったプレイヤーは、読み込み画面なしでそのサーバーへ移ります。",
         "cl_legend": ["Server alpha", "Server beta", "Server gamma", "Not in use"],
-        "cl_note": "読み込み画面なしの移動は Minecraft 26.1・26.2 のクライアントが対象です。ベータ版なので、試す前にワールドをバックアップしてください。",
+        "cl_note": "読み込み画面なしの移動は Minecraft 26.1・26.2 のクライアントが対象です。ワールドを Cluster に移す前に、バックアップを取ってください。",
         "beta_note": "テスト中の新機能が入っています。試す前にサーバーをバックアップしてください。",
         "pill_beta": "{v}：混んだ初期地点も快適にする Tick Guard",
         "dl_count": "{n} ダウンロード", "dl_total": "全リリースの累計ダウンロード数", "dl_total_short": "累計 {n} ダウンロード",
@@ -459,7 +459,7 @@ def cluster_section(lang):
         <h2 id="cl-title">{e(t['cl_t'])}</h2>
         <p class="cl-lede">{e(t['cl_p'])}</p>
         <div class="actions">
-          <a class="btn primary" href="{url(lang, 'downloads/')}#beta">{ICON['dl']}{e(t['cl_try'])}</a>
+          <a class="btn primary" href="{url(lang, 'downloads/')}">{ICON['dl']}{e(t['cl_try'])}</a>
           <a class="btn secondary" href="{url(lang, 'docs/cluster/')}">{e(t['cl_guide'])}</a>
         </div>
         <p class="cl-note">{e(t['cl_note'])}</p>

@@ -19,7 +19,7 @@ single player for everyone on it.
 | Per-player budget | Only players who add load themselves (flying fast) get a shorter view distance while it is busy. | [[player-budget]] |
 | Faster physics | Entity pushing is about 3× faster with identical results. Redstone is untouched. | [[performance]] |
 | Faster world generation | Optimized noise sampling; terrain is identical to vanilla for the same seed. | [[performance]] |
-| Storia Cluster (beta) | One world on several servers; players move between them without a loading screen. | [[cluster]] |
+| Storia Cluster | One world on several servers; players move between them without a loading screen. | [[cluster]] |
 | Storia Proxy | A Velocity fork with 50 placeholders for MOTD, tab list and messages. | [[proxy]] |
 
 ## Design rules
