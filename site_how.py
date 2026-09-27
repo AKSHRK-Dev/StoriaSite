@@ -9,9 +9,9 @@ HOW = {
                 "more CPU for terrain, or both. This page explains what each one does, where it runs and what travels between them.",
         "diagram_label": "Overview of a full Storia network",
         "diagram_desc": [
-            "Players connect to Storia Proxy on port 25565.",
+            "Players connect to Storia Proxy, which listens on port 25565.",
             "Storia Proxy forwards each player to one of the Storia servers (for example lobby and survival), using modern forwarding.",
-            "A Storia server sends terrain work, encrypted, to Storia Relay on port 25590.",
+            "A Storia server connects to Storia Relay, which listens on port 25590, and sends it terrain work, encrypted.",
             "Storia Relay hands each piece of work to one of the Storia Workers, which send the terrain back the same way.",
         ],
         "d": {"players": "Players", "proxy": "Storia Proxy", "lobby": "Storia · lobby", "survival": "Storia · survival",
@@ -137,9 +137,9 @@ HOW = {
                 "地形生成のための CPU の追加、またはその両方のために使います。このページでは、それぞれの役割、動かす場所、やり取りする内容を説明します。",
         "diagram_label": "Storia のネットワーク全体の構成図",
         "diagram_desc": [
-            "プレイヤーは、ポート 25565 で Storia Proxy に接続します。",
+            "プレイヤーは、Storia Proxy（ポート 25565 で待ち受け）に接続します。",
             "Storia Proxy は、modern フォワーディングを使って、各プレイヤーを Storia サーバー（たとえばロビーとサバイバル）のどれかに送ります。",
-            "Storia サーバーは、地形生成の仕事を暗号化して、ポート 25590 で Storia Relay に送ります。",
+            "Storia サーバーは、Storia Relay（ポート 25590 で待ち受け）に接続し、地形生成の仕事を暗号化して送ります。",
             "Storia Relay は仕事を Storia Worker のどれかに渡し、ワーカーは同じ経路で地形を返します。",
         ],
         "d": {"players": "Players", "proxy": "Storia Proxy", "lobby": "Storia · lobby", "survival": "Storia · survival",
