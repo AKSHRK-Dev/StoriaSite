@@ -78,7 +78,8 @@ worker show who runs what; `/storiaproxy cluster` shows the proxy's view.
 
 - Seamless switching needs **Minecraft 26.1 or 26.2** clients. Older clients through ViaVersion may see a
   normal server switch (a short loading screen) instead.
-- Plugins run separately on each worker: their own data is not shared yet.
+- Plugins run separately on each worker. Their own data (balances, claims, ...) can be shared with the
+  [[plugin-api|plugin API]].
 - Folia has no `/scoreboard` and `/team` commands; the shared scoreboard changes through criteria such as
   `deathCount` and a scoreboard carried over from another server.
 - Tested with two workers and a few players so far. Please report problems on

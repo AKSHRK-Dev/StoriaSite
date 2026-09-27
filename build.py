@@ -62,6 +62,7 @@ DOCS_NAV = [
         ("worker", "Storia Worker", "Storia Worker"),
         ("relay", "Storia Relay", "Storia Relay"),
         ("security", "Encryption & security", "暗号化とセキュリティ"),
+        ("plugin-api", "Plugin API (shared data)", "プラグイン API（共有データ）"),
     ]),
     (("Storia Proxy", "Storia Proxy"), [
         ("proxy", "Proxy setup", "プロキシの導入"),

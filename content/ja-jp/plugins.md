@@ -44,3 +44,9 @@ boolean foliaLike = info.isBrandCompatible(Key.key("papermc", "folia"));   // Fo
 
 [[player-budget]] は、`Player#setViewDistance` と同じプレイヤーごとの仕組みで描画距離（有効にした場合はシミュレーション距離も）を変えます。
 プラグインでもプレイヤーごとに距離を設定していると、お互いに上書きし合います。予算機能をオフにするか、距離の管理を Storia に任せてください。
+
+## Storia Cluster でのプラグイン
+
+[[cluster|Storia Cluster]] では、各ワーカーがそれぞれプラグインを動かします。プレイヤーデータは Cluster が共有しますが、
+プラグイン自身のデータ（残高・保護範囲・ホームなど）は、どのワーカーでも同じ値になるよう [[plugin-api|プラグイン API]]
+を使ってください。

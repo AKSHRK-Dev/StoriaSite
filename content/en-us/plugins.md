@@ -48,3 +48,9 @@ boolean foliaLike = info.isBrandCompatible(Key.key("papermc", "folia"));   // tr
 The [[player-budget]] changes players' view distance (and, only if enabled, simulation distance) through the same
 per-player mechanism as `Player#setViewDistance`. If your plugin sets per-player distances too, the two will
 override each other. Disable the budget, or leave distances to Storia.
+
+## Plugins in a Storia Cluster
+
+In a [[cluster|Storia Cluster]] each worker runs its own copy of every plugin. Player data is shared by the cluster;
+a plugin's own data (balances, claims, homes, ...) should go through the [[plugin-api|plugin API]] so that every
+worker sees the same values.
