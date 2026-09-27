@@ -94,6 +94,7 @@ MARK = ('<svg viewBox="46 40 108 120" fill="currentColor" aria-hidden="true">'
         '<rect x="50" y="140" width="100" height="16" rx="3"/></svg>')
 ICON = {
     "storia": MARK,
+    "warn": svg('<path d="M12 3 2 20h20z"/><path d="M12 10v4M12 17v.5"/>'),
     "worker": svg('<rect x="6" y="6" width="12" height="12" rx="2"/><path d="M9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4"/><rect x="10" y="10" width="4" height="4" rx=".5" fill="currentColor"/>'),
     "relay": svg('<circle cx="12" cy="12" r="3"/><circle cx="4" cy="5" r="2"/><circle cx="4" cy="19" r="2"/><circle cx="20" cy="5" r="2"/><circle cx="20" cy="19" r="2"/><path d="m6 6.5 3.6 3.4M6 17.5l3.6-3.4M18 6.5l-3.6 3.4M18 17.5l-3.6-3.4"/>'),
     "proxy": svg('<path d="M12 3 4 6.5v5.2c0 4.6 3.4 8.3 8 9.3 4.6-1 8-4.7 8-9.3V6.5z"/><path d="M8.5 12h7M12 8.5v7"/>'),
@@ -185,6 +186,8 @@ T = {
         "beta": "Beta", "beta_head": "Try the beta",
         "beta_note": "New features that are still being tested. Back up your server before trying it.",
         "pill_beta": "Beta {v}: tick guard keeps busy spawns smooth",
+        "no_cluster": "This version does not include Storia Cluster (several servers running one world together). To use Cluster, download a release that supports it.",
+        "no_cluster_tag": "No Cluster",
         # docs
         "search": "Search docs", "search_empty": "No results", "on_page": "On this page", "prev": "Previous", "next": "Next",
         "docs_menu": "Documentation menu",
@@ -234,9 +237,11 @@ T = {
         "for_mc": "Minecraft {mc} 向け",
         "dl_btn": "ダウンロード", "dev": "最新の変更を試したい場合は、開発版のビルドを入手できます：", "history": "リリース履歴",
         "no_release": "まだリリースがありません。",
-        "beta": "Beta", "beta_head": "ベータ版を試す",
+        "beta": "Beta", "beta_head": "Beta 版を試す",
         "beta_note": "テスト中の新機能が入っています。試す前にサーバーをバックアップしてください。",
         "pill_beta": "{v}：混んだ初期地点も快適にする Tick Guard",
+        "no_cluster": "このバージョンは Storia Cluster（複数のサーバーで 1 つのワールドを動かす機能）に対応していません。Cluster を使う場合は、対応しているリリースをダウンロードしてください。",
+        "no_cluster_tag": "Cluster 非対応",
         "search": "ドキュメントを検索", "search_empty": "見つかりませんでした", "on_page": "このページの内容", "prev": "前へ", "next": "次へ",
         "docs_menu": "ドキュメントのメニュー",
         "tagline": "Folia をベースにした、大人数のコミュニティのための Minecraft サーバー。",
@@ -397,10 +402,7 @@ def diagram(lang):
 
 
 def pill(lang, v):
-    t = T[lang]
-    if RELEASES and RELEASES[0].get("prerelease"):
-        bv = RELEASES[0]["tag_name"].lstrip("v")
-        return f'<a class="pill" href="{url(lang, "downloads/")}#beta"><b>{t["beta"]}</b>{e(t["pill_beta"].format(v=bv))}{ICON["arrow"]}</a>'
+    t = T[lang]  # stable builds only; betas are announced on the downloads page
     return f'<a class="pill" href="{url(lang, "downloads/")}"><b>{t["pill_tag"]}</b>{e(t["pill"].format(v=v))}{ICON["arrow"]}</a>'
 
 
@@ -634,6 +636,19 @@ def fmt_date(s, lang="en-us"):
     return d.strftime("%b %-d, %Y") if lang == "en-us" else f"{d.year}年{d.month}月{d.day}日"
 
 
+# The first release that contains Storia Cluster. None until it ships: every release so far lacks it.
+CLUSTER_SINCE = None
+
+
+def supports_cluster(rel):
+    first = next((r for r in RELEASES if r["tag_name"] == CLUSTER_SINCE), None)
+    return first is not None and rel["published_at"] >= first["published_at"]
+
+
+def cluster_warning(lang, rel):
+    return "" if supports_cluster(rel) else f'<p class="compat-warn" role="note">{ICON["warn"]}<span>{e(T[lang]["no_cluster"])}</span></p>'
+
+
 def release_card(lang, rel, beta=False):
     t = T[lang]
     v = rel["tag_name"].lstrip("v")
@@ -650,7 +665,7 @@ def release_card(lang, rel, beta=False):
     badge = f' <span class="beta">{t["beta"]}</span>' if beta else ""
     note = f'<p class="beta-note">{e(t["beta_note"])}</p>' if beta else ""
     return f"""<div class="release{' is-beta' if beta else ''}" id="{'beta' if beta else 'stable'}">
-  <div class="rhead"><div><h2>{e(t['release'].format(v=v))}{badge}</h2><span>{e(t['for_mc'].format(mc=MC_VERSION))} · {e(t['released'].format(d=fmt_date(rel['published_at'], lang)))}</span>{note}</div>
+  <div class="rhead"><div><h2>{e(t['release'].format(v=v))}{badge}</h2><span>{e(t['for_mc'].format(mc=MC_VERSION))} · {e(t['released'].format(d=fmt_date(rel['published_at'], lang)))}</span>{note}{cluster_warning(lang, rel)}</div>
     <a class="link" href="{e(rel['html_url'])}">{t['notes']} {ICON['arrow']}</a></div>
   {''.join(files)}
 </div>"""
@@ -670,6 +685,8 @@ def downloads(lang):
         lis = "".join(f'<li><a href="{GITHUB}/commit/{c["sha"]}">{c["sha"][:7]}</a><span>{linkify(e(c["message"]))}</span></li>' for c in changes)
         links = "".join(f'<a href="{e(a["browser_download_url"])}">{e(a["name"])}</a>' for a in rel["assets"])
         tag = f' <span class="beta">{t["beta"]}</span>' if rel.get("prerelease") else ""
+        if not supports_cluster(rel):
+            tag += f' <span class="no-cluster" title="{e(t["no_cluster"])}">{e(t["no_cluster_tag"])}</span>'
         entries.append(f"""<div class="entry"><div class="when"><b>{e(rel['tag_name'].lstrip('v'))}</b>{tag}<time datetime="{e(rel['published_at'])}" data-time="{e(rel['published_at'])}">{fmt_date(rel['published_at'], lang)}</time></div>
   {f'<ul>{lis}</ul>' if lis else ''}<div class="files">{links}</div></div>""")
     body = f"""
