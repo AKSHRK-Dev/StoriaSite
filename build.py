@@ -63,6 +63,9 @@ DOCS_NAV = [
         ("relay", "Storia Relay", "Storia Relay"),
         ("security", "Encryption & security", "暗号化とセキュリティ"),
     ]),
+    (("Storia Cluster (Beta)", "Storia Cluster (Beta)"), [
+        ("cluster", "One world on several servers", "複数サーバーで 1 つのワールド"),
+    ]),
     (("Storia Proxy", "Storia Proxy"), [
         ("proxy", "Proxy setup", "プロキシの導入"),
         ("placeholders", "Placeholders", "プレースホルダー一覧"),
@@ -641,8 +644,8 @@ def fmt_date(s, lang="en-us"):
     return d.strftime("%b %-d, %Y") if lang == "en-us" else f"{d.year}年{d.month}月{d.day}日"
 
 
-# The first release that contains Storia Cluster. None until it ships: every release so far lacks it.
-CLUSTER_SINCE = None
+# The first release that contains Storia Cluster; releases published before it show a "No Cluster" warning.
+CLUSTER_SINCE = "v26.2-2-beta"
 
 
 def supports_cluster(rel):
