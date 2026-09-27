@@ -132,7 +132,7 @@ HOW = {
     "ja-jp": {
         "nav": "仕組み",
         "title": "Storia の仕組み",
-        "kicker": "アーキテクチャ",
+        "kicker": "Architecture",
         "lede": "Storia は、連携して動く 4 つのソフトでできています。必須なのはサーバーだけで、ほかのソフトはネットワーク化や、"
                 "地形生成のための CPU の追加、またはその両方のために使います。このページでは、それぞれの役割、動かす場所、やり取りする内容を説明します。",
         "diagram_label": "Storia のネットワーク全体の構成図",
@@ -142,9 +142,9 @@ HOW = {
             "Storia サーバーは、地形生成の仕事を暗号化して、ポート 25590 で Storia Relay に送ります。",
             "Storia Relay は仕事を Storia Worker のどれかに渡し、ワーカーは同じ経路で地形を返します。",
         ],
-        "d": {"players": "プレイヤー", "proxy": "Storia Proxy", "lobby": "Storia · ロビー", "survival": "Storia · サバイバル",
-              "relay": "Storia Relay", "worker": "ワーカー", "net": "ネットワーク", "game": "ゲームサーバー", "help": "地形のお手伝い",
-              "mc": "Minecraft · 25565", "fwd": "modern フォワーディング", "enc": "暗号化 · 25590", "wsub": "地形ノイズ"},
+        "d": {"players": "Players", "proxy": "Storia Proxy", "lobby": "Storia · lobby", "survival": "Storia · survival",
+              "relay": "Storia Relay", "worker": "Worker", "net": "Network", "game": "Game servers", "help": "Terrain helpers",
+              "mc": "Minecraft · 25565", "fwd": "modern forwarding", "enc": "encrypted · 25590", "wsub": "terrain noise"},
         "roles_t": "4 つのソフト",
         "roles_p": "ソフトごとに役割は 1 つです。組み合わせると、1 か所の重さが全員の足を引っ張らないネットワークになります。",
         "roles": {
@@ -245,7 +245,7 @@ HOW = {
             ("お手伝い付きのサーバー", "探索や事前生成が多いサーバーに、空いているマシンを 1〜2 台足します。", ["players", "storia", "worker×2"], "Storia + Storia Worker"),
             ("フルネットワーク", "多くのサーバーで、出入り自由なワーカーを共有します。", ["players", "proxy", "storia×3", "relay", "worker×N"], "4 つすべて"),
         ],
-        "chips": {"players": "プレイヤー", "proxy": "Proxy", "storia": "Storia", "worker": "Worker", "relay": "Relay"},
+        "chips": {"players": "Players", "proxy": "Proxy", "storia": "Storia", "worker": "Worker", "relay": "Relay"},
         "req_t": "必要なものの一覧",
         "req_h": ["ソフト", "Java", "メモリ", "ポート", "必要なファイル"],
         "req": [

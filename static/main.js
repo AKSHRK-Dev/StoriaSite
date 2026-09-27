@@ -59,9 +59,30 @@
   });
   const docsBtn = document.getElementById("docs-menu");
   const sidebar = document.getElementById("sidebar");
-  if (docsBtn && sidebar) docsBtn.addEventListener("click", () => {
-    const open = sidebar.classList.toggle("open");
+  const setDocsMenu = (open) => {
+    sidebar.classList.toggle("open", open);
     docsBtn.setAttribute("aria-expanded", open);
+  };
+  if (docsBtn && sidebar) {
+    docsBtn.addEventListener("click", () => setDocsMenu(!sidebar.classList.contains("open")));
+    document.addEventListener("keydown", (ev) => {
+      if (ev.key === "Escape" && sidebar.classList.contains("open")) { setDocsMenu(false); docsBtn.focus(); }
+    });
+    sidebar.addEventListener("click", (ev) => { if (ev.target.closest("a[href^='#']")) setDocsMenu(false); });
+  }
+
+  // ---- tables: on phones, rows with 3+ columns become cards; labels come from the header row ----
+  document.querySelectorAll(".doc table").forEach((table) => {
+    const heads = [...table.querySelectorAll("thead th")].map((th) => th.textContent.trim());
+    if (heads.length < 3) return;
+    table.classList.add("stack");
+    table.setAttribute("role", "table");
+    table.querySelectorAll("thead, tbody").forEach((g) => g.setAttribute("role", "rowgroup"));
+    table.querySelectorAll("tr").forEach((tr) => {
+      tr.setAttribute("role", "row");
+      tr.querySelectorAll("th").forEach((th) => th.setAttribute("role", "columnheader"));
+      tr.querySelectorAll("td").forEach((td, i) => { td.setAttribute("role", "cell"); td.dataset.label = heads[i] || ""; });
+    });
   });
 
   // ---- copy buttons ----

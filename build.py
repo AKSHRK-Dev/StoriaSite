@@ -19,6 +19,10 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 import markdown
+from pygments import highlight
+from pygments.formatters import HtmlFormatter
+from pygments.lexers import TextLexer, get_lexer_by_name
+from pygments.util import ClassNotFound
 
 from site_how import HOW
 
@@ -196,26 +200,26 @@ T = {
         "features": "特長", "downloads": "ダウンロード", "docs": "ドキュメント", "github": "GitHub",
         "theme": "ダークモード", "menu": "メニュー", "skip": "本文へスキップ", "title_tag": "カクつかない、最高峰のサーバーソフトウェア", "copied": "クリップボードにコピーしました", "results": "{n} 件見つかりました", "language": "言語", "documentation": "ドキュメント",
         "desc": "Storia は Folia ベースの Minecraft サーバーです。RAM 上のワールド、高速なチャンク事前生成、プレイヤーごとの公平な負荷分配、回路を止めない物理演算の最適化、暗号化された別マシンへの地形生成の分担を備えています。",
-        "pill": "Storia {v} を公開しました", "pill_tag": "新着",
-        "hero": '<span class="accent">カクつかない、</span>最高峰のサーバーソフトウェア。',
+        "pill": "Storia {v} を公開しました", "pill_tag": "New",
+        "hero": '<span class="accent">カクつかない、</span><wbr>最高峰の<wbr>サーバー<wbr>ソフトウェア。',
         "hero_sub": "Storia は Folia をベースにした Minecraft サーバーです。ワールドを RAM に置き、CPU を全員に公平に分け、地形生成をほかのマシンに任せることもできます。回路は一切止めません。",
         "get": "{v} をダウンロード", "read": "ドキュメントを読む",
-        "meta": [("layers", "Minecraft " + MC_VERSION), ("java", "Java 25"), ("code", "オープンソース")],
-        "why_k": "中身", "why_t": "Storia がサーバーにしてくれる 6 つのこと",
+        "meta": [("layers", "Minecraft " + MC_VERSION), ("java", "Java 25"), ("code", "Open source")],
+        "why_k": "What's inside", "why_t": "Storia がサーバーにしてくれる 6 つのこと",
         "why_p": "どれもバニラと同じ動きを保ちます。同じシードなら同じ地形、同じ物理演算、そして回路は止まりません。",
         "more": "仕組みを見る",
-        "t_ram": ("RAM ワールド", "ワールドはメモリの上に", "起動時にワールドを RAM にコピーし、変更はバックグラウンドでディスクへ。ディスクの速さが気にならなくなります。"),
-        "t_pregen": ("事前生成", "事前生成が約 5 倍速く", "/storia pregen は空いているコアをすべて使い、再起動しても続きから再開します。"),
+        "t_ram": ("RAM world", "ワールドはメモリの上に", "起動時にワールドを RAM にコピーし、変更はバックグラウンドでディスクへ。ディスクの速さが気にならなくなります。"),
+        "t_pregen": ("Pregeneration", "事前生成が約 5 倍速く", "/storia pregen は空いているコアをすべて使い、再起動しても続きから再開します。"),
         "t_budget": ("Tick Guard", "混んだ初期地点でも、快適に", "トラップや群れで場所が重くなったら、減らすのは群れの判断だけ。近くに立っている人は一切制限しません。"),
-        "t_offload": ("処理の分担", "マシンを足せば、地形も速く", "ほかのマシンのワーカーが、地形生成で一番重い処理を計算します。結果は同一で、暗号化され、いつでも自分での生成に戻れます。"),
+        "t_offload": ("Offload", "マシンを足せば、地形も速く", "ほかのマシンのワーカーが、地形生成で一番重い処理を計算します。結果は同一で、暗号化され、いつでも自分での生成に戻れます。"),
         "t_proxy": ("Storia Proxy", "50 個のプレースホルダー", "自動更新のタブリスト、MOTD、ネットワーク全体の参加メッセージを備えた Velocity のフォーク。"),
-        "t_vanilla": ("バニラと同一", "速く、でも違わない", "すべての変更を、元のコードと 1 件ずつ照合しています。"),
+        "t_vanilla": ("Vanilla-exact", "速く、でも違わない", "すべての変更を、元のコードと 1 件ずつ照合しています。"),
         "bars": [("Folia の初期設定", "3分21秒", 100, False), ("Storia", "40秒", 20, True)],
         "bars_note": "3,721 チャンク・6 コア。短いほど高速です。",
-        "people": [("ゾンビ", 100, 40, True, "AI 1/8"), ("村人", 60, 40, True, "AI 1/8"), ("Alice", 0, 40, False, "描画 10"), ("Bob", 0, 40, False, "描画 10")],
+        "people": [("ゾンビ", 100, 40, True, "AI 1/8"), ("村人", 60, 40, True, "AI 1/8"), ("Alice", 0, 40, False, "view 10"), ("Bob", 0, 40, False, "view 10")],
         "people_note": "モブ 1,400 体の初期地点：1 ティック 55 ms → 33 ms、TPS 20。誰も制限されません。",
         "facts": [("0", "件", "ノイズ 1,800 万件での差異"), ("0", "件", "押し合い 50 万回での差異"), ("3", "倍", "押し合いの計算の速さ"), ("0", "件", "レッドストーンへの変更")],
-        "prog_k": "ファミリー", "prog_t": "4 つのソフトを、ひとつのリリースで",
+        "prog_k": "The family", "prog_t": "4 つのソフトを、ひとつのリリースで",
         "prog_p": "サーバー単体でも動き、必要になったら手伝い役を足せます。4 つとも毎回のリリースにそろって入っています。",
         "products": {
             "storia": ("サーバー本体", "Folia のリージョン並列処理に、RAM ワールド・高速な事前生成・プレイヤーごとの予算を加えたもの。"),
@@ -225,14 +229,14 @@ T = {
         },
         "req": {"storia": "Java 25", "worker": "Java 25", "relay": "Java 21 以上", "proxy": "Java 21 以上"},
         "close_t": "1 分で Storia を始めよう。", "close_p": "Folia の jar と入れ替えて、EULA に同意すれば動きます。Folia 対応のプラグインはそのまま使えます。",
-        "dl_k": "ダウンロード", "dl_t": 'Storia <span class="accent">{v}</span> を入手', "dl_p": "各リリースには、サーバー本体と 3 つの関連ソフトが入っています。すべて公開されているソースから GitHub Actions でビルドしています。",
+        "dl_k": "Downloads", "dl_t": 'Storia <span class="accent">{v}</span> を入手', "dl_p": "各リリースには、サーバー本体と 3 つの関連ソフトが入っています。すべて公開されているソースから GitHub Actions でビルドしています。",
         "release": "Storia {v}", "released": "{d} 公開", "notes": "リリースノート",
         "for_mc": "Minecraft {mc} 向け",
         "dl_btn": "ダウンロード", "dev": "最新の変更を試したい場合は、開発版のビルドを入手できます：", "history": "リリース履歴",
         "no_release": "まだリリースがありません。",
-        "beta": "ベータ", "beta_head": "ベータ版を試す",
+        "beta": "Beta", "beta_head": "ベータ版を試す",
         "beta_note": "テスト中の新機能が入っています。試す前にサーバーをバックアップしてください。",
-        "pill_beta": "ベータ {v}：混んだ初期地点も快適にする Tick Guard",
+        "pill_beta": "{v}：混んだ初期地点も快適にする Tick Guard",
         "search": "ドキュメントを検索", "search_empty": "見つかりませんでした", "on_page": "このページの内容", "prev": "前へ", "next": "次へ",
         "docs_menu": "ドキュメントのメニュー",
         "tagline": "Folia をベースにした、大人数のコミュニティのための Minecraft サーバー。",
@@ -372,7 +376,7 @@ def terminal_lines(version):
 
 def diagram(lang):
     ja = lang == "ja-jp"
-    labels = ["プレイヤー" if ja else "Players", "Proxy", "Storia", "Relay", "ワーカー" if ja else "Worker"]
+    labels = ["Players", "Proxy", "Storia", "Relay", "Worker"]
     desc = ("プレイヤーは Proxy を通って Storia サーバーに接続し、Storia は Relay を通して 3 台のワーカーに地形生成を暗号化して依頼します。" if ja
             else "Players connect through the proxy to the Storia server, which sends encrypted terrain work through a relay to three workers.")
     box = lambda x, y, w, h, title, strong=False: (
@@ -727,8 +731,23 @@ def render_markdown(src, lang):
     src = re.sub(r"\[\[([^\]]+)\]\]", link, src)
     src = src.replace("](/en-us/", f"](/{lang}/")
     src = src.replace("{{VERSION}}", LATEST["version"]).replace("{{MC}}", MC_VERSION).replace("{{GITHUB}}", GITHUB)
+    # Python-Markdown's fenced_code ignores fences indented inside list items; render those here and put them back afterwards
+    stash = []
+
+    def nested_fence(m):
+        indent, lang_name, code = m.group(1), m.group(2), m.group(3)
+        code = "\n".join(line[len(indent):] if line.startswith(indent) else line.lstrip() for line in code.split("\n"))
+        try:
+            lexer = get_lexer_by_name(lang_name) if lang_name else TextLexer()
+        except ClassNotFound:
+            lexer = TextLexer()
+        stash.append(highlight(code + "\n", lexer, HtmlFormatter(cssclass="hl", wrapcode=True)))
+        return f"{indent}STORIACODE{len(stash) - 1}X"
+    src = re.sub(r"^([ \t]+)```([\w+-]*)[ \t]*\n(.*?)\n\1```[ \t]*$", nested_fence, src, flags=re.M | re.S)
+    out = md.convert(src)
+    out = re.sub(r"(?:<p>)?STORIACODE(\d+)X(?:</p>)?", lambda m: stash[int(m.group(1))], out)
     # tabindex lets keyboard users scroll long code blocks (WCAG 2.1.1)
-    return md.convert(src).replace("<pre>", '<pre tabindex="0">'), md.toc_tokens
+    return out.replace("<pre>", '<pre tabindex="0">'), md.toc_tokens
 
 
 def plain(html_text):
@@ -787,7 +806,7 @@ def docs(lang):
         summary = f'<p class="summary">{e(d.summary)}</p>' if d.summary else ""
         body = f"""
 <div class="docs">
-  <button class="icon-btn docs-menu" id="docs-menu" type="button" aria-controls="sidebar" aria-expanded="false">{e(d.group)} › {e(d.title)} {ICON['menu']}</button>
+  <button class="icon-btn docs-menu" id="docs-menu" type="button" aria-controls="sidebar" aria-expanded="false"><span class="dm-label">{e(d.group)} › {e(d.title)}</span>{ICON['menu']}</button>
   <aside class="sidebar" id="sidebar" aria-label="{t['docs_menu']}">
     <div class="search">{ICON['search']}
       <input id="search" type="search" placeholder="{t['search']}" aria-label="{t['search']}" autocomplete="off"
@@ -823,7 +842,16 @@ def not_found(lang):
     return page(lang, "", t["nf_title"], t["nf_text"], body, "")
 
 
+def keep_phrases(content):
+    """Japanese headings: a space next to a Latin word or number must not become a line break (e.g. "6 / つのこと")."""
+    def fix(m):
+        return re.sub(r">([^<]*)<", lambda t: ">" + re.sub(r"(?<=\S) (?=\S)", "\u00a0", t.group(1)) + "<", m.group(0))
+    return re.sub(r"<(h[1-3]|b|button)\b[^>]*>.*?</\1>", fix, content, flags=re.S)
+
+
 def write(lang, path, content):
+    if lang == "ja-jp":
+        content = keep_phrases(content)
     out = DIST / lang / path / "index.html" if path.endswith("/") or path == "" else DIST / lang / path
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(content, encoding="utf-8")
