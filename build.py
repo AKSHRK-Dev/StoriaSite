@@ -201,8 +201,6 @@ T = {
         "cl_note": "Seamless moves need Minecraft 26.1 or 26.2 clients. Beta: back up your world first.",
         "beta_note": "New features that are still being tested. Back up your server before trying it.",
         "pill_beta": "Beta {v}: tick guard keeps busy spawns smooth",
-        "no_cluster": "This version does not include Storia Cluster (several servers running one world together). To use Cluster, download a release that supports it.",
-        "no_cluster_tag": "No Cluster",
         "dl_count": "{n} downloads", "dl_total": "total downloads across all releases", "dl_total_short": "{n} downloads",
         # docs
         "search": "Search docs", "search_empty": "No results", "on_page": "On this page", "prev": "Previous", "next": "Next",
@@ -220,7 +218,7 @@ T = {
         "theme": "ダークモード", "menu": "メニュー", "skip": "本文へスキップ", "title_tag": "カクつかない、最高峰のサーバーソフトウェア", "copied": "クリップボードにコピーしました", "results": "{n} 件見つかりました", "language": "言語", "documentation": "ドキュメント",
         "desc": "Storia は、1 つのワールドを複数のサーバーで分担して動かせる Minecraft サーバーです。サーバー間の移動に読み込み画面は出ません。Folia ベースで、RAM ワールド、高速な事前生成、混んだ初期地点のための Tick Guard も備えています。",
         "pill": "Storia {v} を公開しました", "pill_tag": "New",
-        "hero": '<span class="accent">カクつかない、</span><wbr>最高峰の<wbr>サーバー<wbr>ソフトウェア。',
+        "hero": '<span class="accent ph">カクつかない、</span><span class="ph">最高峰の</span><span class="ph">サーバー</span><span class="ph">ソフトウェア。</span>',
         "hero_sub": "Storia は、1 つのワールドを複数のサーバーで分担して動かせる Minecraft サーバーです。サーバーをまたいでも読み込み画面は出ず、回路も止まりません。",
         "get": "{v} をダウンロード", "read": "ドキュメントを読む",
         "meta": [("layers", "Minecraft " + MC_VERSION), ("java", "Java 25"), ("code", "Open source")],
@@ -268,8 +266,6 @@ T = {
         "cl_note": "読み込み画面なしの移動は Minecraft 26.1・26.2 のクライアントが対象です。ベータ版なので、試す前にワールドをバックアップしてください。",
         "beta_note": "テスト中の新機能が入っています。試す前にサーバーをバックアップしてください。",
         "pill_beta": "{v}：混んだ初期地点も快適にする Tick Guard",
-        "no_cluster": "このバージョンは Storia Cluster（複数のサーバーで 1 つのワールドを動かす機能）に対応していません。Cluster を使う場合は、対応しているリリースをダウンロードしてください。",
-        "no_cluster_tag": "Cluster 非対応",
         "dl_count": "{n} ダウンロード", "dl_total": "全リリースの累計ダウンロード数", "dl_total_short": "累計 {n} ダウンロード",
         "search": "ドキュメントを検索", "search_empty": "見つかりませんでした", "on_page": "このページの内容", "prev": "前へ", "next": "次へ",
         "docs_menu": "ドキュメントのメニュー",
@@ -736,15 +732,6 @@ def fmt_date(s, lang="en-us"):
     return d.strftime("%b %-d, %Y") if lang == "en-us" else f"{d.year}年{d.month}月{d.day}日"
 
 
-# The first release that contains Storia Cluster; releases published before it show a "No Cluster" warning.
-CLUSTER_SINCE = "v26.2-2-beta"
-
-
-def supports_cluster(rel):
-    first = next((r for r in RELEASES if r["tag_name"] == CLUSTER_SINCE), None)
-    return first is not None and rel["published_at"] >= first["published_at"]
-
-
 def downloads_of(rel):
     return sum(a.get("download_count", 0) for a in rel["assets"])
 
@@ -755,10 +742,6 @@ def total_downloads():
 
 def fmt_count(n, lang):
     return T[lang]["dl_count"].format(n=f"{n:,}")
-
-
-def cluster_warning(lang, rel):
-    return "" if supports_cluster(rel) else f'<p class="compat-warn" role="note">{ICON["warn"]}<span>{e(T[lang]["no_cluster"])}</span></p>'
 
 
 def release_card(lang, rel, beta=False):
@@ -777,7 +760,7 @@ def release_card(lang, rel, beta=False):
     badge = f' <span class="beta">{t["beta"]}</span>' if beta else ""
     note = f'<p class="beta-note">{e(t["beta_note"])}</p>' if beta else ""
     return f"""<div class="release{' is-beta' if beta else ''}" id="{'beta' if beta else 'stable'}">
-  <div class="rhead"><div><h2>{e(t['release'].format(v=v))}{badge}</h2><span>{e(t['for_mc'].format(mc=MC_VERSION))} · {e(t['released'].format(d=fmt_date(rel['published_at'], lang)))}</span>{note}{cluster_warning(lang, rel)}</div>
+  <div class="rhead"><div><h2>{e(t['release'].format(v=v))}{badge}</h2><span>{e(t['for_mc'].format(mc=MC_VERSION))} · {e(t['released'].format(d=fmt_date(rel['published_at'], lang)))}</span>{note}</div>
     <a class="link" href="{e(rel['html_url'])}">{t['notes']} {ICON['arrow']}</a></div>
   {''.join(files)}
 </div>"""
@@ -797,8 +780,6 @@ def downloads(lang):
         lis = "".join(f'<li><a href="{GITHUB}/commit/{c["sha"]}">{c["sha"][:7]}</a><span>{linkify(e(c["message"]))}</span></li>' for c in changes)
         links = "".join(f'<a href="{e(a["browser_download_url"])}">{e(a["name"])}</a>' for a in rel["assets"])
         tag = f' <span class="beta">{t["beta"]}</span>' if rel.get("prerelease") else ""
-        if not supports_cluster(rel):
-            tag += f' <span class="no-cluster" title="{e(t["no_cluster"])}">{e(t["no_cluster_tag"])}</span>'
         entries.append(f"""<div class="entry"><div class="when"><b>{e(rel['tag_name'].lstrip('v'))}</b>{tag}<time datetime="{e(rel['published_at'])}" data-time="{e(rel['published_at'])}">{fmt_date(rel['published_at'], lang)}</time><span class="dl-total">{e(fmt_count(downloads_of(rel), lang))}</span></div>
   {f'<ul>{lis}</ul>' if lis else ''}<div class="files">{links}</div></div>""")
     body = f"""

@@ -494,9 +494,6 @@ table.plain tr:last-child th, table.plain tr:last-child td { border-bottom: 0; }
   .doc table.stack td:not(:first-child)::before { content: attr(data-label); display: block; font-size: 11.5px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
   .doc table.stack td code { white-space: normal; }
 }
-.compat-warn { display: flex; gap: 10px; align-items: flex-start; margin: 12px 0 0; padding: 10px 14px; border: 1px solid var(--line); border-left: 4px solid #d9a21b; border-radius: 10px; background: var(--surface-2); font-size: 13.5px; color: var(--ink); max-width: 640px; }
-.compat-warn svg { width: 18px; height: 18px; flex-shrink: 0; margin-top: 2px; color: #b07d0a; }
-.no-cluster { display: inline-block; font-size: 12px; font-weight: 800; padding: 2px 10px; border-radius: 999px; border: 1px solid var(--control); color: var(--ink-2); white-space: nowrap; }
 .page-head .stat { margin: 26px auto 0; display: inline-flex; align-items: baseline; gap: 10px; padding: 10px 20px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); }
 .page-head .stat b { font-family: var(--serif); font-size: 28px; font-weight: 600; color: var(--accent); line-height: 1; }
 .page-head .stat span { font-size: 14px; font-weight: 600; color: var(--ink-2); }
@@ -542,3 +539,9 @@ table.plain tr:last-child th, table.plain tr:last-child td { border-bottom: 0; }
 .cl-point p { margin: 0; font-size: 14.5px; color: var(--ink-2); }
 @media (max-width: 1000px) { .cl-top { grid-template-columns: 1fr; gap: 36px; } .cl-points { grid-template-columns: repeat(2, 1fr); } }
 @media (max-width: 560px) { .cl-points { grid-template-columns: 1fr; } .cmap { padding: 12px; } .cl-lede { font-size: 16.5px; } .cmap .tag { display: none; } .cmap .lbl { font-size: 20px; } }
+
+/* phrases that must not break inside (all browsers; Safari has no word-break: auto-phrase) */
+.ph { display: inline-block; }
+@supports not (word-break: auto-phrase) {
+  :lang(ja) :is(h1, h2, h3, .pill, .btn) { word-break: keep-all; overflow-wrap: anywhere; }
+}
