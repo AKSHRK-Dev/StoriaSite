@@ -188,6 +188,7 @@ T = {
         "pill_beta": "Beta {v}: tick guard keeps busy spawns smooth",
         "no_cluster": "This version does not include Storia Cluster (several servers running one world together). To use Cluster, download a release that supports it.",
         "no_cluster_tag": "No Cluster",
+        "dl_count": "{n} downloads", "dl_total": "total downloads across all releases", "dl_total_short": "{n} downloads",
         # docs
         "search": "Search docs", "search_empty": "No results", "on_page": "On this page", "prev": "Previous", "next": "Next",
         "docs_menu": "Documentation menu",
@@ -242,6 +243,7 @@ T = {
         "pill_beta": "{v}：混んだ初期地点も快適にする Tick Guard",
         "no_cluster": "このバージョンは Storia Cluster（複数のサーバーで 1 つのワールドを動かす機能）に対応していません。Cluster を使う場合は、対応しているリリースをダウンロードしてください。",
         "no_cluster_tag": "Cluster 非対応",
+        "dl_count": "{n} ダウンロード", "dl_total": "全リリースの累計ダウンロード数", "dl_total_short": "累計 {n} ダウンロード",
         "search": "ドキュメントを検索", "search_empty": "見つかりませんでした", "on_page": "このページの内容", "prev": "前へ", "next": "次へ",
         "docs_menu": "ドキュメントのメニュー",
         "tagline": "Folia をベースにした、大人数のコミュニティのための Minecraft サーバー。",
@@ -423,6 +425,9 @@ def home(lang):
     v = LATEST["version"]
     term = "".join(f'<span class="ln" data-k="{k}">{h}</span>' for k, h in terminal_lines(v))
     meta = "".join(f"<span>{ICON[i]}{e(m)}</span>" for i, m in t["meta"])
+    if RELEASES:
+        meta += f'<span>{ICON["dl"]}{e(t["dl_total_short"].format(n=f"{total_downloads():,}"))}</span>'
+
     status = f"""<div class="screen"><pre><span class="a">Storia {e(v)}</span>
 <span class="k">RAM world:</span> <span class="g">enabled</span>
 <span class="k">RAM used:</span> 3187 MB
@@ -645,6 +650,18 @@ def supports_cluster(rel):
     return first is not None and rel["published_at"] >= first["published_at"]
 
 
+def downloads_of(rel):
+    return sum(a.get("download_count", 0) for a in rel["assets"])
+
+
+def total_downloads():
+    return sum(downloads_of(r) for r in RELEASES)
+
+
+def fmt_count(n, lang):
+    return T[lang]["dl_count"].format(n=f"{n:,}")
+
+
 def cluster_warning(lang, rel):
     return "" if supports_cluster(rel) else f'<p class="compat-warn" role="note">{ICON["warn"]}<span>{e(T[lang]["no_cluster"])}</span></p>'
 
@@ -660,7 +677,7 @@ def release_card(lang, rel, beta=False):
         sha = (asset.get("digest") or "").replace("sha256:", "")
         files.append(f"""<div class="file" id="{'beta-' if beta else ''}{k}">{logo(k)}
   <div><h3>{e(name)}</h3><p>{e(t['products'][k][1])}</p>
-    <div class="meta"><span>{e(asset['name'])}</span><span>{fmt_size(asset['size'])}</span><span>{e(t['req'][k])}</span>{f'<span title="SHA-256 {e(sha)}">SHA-256 <code class="sha">{e(sha)}</code></span>' if sha else ''}<a href="{url(lang, f'docs/{doc}/')}" style="color:var(--accent);text-decoration:none;font-weight:700">{t['docs']}</a></div></div>
+    <div class="meta"><span>{e(asset['name'])}</span><span>{fmt_size(asset['size'])}</span><span>{e(t['req'][k])}</span><span>{e(fmt_count(asset.get('download_count', 0), lang))}</span>{f'<span title="SHA-256 {e(sha)}">SHA-256 <code class="sha">{e(sha)}</code></span>' if sha else ''}<a href="{url(lang, f'docs/{doc}/')}" style="color:var(--accent);text-decoration:none;font-weight:700">{t['docs']}</a></div></div>
   <a class="btn {'secondary' if beta else 'primary'} small" href="{e(asset['browser_download_url'])}">{ICON['dl']}{t['dl_btn']}</a></div>""")
     badge = f' <span class="beta">{t["beta"]}</span>' if beta else ""
     note = f'<p class="beta-note">{e(t["beta_note"])}</p>' if beta else ""
@@ -687,13 +704,14 @@ def downloads(lang):
         tag = f' <span class="beta">{t["beta"]}</span>' if rel.get("prerelease") else ""
         if not supports_cluster(rel):
             tag += f' <span class="no-cluster" title="{e(t["no_cluster"])}">{e(t["no_cluster_tag"])}</span>'
-        entries.append(f"""<div class="entry"><div class="when"><b>{e(rel['tag_name'].lstrip('v'))}</b>{tag}<time datetime="{e(rel['published_at'])}" data-time="{e(rel['published_at'])}">{fmt_date(rel['published_at'], lang)}</time></div>
+        entries.append(f"""<div class="entry"><div class="when"><b>{e(rel['tag_name'].lstrip('v'))}</b>{tag}<time datetime="{e(rel['published_at'])}" data-time="{e(rel['published_at'])}">{fmt_date(rel['published_at'], lang)}</time><span class="dl-total">{e(fmt_count(downloads_of(rel), lang))}</span></div>
   {f'<ul>{lis}</ul>' if lis else ''}<div class="files">{links}</div></div>""")
     body = f"""
 <section class="page-head"><div class="container">
   <p class="kicker">{e(t['dl_k'])}</p>
   <h1>{t['dl_t'].format(v=e(v))}</h1>
   <p>{e(t['dl_p'])}</p>
+  <p class="stat"><b>{total_downloads():,}</b><span>{e(t['dl_total'])}</span></p>
 </div></section>
 <div class="container">
   {release}
