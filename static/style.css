@@ -501,3 +501,44 @@ table.plain tr:last-child th, table.plain tr:last-child td { border-bottom: 0; }
 .page-head .stat b { font-family: var(--serif); font-size: 28px; font-weight: 600; color: var(--accent); line-height: 1; }
 .page-head .stat span { font-size: 14px; font-weight: 600; color: var(--ink-2); }
 .entry .when .dl-total { font-size: 13px; color: var(--muted); font-weight: 600; }
+
+/* ---------- Storia Cluster spotlight ---------- */
+.section.cluster { background: var(--bg-alt); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.cl-top { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); gap: 56px; align-items: center; }
+.cl-text h2 { font-size: clamp(34px, 4.6vw, 54px); line-height: 1.08; font-weight: 600; letter-spacing: -.02em; margin: 0 0 18px; }
+:lang(ja) .cl-text h2 { line-height: 1.25; letter-spacing: 0; }
+.cl-lede { font-size: 18px; color: var(--ink-2); margin: 0 0 28px; }
+.cl-note { margin: 18px 0 0; font-size: 13.5px; color: var(--muted); }
+.cmap { margin: 0; background: var(--surface); border: 1px solid var(--line); border-radius: 20px; padding: 20px; }
+.cmap svg { width: 100%; height: auto; font-family: var(--sans); }
+.cmap .cell { stroke: var(--surface); stroke-width: 3; }
+.cmap .cell.n { fill: var(--surface-2); }
+.cmap .cell.a { fill: color-mix(in srgb, var(--accent) 28%, var(--surface)); }
+.cmap .cell.b { fill: color-mix(in srgb, #3b7fb0 28%, var(--surface)); }
+.cmap .cell.g { fill: color-mix(in srgb, #4f9d69 30%, var(--surface)); }
+.cmap .p { stroke: var(--surface); stroke-width: 2.5; }
+.cmap .p.a { fill: var(--accent); }
+.cmap .p.b { fill: #2f6a94; }
+.cmap .p.g { fill: #3f7f55; }
+.cmap .lbl { text-anchor: middle; font-size: 14px; font-weight: 800; fill: var(--ink); letter-spacing: .02em; }
+.cmap .tag { text-anchor: middle; font-size: 11.5px; font-weight: 700; fill: var(--ink-2); paint-order: stroke; stroke: var(--surface); stroke-width: 4px; stroke-linejoin: round; }
+.cmap .mv { fill: none; stroke: var(--ink); stroke-width: 2; stroke-dasharray: 5 5; }
+.cmap .ah { fill: var(--ink); }
+.cmap .link rect { fill: var(--surface); stroke: var(--ink); stroke-width: 1.5; }
+.cmap .link path { stroke: var(--ink); stroke-width: 1.8; fill: none; stroke-linecap: round; }
+.cmap .mover { animation: cm-fly 3.2s ease-in-out infinite; }
+@keyframes cm-fly { 0%, 15% { transform: translate(0, 0); } 70%, 100% { transform: translate(108px, -58px); } }
+@media (prefers-reduced-motion: reduce) { .cmap .mover { animation: none; } }
+.legend { list-style: none; margin: 14px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px 18px; font-size: 13px; font-weight: 600; color: var(--ink-2); }
+.legend li { display: flex; align-items: center; gap: 7px; }
+.legend .sw { width: 14px; height: 14px; border-radius: 4px; display: inline-block; }
+.legend .sw.a { background: color-mix(in srgb, var(--accent) 28%, var(--surface)); border: 2px solid var(--accent); }
+.legend .sw.b { background: color-mix(in srgb, #3b7fb0 28%, var(--surface)); border: 2px solid #2f6a94; }
+.legend .sw.g { background: color-mix(in srgb, #4f9d69 30%, var(--surface)); border: 2px solid #3f7f55; }
+.legend .sw.n { background: var(--surface-2); border: 2px solid var(--line-strong); }
+.cl-points { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 48px; }
+.cl-point { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 22px; }
+.cl-point h3 { font-family: var(--sans); font-size: 16.5px; font-weight: 800; margin: 0 0 6px; }
+.cl-point p { margin: 0; font-size: 14.5px; color: var(--ink-2); }
+@media (max-width: 1000px) { .cl-top { grid-template-columns: 1fr; gap: 36px; } .cl-points { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 560px) { .cl-points { grid-template-columns: 1fr; } .cmap { padding: 12px; } .cl-lede { font-size: 16.5px; } .cmap .tag { display: none; } .cmap .lbl { font-size: 20px; } }

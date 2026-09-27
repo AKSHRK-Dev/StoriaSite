@@ -150,14 +150,14 @@ T = {
     "en-us": {
         "features": "Features", "downloads": "Downloads", "docs": "Docs", "github": "GitHub",
         "theme": "Dark mode", "menu": "Menu", "skip": "Skip to main content", "title_tag": "The finest server software. Zero stutter.", "copied": "Copied to clipboard", "results": "{n} results", "language": "Language", "documentation": "Documentation",
-        "desc": "Storia is a Folia-based Minecraft server with RAM-backed worlds, fast chunk pregeneration, a fair share of the server for every player, redstone-safe physics optimizations and encrypted terrain offloading to other machines.",
+        "desc": "Storia is a Minecraft server that runs one world on several machines at once: players move between servers without a loading screen. Built on Folia, with RAM worlds, fast pregeneration and a tick guard for busy spawns.",
         "pill": "Storia {v} is out", "pill_tag": "New",
         "hero": 'The finest server software. <span class="accent">Zero stutter.</span>',
-        "hero_sub": "Storia is a Minecraft server built on Folia. It keeps worlds in RAM, gives every player a fair slice of the CPU and can hand terrain generation to other machines, without ever pausing your redstone.",
+        "hero_sub": "Storia is a Minecraft server that runs one world on several machines at once. Players cross from server to server without a loading screen, and redstone never stops.",
         "get": "Download {v}", "read": "Read the docs",
         "meta": [("layers", "Minecraft " + MC_VERSION), ("java", "Java 25"), ("code", "Open source")],
-        "why_k": "What's inside", "why_t": "Six things Storia does for your server",
-        "why_p": "Each one keeps vanilla behavior: the same terrain for the same seed, the same physics, and redstone that never stops.",
+        "why_k": "On a single server, too", "why_t": "Fast even on one machine",
+        "why_p": "Without a cluster, these still work on every Storia server. Each one keeps vanilla behavior: the same terrain for the same seed, the same physics, and redstone that never stops.",
         "more": "How it works",
         "t_ram": ("RAM world", "Worlds live in memory", "Worlds are copied into RAM at startup and synced back to disk in the background, so disk speed stops mattering."),
         "t_pregen": ("Pregeneration", "Five times faster pregen", "/storia pregen puts every spare core to work and picks up where it left off after a restart."),
@@ -175,7 +175,7 @@ T = {
         "products": {
             "storia": ("The server", "Folia's regionized multithreading plus RAM worlds, fast pregeneration and a per-player budget."),
             "worker": ("Terrain helper", "Generates terrain for your server on a spare machine. No player port."),
-            "relay": ("Work router", "Shares terrain work between any number of workers. No Minecraft files."),
+            "relay": ("Coordinator", "Keeps a cluster's world and decides which server runs which part. Also shares terrain work between workers."),
             "proxy": ("Network proxy", "Velocity with placeholders, a live tab list and network messages."),
         },
         "req": {"storia": "Java 25", "worker": "Java 25", "relay": "Java 21+", "proxy": "Java 21+"},
@@ -187,6 +187,18 @@ T = {
         "dl_btn": "Download", "dev": "Looking for the newest changes? Development builds are on", "history": "Release history",
         "no_release": "No release has been published yet.",
         "beta": "Beta", "beta_head": "Try the beta",
+        "cl_nav": "Cluster", "cl_k": "Storia Cluster · Beta", "cl_t": "One world, many servers.",
+        "cl_p": "Folia splits a world across the cores of one machine. Storia splits it across machines. When your players outgrow one server, add another: they keep playing in the same world.",
+        "cl_try": "Try the beta", "cl_guide": "Read the guide",
+        "cl_points": [
+            ("Automatic placement", "Every part of the world where people play is given to a server. Players who meet end up on the same one; busy servers hand work to quiet ones."),
+            ("No loading screen", "Crossing to another server keeps the connection. Inventory, advancements and statistics come along."),
+            ("Contraptions stay whole", "Redstone and machines on the border between two parts are found and always run on one server."),
+            ("Stop a server, nobody is kicked", "/stop moves its players to the other servers first. If the coordinator blinks, writes wait on disk."),
+        ],
+        "cl_fig": "A world split between three servers. Each colored area is run by one server; a player flying from one area into another moves to that server without a loading screen.",
+        "cl_legend": ["Server alpha", "Server beta", "Server gamma", "Not in use"],
+        "cl_note": "Seamless moves need Minecraft 26.1 or 26.2 clients. Beta: back up your world first.",
         "beta_note": "New features that are still being tested. Back up your server before trying it.",
         "pill_beta": "Beta {v}: tick guard keeps busy spawns smooth",
         "no_cluster": "This version does not include Storia Cluster (several servers running one world together). To use Cluster, download a release that supports it.",
@@ -206,14 +218,14 @@ T = {
     "ja-jp": {
         "features": "特長", "downloads": "ダウンロード", "docs": "ドキュメント", "github": "GitHub",
         "theme": "ダークモード", "menu": "メニュー", "skip": "本文へスキップ", "title_tag": "カクつかない、最高峰のサーバーソフトウェア", "copied": "クリップボードにコピーしました", "results": "{n} 件見つかりました", "language": "言語", "documentation": "ドキュメント",
-        "desc": "Storia は Folia ベースの Minecraft サーバーです。RAM 上のワールド、高速なチャンク事前生成、プレイヤーごとの公平な負荷分配、回路を止めない物理演算の最適化、暗号化された別マシンへの地形生成の分担を備えています。",
+        "desc": "Storia は、1 つのワールドを複数のサーバーで分担して動かせる Minecraft サーバーです。サーバー間の移動に読み込み画面は出ません。Folia ベースで、RAM ワールド、高速な事前生成、混んだ初期地点のための Tick Guard も備えています。",
         "pill": "Storia {v} を公開しました", "pill_tag": "New",
         "hero": '<span class="accent">カクつかない、</span><wbr>最高峰の<wbr>サーバー<wbr>ソフトウェア。',
-        "hero_sub": "Storia は Folia をベースにした Minecraft サーバーです。ワールドを RAM に置き、CPU を全員に公平に分け、地形生成をほかのマシンに任せることもできます。回路は一切止めません。",
+        "hero_sub": "Storia は、1 つのワールドを複数のサーバーで分担して動かせる Minecraft サーバーです。サーバーをまたいでも読み込み画面は出ず、回路も止まりません。",
         "get": "{v} をダウンロード", "read": "ドキュメントを読む",
         "meta": [("layers", "Minecraft " + MC_VERSION), ("java", "Java 25"), ("code", "Open source")],
-        "why_k": "What's inside", "why_t": "Storia がサーバーにしてくれる 6 つのこと",
-        "why_p": "どれもバニラと同じ動きを保ちます。同じシードなら同じ地形、同じ物理演算、そして回路は止まりません。",
+        "why_k": "On a single server, too", "why_t": "1 台のサーバーでも、とことん軽く",
+        "why_p": "Cluster を使わなくても、どの Storia サーバーでも効きます。どれもバニラと同じ動きです。同じシードなら同じ地形、同じ物理演算、そして回路は止まりません。",
         "more": "仕組みを見る",
         "t_ram": ("RAM world", "ワールドはメモリの上に", "起動時にワールドを RAM にコピーし、変更はバックグラウンドでディスクへ。ディスクの速さが気にならなくなります。"),
         "t_pregen": ("Pregeneration", "事前生成が約 5 倍速く", "/storia pregen は空いているコアをすべて使い、再起動しても続きから再開します。"),
@@ -231,7 +243,7 @@ T = {
         "products": {
             "storia": ("サーバー本体", "Folia のリージョン並列処理に、RAM ワールド・高速な事前生成・プレイヤーごとの予算を加えたもの。"),
             "worker": ("地形のお手伝い", "空いているマシンで地形を生成します。プレイヤー用ポートは開きません。"),
-            "relay": ("仕事の中継", "何台ものワーカーに仕事を配ります。Minecraft のファイルは不要です。"),
+            "relay": ("まとめ役", "Cluster のワールドを保管し、どのサーバーがどこを動かすかを決めます。ワーカーへの地形生成の仕事も配ります。"),
             "proxy": ("ネットワーク用プロキシ", "プレースホルダー、自動更新のタブリスト、ネットワークのメッセージを備えた Velocity。"),
         },
         "req": {"storia": "Java 25", "worker": "Java 25", "relay": "Java 21 以上", "proxy": "Java 21 以上"},
@@ -242,6 +254,18 @@ T = {
         "dl_btn": "ダウンロード", "dev": "最新の変更を試したい場合は、開発版のビルドを入手できます：", "history": "リリース履歴",
         "no_release": "まだリリースがありません。",
         "beta": "Beta", "beta_head": "Beta 版を試す",
+        "cl_nav": "Cluster", "cl_k": "Storia Cluster · Beta", "cl_t": "1 つのワールドを、何台ものサーバーで。",
+        "cl_p": "Folia は 1 台のマシンの中で、ワールドを CPU コアごとに分けました。Storia はそれをマシンごとに分けます。プレイヤーが 1 台に収まらなくなったら、サーバーを足すだけ。みんな同じワールドで遊び続けられます。",
+        "cl_try": "Beta を試す", "cl_guide": "ガイドを読む",
+        "cl_points": [
+            ("自動で振り分け", "人が遊んでいる場所ごとに、サーバーを自動で割り当てます。近づいたプレイヤーは同じサーバーにまとめ、忙しいサーバーの仕事は空いているサーバーへ移します。"),
+            ("読み込み画面なしで移動", "別のサーバーへ移っても接続はそのまま。インベントリ・進捗・統計も一緒に移ります。"),
+            ("回路は分けない", "サーバーの境目にあるレッドストーンや装置を見つけ、必ず 1 台で動かします。"),
+            ("止めてもキックされない", "/stop すると、先にプレイヤーをほかのサーバーへ移します。まとめ役が一瞬止まっても、書き込みはディスクで待ちます。"),
+        ],
+        "cl_fig": "3 台のサーバーで分担しているワールド。色の付いた場所をそれぞれ 1 台が動かし、別の場所へ飛んでいったプレイヤーは、読み込み画面なしでそのサーバーへ移ります。",
+        "cl_legend": ["Server alpha", "Server beta", "Server gamma", "Not in use"],
+        "cl_note": "読み込み画面なしの移動は Minecraft 26.1・26.2 のクライアントが対象です。ベータ版なので、試す前にワールドをバックアップしてください。",
         "beta_note": "テスト中の新機能が入っています。試す前にサーバーをバックアップしてください。",
         "pill_beta": "{v}：混んだ初期地点も快適にする Tick Guard",
         "no_cluster": "このバージョンは Storia Cluster（複数のサーバーで 1 つのワールドを動かす機能）に対応していません。Cluster を使う場合は、対応しているリリースをダウンロードしてください。",
@@ -276,6 +300,7 @@ def header(lang, path, current):
   <div class="container">
     <a class="brand" href="{url(lang)}" aria-label="StoriaMC">{logo("storia")}<span class="word">StoriaMC</span></a>
     <nav class="nav" id="site-nav" aria-label="Main">
+      <a href="{url(lang)}#cluster">{t['cl_nav']}</a>
       <a href="{url(lang)}#features">{t['features']}</a>
       <a href="{url(lang, 'how-it-works/')}"{cur('how')}>{HOW[lang]['nav']}</a>
       <a href="{url(lang, 'downloads/')}"{cur('downloads')}>{t['downloads']}</a>
@@ -369,18 +394,18 @@ def page(lang, path, title, description, body, current):
 # Home
 # ---------------------------------------------------------------------------------------------
 def terminal_lines(version):
-    radius_chunks = (5000 + 15) >> 4
-    side = 2 * radius_chunks + 1
+    d = '<span class="d">[INFO]</span> '
     return [
-        ("cmd", '<span class="p">$</span> <span class="c">java</span> -Xmx8G -jar storia-' + e(version) + '.jar nogui'),
-        ("out", '<span class="d">[INFO]</span> Starting minecraft server version ' + MC_VERSION),
-        ("out", '<span class="d">[INFO]</span> <span class="g">Loaded world (412 MB) into /dev/shm/storia in 830 ms</span>'),
-        ("out", '<span class="d">[INFO]</span> Syncing to disk every 300 seconds.'),
-        ("out", '<span class="d">[INFO]</span> Player budget enabled: checking every 100 ticks, region MSPT limit 45.0'),
-        ("out", '<span class="d">[INFO]</span> <span class="a">Offloading noise generation to 192.168.0.20:25590 (6 threads, encrypted)</span>'),
-        ("out", '<span class="d">[INFO]</span> <span class="w">Done (4.812s)! For help, type "help"</span>'),
-        ("cmd", '<span class="p">&gt;</span> storia pregen start 5000'),
-        ("out", f'<span class="g">Pregenerating {side * side} chunks in world with 11 worker threads.</span>'),
+        ("cmd", '<span class="p">$</span> <span class="c">java</span> -jar storia-relay.jar'),
+        ("out", d + 'Cluster mode on: storing the shared world in cluster-world'),
+        ("out", d + '<span class="g">Node alpha joined the cluster</span>'),
+        ("out", d + '<span class="g">Node beta joined the cluster</span>'),
+        ("out", d + '<span class="g">Node gamma joined the cluster</span>'),
+        ("out", d + '<span class="a">Storia Proxy connected to the cluster</span>'),
+        ("out", d + 'Linked r.3.-1 and r.4.-1: redstone on the border stays on one node'),
+        ("out", d + '<span class="w">Moving player Alice from alpha to beta (areas met)</span>'),
+        ("cmd", '<span class="p">&gt;</span> status'),
+        ("out", '<span class="g">3 node(s), 214 owned cell(s), 1 proxy, 38 player move(s)</span>'),
     ]
 
 
@@ -404,6 +429,71 @@ def diagram(lang):
 {box(346, 68, 88, 40, labels[3])}{wlines}{workers}
 <text x="285" y="170" text-anchor="middle" font-size="10.5" letter-spacing="1.5" fill="#9c948b" font-family="JetBrains Mono, monospace">AES-256-GCM</text>
 </svg>"""
+
+
+def cluster_map(lang):
+    """A world split between three servers, as a grid of cells coloured by the server that runs them."""
+    t = T[lang]
+    cols, rows, w, h, x0, y0 = 10, 6, 58, 54, 10, 10
+    owner = {}
+    for c in range(0, 3):
+        for r in range(0, 4):
+            owner[(c, r)] = "a"
+    owner[(3, 1)] = owner[(3, 2)] = "a"
+    for c in range(5, 8):
+        for r in range(0, 3):
+            owner[(c, r)] = "b"
+    for c in range(6, 10):
+        for r in range(3, 6):
+            owner[(c, r)] = "g"
+    cells = "".join(f'<rect class="cell {owner.get((c, r), "n")}" x="{x0 + c * w}" y="{y0 + r * h}" width="{w}" height="{h}" rx="6"/>'
+                    for c in range(cols) for r in range(rows))
+    cx = lambda c: x0 + c * w + w / 2
+    cy = lambda r: y0 + r * h + h / 2
+    players = [("a", 0.6, 0.7), ("a", 1.5, 2.3), ("a", 1.1, 1.4), ("b", 6.2, 0.6), ("b", 5.7, 1.5), ("g", 7.4, 4.2), ("g", 8.6, 4.9), ("g", 8.1, 3.6)]
+    dots = "".join(f'<circle class="p {k}" cx="{x0 + c * w}" cy="{y0 + r * h}" r="7"/>' for k, c, r in players)
+    labels = "".join(f'<text class="lbl" x="{x}" y="{y}">{n}</text>' for n, x, y in
+                     (("alpha", cx(1), cy(3) + 6), ("beta", cx(6), cy(2) + 6), ("gamma", cx(8), cy(5) + 6)))
+    # a player flying from alpha into beta's area
+    path = f'M{cx(3) + 6} {cy(2)} C {cx(4) - 4} {cy(2) + 10}, {cx(4) + 6} {cy(1) + 18}, {cx(5) - 6} {cy(1) + 4}'
+    move = (f'<path class="mv" d="{path}" marker-end="url(#cm-arr)"/>'
+            f'<circle class="p a mover" cx="{cx(3) + 2}" cy="{cy(2)}" r="7"/>'
+            f'<text class="tag" x="{cx(4) + 2}" y="{cy(2) + 34}">seamless move</text>')
+    # linked cells: a machine on the border between two of alpha's cells
+    link = (f'<g class="link"><rect x="{x0 + 3 * w - 12}" y="{cy(1) - 11}" width="24" height="22" rx="5"/>'
+            f'<path d="M{x0 + 3 * w - 6} {cy(1)}h12M{x0 + 3 * w - 3} {cy(1) - 5}v10M{x0 + 3 * w + 3} {cy(1) - 5}v10"/></g>'
+            f'<text class="tag" x="{x0 + 3 * w}" y="{cy(0) + 6}">linked</text>')
+    legend = "".join(f'<li><i class="sw {k}"></i>{e(n)}</li>' for k, n in zip(("a", "b", "g", "n"), t["cl_legend"]))
+    return f"""<figure class="cmap">
+  <svg viewBox="0 0 600 344" role="img" aria-label="{e(t['cl_fig'])}">
+    <defs><marker id="cm-arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0 10 5 0 10z" class="ah"/></marker></defs>
+    {cells}{labels}{link}{dots}{move}
+  </svg>
+  <figcaption><ul class="legend">{legend}</ul></figcaption>
+</figure>"""
+
+
+def cluster_section(lang):
+    t = T[lang]
+    points = "".join(f'<div class="cl-point"><h3>{e(h)}</h3><p>{e(p)}</p></div>' for h, p in t["cl_points"])
+    return f"""<section class="section cluster" id="cluster" aria-labelledby="cl-title">
+  <div class="container">
+    <div class="cl-top">
+      <div class="cl-text">
+        <p class="kicker">{e(t['cl_k'])}</p>
+        <h2 id="cl-title">{e(t['cl_t'])}</h2>
+        <p class="cl-lede">{e(t['cl_p'])}</p>
+        <div class="actions">
+          <a class="btn primary" href="{url(lang, 'downloads/')}#beta">{ICON['dl']}{e(t['cl_try'])}</a>
+          <a class="btn secondary" href="{url(lang, 'docs/cluster/')}">{e(t['cl_guide'])}</a>
+        </div>
+        <p class="cl-note">{e(t['cl_note'])}</p>
+      </div>
+      {cluster_map(lang)}
+    </div>
+    <div class="cl-points">{points}</div>
+  </div>
+</section>"""
 
 
 def pill(lang, v):
@@ -461,9 +551,11 @@ def home(lang):
       <a class="btn secondary" href="{url(lang, 'docs/')}">{t['read']}</a>
     </div>
     <div class="meta">{meta}</div>
-    <div class="stage"><div class="terminal" aria-hidden="true"><div class="bar"><i></i><i></i><i></i><b>storia</b></div><pre id="term">{term}</pre></div></div>
+    <div class="stage"><div class="terminal" aria-hidden="true"><div class="bar"><i></i><i></i><i></i><b>storia-relay</b></div><pre id="term">{term}</pre></div></div>
   </div>
 </section>
+
+{cluster_section(lang)}
 
 <section class="section" id="features">
   <div class="container">
