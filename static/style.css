@@ -556,3 +556,7 @@ table.plain tr:last-child th, table.plain tr:last-child td { border-bottom: 0; }
 .arch .mv { fill: none; stroke: var(--accent); stroke-width: 1.8; stroke-dasharray: 5 5; }
 @media (max-width: 760px) { .arch-wide { display: none; } .arch-tall { display: block; } .arch-wrap { overflow: visible; } }
 .who-proxy { background: var(--surface); color: var(--ink); border: 1px dashed var(--control); }
+.dl-which { max-width: 920px; margin: 0 auto 20px; display: flex; gap: 10px; align-items: flex-start; padding: 12px 16px; border: 1px solid var(--line); border-left: 4px solid var(--accent); border-radius: 10px; background: var(--surface); font-size: 14px; color: var(--ink); }
+.dl-which svg { width: 18px; height: 18px; flex-shrink: 0; margin-top: 2px; color: var(--accent); }
+.dl-which a { color: var(--accent); font-weight: 700; text-decoration: underline; text-underline-offset: 3px; }
+.cl-scale { margin: 10px 0 0; }

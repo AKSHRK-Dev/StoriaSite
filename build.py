@@ -59,6 +59,7 @@ DOCS_NAV = [
     ]),
     (("Storia Cluster", "Storia Cluster"), [
         ("cluster", "One world on several servers", "複数サーバーで 1 つのワールド"),
+        ("scaling", "From one server to a cluster", "1 台から Cluster へ"),
         ("worker", "Storia Worker", "Storia Worker"),
         ("relay", "Storia Relay", "Storia Relay"),
         ("security", "Encryption & security", "暗号化とセキュリティ"),
@@ -95,6 +96,7 @@ MARK = ('<svg viewBox="46 40 108 120" fill="currentColor" aria-hidden="true">'
         '<rect x="50" y="140" width="100" height="16" rx="3"/></svg>')
 ICON = {
     "storia": MARK,
+    "info": svg('<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/>'),
     "warn": svg('<path d="M12 3 2 20h20z"/><path d="M12 10v4M12 17v.5"/>'),
     "worker": svg('<rect x="6" y="6" width="12" height="12" rx="2"/><path d="M9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4"/><rect x="10" y="10" width="4" height="4" rx=".5" fill="currentColor"/>'),
     "relay": svg('<circle cx="12" cy="12" r="3"/><circle cx="4" cy="5" r="2"/><circle cx="4" cy="19" r="2"/><circle cx="20" cy="5" r="2"/><circle cx="20" cy="19" r="2"/><path d="m6 6.5 3.6 3.4M6 17.5l3.6-3.4M18 6.5l-3.6 3.4M18 17.5l-3.6-3.4"/>'),
@@ -202,6 +204,9 @@ T = {
         "beta_note": "New features that are still being tested. Back up your server before trying it.",
         "pill_beta": "Beta {v}: tick guard keeps busy spawns smooth",
         "dl_count": "{n} downloads", "dl_total": "total downloads across all releases", "dl_total_short": "{n} downloads",
+        "dl_which": "Running one server? You only need <b>storia-{v}.jar</b>. Storia Worker and Storia Relay are for a cluster (one world on several servers) and do not work with a single Storia server.",
+        "dl_which_link": "From one server to a cluster",
+        "cl_scale": "Running one server now? How to move to a cluster",
         # docs
         "search": "Search docs", "search_empty": "No results", "on_page": "On this page", "prev": "Previous", "next": "Next",
         "docs_menu": "Documentation menu",
@@ -269,6 +274,9 @@ T = {
         "beta_note": "テスト中の新機能が入っています。試す前にサーバーをバックアップしてください。",
         "pill_beta": "{v}：混んだ初期地点も快適にする Tick Guard",
         "dl_count": "{n} ダウンロード", "dl_total": "全リリースの累計ダウンロード数", "dl_total_short": "累計 {n} ダウンロード",
+        "dl_which": "サーバー 1 台で動かすなら、必要なのは <b>storia-{v}.jar</b> だけです。Storia Worker と Storia Relay は Cluster（1 つのワールドを複数のサーバーで動かす構成）専用で、単体の Storia サーバーでは動きません。",
+        "dl_which_link": "1 台から Cluster へ",
+        "cl_scale": "いまは 1 台で動かしていますか？Cluster への移り方",
         "search": "ドキュメントを検索", "search_empty": "見つかりませんでした", "on_page": "このページの内容", "prev": "前へ", "next": "次へ",
         "docs_menu": "ドキュメントのメニュー",
         "tagline": "Folia をベースにした、大人数のコミュニティのための Minecraft サーバー。",
@@ -464,6 +472,7 @@ def cluster_section(lang):
           <a class="btn secondary" href="{url(lang, 'docs/cluster/')}">{e(t['cl_guide'])}</a>
         </div>
         <p class="cl-note">{e(t['cl_note'])}</p>
+        <p class="cl-scale"><a class="link" href="{url(lang, 'docs/scaling/')}">{e(t['cl_scale'])} {ICON['arrow']}</a></p>
       </div>
       {cluster_map(lang)}
     </div>
@@ -779,6 +788,7 @@ def downloads(lang):
   <p class="stat"><b>{total_downloads():,}</b><span>{e(t['dl_total'])}</span></p>
 </div></section>
 <div class="container">
+  <p class="dl-which" role="note">{ICON['info']}<span>{t['dl_which'].format(v=e(v))} <a href="{url(lang, 'docs/scaling/')}">{e(t['dl_which_link'])}</a></span></p>
   {release}
   <p class="dl-note">{e(t['dev'])} <a href="{GITHUB}/actions">GitHub Actions</a>.</p>
 </div>

@@ -44,7 +44,7 @@ HOW = {
             "worker": {
                 "role": "One server of a cluster",
                 "does": "Runs the part of the shared world where its players are: chunks, mobs, redstone and the players themselves. Add workers when your players outgrow one machine.",
-                "not": "Keeps no world of its own: chunks, player data and shared data are read from and written to the relay.",
+                "not": "Cannot be added to a single Storia server: it needs Storia Relay. Keeps no world of its own; chunks, player data and shared data are read from and written to the relay.",
                 "runs": "Any machine that could run a Storia server.",
                 "needs": "Java 25, about the CPU and RAM of a normal Storia server. No world copy: it fetches the world settings from the relay.",
                 "ports": "25565 for the proxy (keep it private).",
@@ -171,7 +171,7 @@ HOW = {
             "worker": {
                 "role": "Cluster のサーバー 1 台",
                 "does": "共有するワールドのうち、自分のプレイヤーがいる場所（チャンク・モブ・回路・プレイヤー）を動かします。プレイヤーが 1 台に収まらなくなったら、ワーカーを足します。",
-                "not": "自分のワールドは持ちません。チャンク・プレイヤーデータ・共有データは Relay から読み書きします。",
+                "not": "単体の Storia サーバーには足せません（Storia Relay が必要）。自分のワールドは持たず、チャンク・プレイヤーデータ・共有データは Relay から読み書きします。",
                 "runs": "Storia サーバーを動かせるマシンならどれでも。",
                 "needs": "Java 25。普通の Storia サーバーと同じくらいの CPU と RAM。ワールドのコピーは不要（Relay から設定を取り寄せます）。",
                 "ports": "プロキシ用の 25565（非公開に）。",

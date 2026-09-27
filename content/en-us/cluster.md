@@ -1,6 +1,8 @@
 ---
 summary: Several Storia servers run one world together, each ticking a different part of it, and players move between them without a loading screen.
 ---
+Running a single server today? See [[scaling|From one server to a cluster]] for when to move and how.
+
 !!! note "Version"
     Storia Cluster is part of Storia **26.2-2** and later; the first 26.2 release does not include it. Back up your
     world before you move it into a cluster.

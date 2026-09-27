@@ -1,6 +1,10 @@
 ---
 summary: One server of a Storia Cluster. Add workers to run one world on several machines; players move between them without a loading screen.
 ---
+!!! warning "Not for a single Storia server"
+    A worker works only together with Storia Relay; it cannot be added to a single Storia server. To grow from one
+    server to several, see [[scaling|From one server to a cluster]].
+
 A **Storia Worker** is one server of a [[cluster|Storia Cluster]]. Each worker runs the part of the world where
 its players are (chunks, mobs, redstone and the players themselves), and [[relay|Storia Relay]] decides which
 worker runs which part. Players reach the workers through Storia Proxy and move between them without a loading

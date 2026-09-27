@@ -80,3 +80,7 @@ Recommended next reads:
 - [[pregeneration]] to generate terrain before players arrive.
 - [[cluster]] when your players outgrow one machine.
 - [[proxy]] if you run several servers behind one address.
+
+!!! tip "One server is enough to start"
+    Everything above is a single Storia server. Storia Worker and Storia Relay are only for a cluster (one world on
+    several servers); see [[scaling|From one server to a cluster]] when you need more than one machine.
