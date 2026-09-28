@@ -154,6 +154,8 @@ T = {
         "theme": "Dark mode", "menu": "Menu", "skip": "Skip to main content", "title_tag": "The finest server software. Zero stutter.", "copied": "Copied to clipboard", "results": "{n} results", "language": "Language", "documentation": "Documentation",
         "desc": "Storia is a Minecraft server that runs one world on several machines at once: players move between servers without a loading screen. Built on Folia, with RAM worlds, fast pregeneration and a tick guard for busy spawns.",
         "pill": "Storia {v} is out", "pill_tag": "New",
+        "rn": "Release notes", "rn_k": "What changed", "rn_p": "New features, improvements and fixes in every Storia release, newest first.",
+        "rn_versions": "Versions", "rn_latest": "Latest", "rn_files": "Downloads on GitHub", "rn_read": "Release notes",
         "hero": 'The finest server software. <span class="accent">Zero stutter.</span>',
         "hero_sub": "Storia is a Minecraft server that runs one world on several machines at once. Players cross from server to server without a loading screen, and redstone never stops.",
         "get": "Download {v}", "read": "Read the docs",
@@ -225,6 +227,8 @@ T = {
         "theme": "ダークモード", "menu": "メニュー", "skip": "本文へスキップ", "title_tag": "カクつかない、最高峰のサーバーソフトウェア", "copied": "クリップボードにコピーしました", "results": "{n} 件見つかりました", "language": "言語", "documentation": "ドキュメント",
         "desc": "Storia は、1 つのワールドを複数のサーバーで分担して動かせる Minecraft サーバーです。サーバー間の移動に読み込み画面は出ません。Folia ベースで、RAM ワールド、高速な事前生成、混んだ初期地点のための Tick Guard も備えています。",
         "pill": "Storia {v} を公開しました", "pill_tag": "New",
+        "rn": "パッチノート", "rn_k": "変更点", "rn_p": "Storia の各リリースで追加された機能・改善・修正を、新しい順にまとめています。",
+        "rn_versions": "バージョン", "rn_latest": "Latest", "rn_files": "GitHub でダウンロード", "rn_read": "パッチノート",
         "hero": '<span class="accent ph">カクつかない、</span><span class="ph">最高峰の</span><span class="ph">サーバー</span><span class="ph">ソフトウェア。</span>',
         "hero_sub": "Storia は、1 つのワールドを複数のサーバーで分担して動かせる Minecraft サーバーです。サーバーをまたいでも読み込み画面は出ず、回路も止まりません。",
         "get": "{v} をダウンロード", "read": "ドキュメントを読む",
@@ -312,6 +316,7 @@ def header(lang, path, current):
       <a href="{url(lang)}#features">{t['features']}</a>
       <a href="{url(lang, 'how-it-works/')}"{cur('how')}>{HOW[lang]['nav']}</a>
       <a href="{url(lang, 'downloads/')}"{cur('downloads')}>{t['downloads']}</a>
+      <a href="{url(lang, 'releases/')}"{cur('releases')}>{t['rn']}</a>
       <a href="{url(lang, 'docs/')}"{cur('docs')}>{t['docs']}</a>
     </nav>
     <div class="header-tools">
@@ -337,6 +342,7 @@ def footer(lang):
       <div class="about"><a class="brand" href="{url(lang)}" aria-label="StoriaMC">{logo("storia")}<span class="word" style="color:var(--ink)">StoriaMC</span></a><p>{e(t['tagline'])}</p></div>
       <div><h2>{t['f_use']}</h2><ul>
         <li><a href="{url(lang, 'downloads/')}">{t['downloads']}</a></li>
+        <li><a href="{url(lang, 'releases/')}">{t['rn']}</a></li>
         {d('getting-started')}{d('configuration')}{d('commands')}
       </ul></div>
       <div><h2>{t['f_learn']}</h2><ul>
@@ -485,7 +491,7 @@ def cluster_section(lang):
 
 def pill(lang, v):
     t = T[lang]  # stable builds only; betas are announced on the downloads page
-    return f'<a class="pill" href="{url(lang, "downloads/")}"><b>{t["pill_tag"]}</b>{e(t["pill"].format(v=v))}{ICON["arrow"]}</a>'
+    return f'<a class="pill" href="{url(lang, "releases/")}#{version_id(v)}"><b>{t["pill_tag"]}</b>{e(t["pill"].format(v=v))}{ICON["arrow"]}</a>'
 
 
 def tile(lang, key, icon, visual, slug, width=""):
@@ -781,7 +787,7 @@ def downloads(lang):
         links = "".join(f'<a href="{e(a["browser_download_url"])}">{e(a["name"])}</a>' for a in rel["assets"])
         tag = f' <span class="beta">{t["beta"]}</span>' if rel.get("prerelease") else ""
         entries.append(f"""<div class="entry"><div class="when"><b>{e(rel['tag_name'].lstrip('v'))}</b>{tag}<time datetime="{e(rel['published_at'])}" data-time="{e(rel['published_at'])}">{fmt_date(rel['published_at'], lang)}</time><span class="dl-total">{e(fmt_count(downloads_of(rel), lang))}</span></div>
-  {f'<ul>{lis}</ul>' if lis else ''}<div class="files">{links}</div></div>""")
+  {f'<ul>{lis}</ul>' if lis else ''}<div class="files">{notes_link(lang, rel)}{links}</div></div>""")
     body = f"""
 <section class="page-head"><div class="container">
   <p class="kicker">{e(t['dl_k'])}</p>
@@ -796,6 +802,67 @@ def downloads(lang):
 </div>
 <section class="section"><div class="container"><div class="history"><h2>{t['history']}</h2>{''.join(entries)}</div></div></section>"""
     return page(lang, "downloads/", t["downloads"], t["dl_p"], body, "downloads")
+
+
+# ---------------------------------------------------------------------------------------------
+# Release notes: content/<lang>/releases/<version>.md, shown once that version is released
+# ---------------------------------------------------------------------------------------------
+def version_id(v):
+    return "v" + re.sub(r"[^0-9a-z]+", "-", v.lower())
+
+
+def release_notes(lang):
+    released = {r["tag_name"].lstrip("v"): r for r in RELEASES}
+    notes = []
+    for f in (CONTENT / lang / "releases").glob("*.md"):
+        v = f.stem
+        if RELEASES and v not in released:
+            continue  # written ahead of the release
+        meta, src = parse_front(f.read_text(encoding="utf-8"))
+        rel = released.get(v)
+        notes.append({"v": v, "meta": meta, "src": src, "rel": rel,
+                      "when": rel["published_at"] if rel else meta.get("date", "")})
+    notes.sort(key=lambda n: n["when"], reverse=True)
+    return notes
+
+
+def notes_link(lang, rel):
+    v = rel["tag_name"].lstrip("v")
+    if not (CONTENT / lang / "releases" / f"{v}.md").exists():
+        return ""
+    return f'<a class="rn-link" href="{url(lang, "releases/")}#{version_id(v)}">{e(T[lang]["rn_read"])}</a>'
+
+
+def releases_page(lang):
+    t = T[lang]
+    notes = release_notes(lang)
+    side, items = [], []
+    for n in notes:
+        vid = version_id(n["v"])
+        beta = n["meta"].get("channel") == "beta"
+        badge = f' <span class="beta">{t["beta"]}</span>' if beta else (f' <span class="beta latest">{t["rn_latest"]}</span>' if n["v"] == LATEST["version"] else "")
+        body, _ = render_markdown(n["src"], lang)
+        body = re.sub(r'(id="|href="#)(?!v\d)', lambda m: m.group(1) + vid + "-", body)
+        date = f'<time datetime="{e(n["when"])}" data-time="{e(n["when"])}">{fmt_date(n["when"], lang)}</time>' if n["when"] else ""
+        files = f'<p class="rn-files"><a href="{e(n["rel"]["html_url"])}">{e(t["rn_files"])} {ICON["ext"]}</a></p>' if n["rel"] else ""
+        side.append(f'<li><a href="#{vid}">{e(n["v"])}</a>{"<small>" + t["beta"] + "</small>" if beta else ""}</li>')
+        items.append(f"""<article class="rn doc" id="{vid}" aria-labelledby="{vid}-h">
+  <header><h2 id="{vid}-h"><a href="#{vid}">Storia {e(n["v"])}</a>{badge}</h2>{date}</header>
+  <p class="summary">{e(n["meta"].get("summary", ""))}</p>
+  {body}
+  {files}
+</article>""")
+    body = f"""
+<section class="page-head"><div class="container">
+  <p class="kicker">{e(t['rn_k'])}</p>
+  <h1>{e(t['rn'])}</h1>
+  <p>{e(t['rn_p'])}</p>
+</div></section>
+<div class="container notes">
+  <nav class="rn-side" aria-label="{e(t['rn_versions'])}"><p class="group-title">{e(t['rn_versions'])}</p><ul>{''.join(side)}</ul></nav>
+  <div class="rn-list">{''.join(items)}</div>
+</div>"""
+    return page(lang, "releases/", t["rn"], t["rn_p"], body, "releases")
 
 
 def linkify(text):
@@ -1028,6 +1095,7 @@ def main():
     for lang in LANGS:
         write(lang, "", home(lang))
         write(lang, "downloads/", downloads(lang))
+        write(lang, "releases/", releases_page(lang))
         write(lang, "how-it-works/", how_it_works(lang))
         for key in ("worker", "relay", "proxy"):  # old per-product pages
             write(lang, f"downloads/{key}/", redirect_page(url(lang, f"downloads/#{key}")))
