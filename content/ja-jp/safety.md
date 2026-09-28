@@ -13,7 +13,7 @@ Storia を入れる前に知っておきたいことを 1 ページにまとめ�
 | Paper・Folia・バニラに戻せる？ | 戻せます。ワールドフォルダをそのまま使えます。 |
 | 地形は変わる？ | 変わりません。同じシード値なら、バニラとまったく同じ地形になります。 |
 | レッドストーンやモブの動きは？ | Storia 独自の変更は同じ結果を保ちます。違いが出るのは、もとになった Folia の仕様の部分です。 |
-| プレイヤーの情報を外部に送る？ | Storia 独自の機能は、何も外部に送りません。 |
+| プレイヤーの情報を外部に送る？ | 送りません。送るのは、サーバーの台数などの匿名の統計（bStats）だけで、オフにできます。 |
 | プラグインは動く？ | **Folia に対応したプラグイン**だけが動きます。 |
 
 ## データの扱い
@@ -28,13 +28,15 @@ Storia を入れる前に知っておきたいことを 1 ページにまとめ�
 
 ### 外部への送信
 
-- Storia が独自に加えた機能（RAM ワールド、Tick Guard、Cluster など）は、**インターネットに何も送りません**。
-- もとになった Paper・Folia・Velocity から受け継いだ、次の 2 つだけがあります。
+プレイヤーの名前・IP アドレス・チャット・ワールドの中身は、**どこにも送りません**。送るのは次の 2 つだけです。
 
 | 送信 | 内容 | 止め方 |
 | --- | --- | --- |
-| bStats の統計 | サーバーの台数・人数・バージョンなどの**匿名の集計**（Folia・Velocity として） | サーバー：`plugins/bStats/config.yml` の `enabled: false`。プロキシ：`velocity.toml` の `[metrics]` |
-| バージョン確認 | `/version` を実行したときだけ、新しいバージョンがあるかを確認 | 実行しなければ送信しません |
+| [bStats](https://bstats.org) の統計 | サーバーの台数・人数、Storia・Minecraft・Java のバージョン、OS、CPU のコア数、単体か Cluster か、RAM ワールドを使っているか。どれも**匿名**で、30 分に 1 回送ります | サーバー：`plugins/bStats/config.yml` の `enabled: false`。プロキシ：`plugins/bStats/config.txt` の `enabled=false` |
+| バージョン確認 | `/version` を実行したときだけ、GitHub に新しいリリースがあるかを確認 | 実行しなければ送信しません |
+
+集まった統計は、誰でも見られます：[Storia](https://bstats.org/plugin/bukkit/Storia/34364)・[Storia Proxy](https://bstats.org/plugin/velocity/StoriaProxy/34365)。
+26.2-4 までは、Folia・Velocity の統計として送っていました。Storia Relay は何も送りません。
 
 ### Cluster の通信
 

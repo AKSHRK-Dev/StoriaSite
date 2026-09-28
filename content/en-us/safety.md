@@ -13,7 +13,7 @@ to Paper or Folia at any time.
 | Can I go back to Paper, Folia or vanilla? | Yes. Use the world folder as it is. |
 | Does terrain change? | No. The same seed gives exactly the same terrain as vanilla. |
 | What about redstone and mobs? | Storia's own changes keep vanilla results. Differences come from Folia, which Storia is based on. |
-| Is player data sent anywhere? | Storia's own features send nothing to the internet. |
+| Is player data sent anywhere? | No. Only anonymous statistics such as the server count are sent (bStats), and you can turn them off. |
 | Do my plugins work? | Only **Folia-compatible plugins** work. |
 
 ## How your data is handled
@@ -28,13 +28,16 @@ to Paper or Folia at any time.
 
 ### What is sent to the internet
 
-- The features Storia adds (RAM world, Tick Guard, Cluster and so on) **send nothing to the internet**.
-- Only these two, inherited from Paper, Folia and Velocity, exist:
+Player names, IP addresses, chat and world contents are **never sent anywhere**. Only these two are sent:
 
 | What | Contents | How to turn it off |
 | --- | --- | --- |
-| bStats statistics | **Anonymous totals** such as server count, player count and version (reported as Folia and Velocity) | Server: `enabled: false` in `plugins/bStats/config.yml`. Proxy: `[metrics]` in `velocity.toml` |
-| Version check | Only when you run `/version`, asks whether a newer version exists | Nothing is sent unless you run it |
+| [bStats](https://bstats.org) statistics | Server and player counts, Storia, Minecraft and Java versions, OS, CPU core count, single server or cluster, and whether the RAM world is on. All **anonymous**, sent every 30 minutes | Server: `enabled: false` in `plugins/bStats/config.yml`. Proxy: `enabled=false` in `plugins/bStats/config.txt` |
+| Version check | Only when you run `/version`, asks GitHub whether a newer release exists | Nothing is sent unless you run it |
+
+The statistics are public: [Storia](https://bstats.org/plugin/bukkit/Storia/34364) and
+[Storia Proxy](https://bstats.org/plugin/velocity/StoriaProxy/34365). Up to 26.2-4 they were reported as Folia and
+Velocity. Storia Relay sends nothing.
 
 ### Cluster traffic
 
