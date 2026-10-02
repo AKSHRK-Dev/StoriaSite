@@ -1054,13 +1054,25 @@ def first_line(message):
 
 def load_releases():
     cache = ROOT / "releases.json"
+    # the changes between two released tags never change: reuse them, so a build only asks GitHub for new releases
+    known = {}
+    if cache.exists():
+        try:
+            known = {(r.get("changes_from"), r["tag_name"]): r["changes"] for r in json.loads(cache.read_text(encoding="utf-8")) if "changes" in r}
+        except (ValueError, KeyError):
+            known = {}
     try:
         data = [r for r in api(f"repos/{REPO}/releases?per_page=30") if not r.get("draft")]
         data.sort(key=lambda r: r.get("published_at") or "", reverse=True)  # the API does not sort by date
         for i, rel in enumerate(data):
             tag = rel["tag_name"]
-            if i + 1 < len(data):
-                commits = api(f"repos/{REPO}/compare/{data[i + 1]['tag_name']}...{tag}").get("commits", [])[::-1]
+            prev = data[i + 1]["tag_name"] if i + 1 < len(data) else None
+            rel["changes_from"] = prev
+            if (prev, tag) in known:
+                rel["changes"] = known[(prev, tag)]
+                continue
+            if prev:
+                commits = api(f"repos/{REPO}/compare/{prev}...{tag}").get("commits", [])[::-1]
             else:
                 commits = api(f"repos/{REPO}/commits?sha={tag}&per_page=5")
             rel["changes"] = [{"sha": c["sha"], "message": first_line(c["commit"]["message"])} for c in commits[:6]]
