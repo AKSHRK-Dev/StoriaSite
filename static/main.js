@@ -144,10 +144,11 @@
     const load = () => index ? Promise.resolve(index) :
       fetch(input.dataset.index).then((r) => r.json()).then((j) => (index = j)).catch(() => (index = []));
     const esc = (s) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+    // highlight on the plain text, then escape each piece (marking escaped HTML would break on "amp", "lt", ...)
     const mark = (s, terms) => {
-      let out = esc(s);
-      terms.forEach((t) => { out = out.replace(new RegExp("(" + t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + ")", "gi"), "<mark>$1</mark>"); });
-      return out;
+      if (!terms.length) return esc(s);
+      const re = new RegExp("(" + terms.map((t) => t.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|") + ")", "gi");
+      return s.split(re).map((part, i) => (i % 2 ? "<mark>" + esc(part) + "</mark>" : esc(part))).join("");
     };
     results.setAttribute("role", "listbox");
     const close = () => {
@@ -251,7 +252,9 @@
   if ("RelativeTimeFormat" in Intl) {
     const rtf = new Intl.RelativeTimeFormat(lang === "ja-jp" ? "ja" : "en", { numeric: "auto" });
     document.querySelectorAll("[data-time]").forEach((el) => {
-      const days = Math.round((new Date(el.dataset.time) - Date.now()) / 86400000);
+      // whole calendar days in the visitor's time zone, so "yesterday" really means yesterday
+      const t = new Date(el.dataset.time), now = new Date();
+      const days = Math.round((Date.UTC(t.getFullYear(), t.getMonth(), t.getDate()) - Date.UTC(now.getFullYear(), now.getMonth(), now.getDate())) / 86400000);
       if (days > -8) el.textContent = rtf.format(days, "day");
     });
   }
