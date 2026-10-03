@@ -357,7 +357,7 @@ def footer(lang):
         <li><a href="{GITHUB}/issues">{t['issues']}</a></li>
       </ul></div>
     </div>
-    <div class="bottom"><span>© {datetime.now().year} StoriaMC · {e(t['legal'])}</span><span>{e(t['thanks'])}</span></div>
+    <div class="bottom"><span>© {datetime.now().year} StoriaMC · {e(t['legal'])}</span><span>{e(t['thanks'])}</span><span>Developed by <a href="https://group.ashikanw.com/{lang}/">ASHIKA Group</a></span></div>
   </div>
 </footer>"""
 
