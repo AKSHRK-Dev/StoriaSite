@@ -102,7 +102,7 @@ Makes this server a [[worker|Storia Worker]] in a [[cluster|Storia Cluster]]. Se
 | Option | Default | Description |
 | --- | --- | --- |
 | `enabled` | `false` | Join a cluster. The world then lives on the relay; this server keeps no world of its own. |
-| `coordinator` | `127.0.0.1:25590` | The [[relay|Storia Relay]], as `host:port`. |
+| `coordinator` | `127.0.0.1:25590` | The [[relay|Storia Relay]], as `host:port`. With a [[relay#standby|standby relay]], list both in order: `relay-a:25590,relay-b:25590`. |
 | `node-name` | `''` | A unique name for this worker; use the same name for it in the proxy's `velocity.toml`. |
 | `secret` | `''` | The relay's secret, at least 8 characters. Never sent over the network. |
 

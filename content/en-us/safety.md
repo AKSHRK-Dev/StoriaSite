@@ -58,6 +58,7 @@ single server), **not encrypted**. Plugins should encrypt secrets such as passwo
 | The server process crashed | Changes since the last autosave are lost, as on any server. A RAM world is recovered from the copy in RAM on the next start. |
 | **The machine lost power** (with RAM world) | RAM is cleared and changes **since the last sync** are lost. The sync interval is `ram-world.sync-interval-seconds` (5 minutes by default). |
 | The relay stopped (cluster) | Workers keep running, keep their writes in `cluster-spool/` and send them when the relay is back. New players cannot log in meanwhile. |
+| The relay's machine or disk failed (cluster) | With a [[relay#standby|standby relay]], `promote` takes over; every write that was confirmed is on the standby too. Without one, restore from a backup. |
 | One worker stopped (cluster) | Its players are disconnected. The world is on the relay, so they can rejoin on another worker. `/stop` moves players to other workers first, so they are not disconnected. |
 | Player data could not be read from the relay (cluster) | The login is refused. Storia never overwrites the player with empty data and loses their items. |
 

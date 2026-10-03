@@ -102,7 +102,7 @@ cluster:
 | 項目 | 初期値 | 説明 |
 | --- | --- | --- |
 | `enabled` | `false` | Cluster に参加します。ワールドは Relay に置かれ、このサーバーは自分のワールドを持ちません。 |
-| `coordinator` | `127.0.0.1:25590` | [[relay|Storia Relay]] の `host:port`。 |
+| `coordinator` | `127.0.0.1:25590` | [[relay|Storia Relay]] の `host:port`。[[relay#standby|予備の Relay]] を使うときは `relay-a:25590,relay-b:25590` のように順番に並べます。 |
 | `node-name` | `''` | このワーカーの名前。ワーカーごとに変え、プロキシの `velocity.toml` でも同じ名前にします。 |
 | `secret` | `''` | Relay と同じ合言葉。8 文字以上。ネットワークには流れません。 |
 
