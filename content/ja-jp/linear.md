@@ -1,8 +1,8 @@
 ---
 summary: ワールドを Linear 形式で保存して、ディスクの使用量をおよそ半分にする。既存のワールドは、使ったところから自動で変換します。
 ---
-!!! note "Beta"
-    Linear 形式は Storia **26.2-9-beta** 以降の機能です。切り替える前に、ワールドのバックアップを取ってください。
+!!! note "バージョン"
+    Linear 形式は Storia **26.2-10** 以降の機能です（26.2-9-beta で先行公開）。切り替える前に、ワールドのバックアップを取ってください。
 
 **Linear 形式**は、リージョンファイル 1 つ（32 × 32 チャンク）を丸ごと Zstandard で圧縮して、`r.X.Z.linear` という
 1 つのファイルに保存する形式です（[仕様と変換ツール](https://github.com/xymb-endcrystalme/LinearRegionFileFormatTools)）。

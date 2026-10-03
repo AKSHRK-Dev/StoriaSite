@@ -48,10 +48,10 @@ Workers keep running. Writes they cannot send are kept in `cluster-spool/` on th
 when the relay is back (also after a worker restart). Workers claim their parts of the world again when they
 reconnect. New players cannot join and nobody is moved until the relay is back.
 
-## Standby relay (beta) {#standby}
+## Standby relay {#standby}
 
-!!! note "Beta"
-    The standby relay is part of Storia **26.2-8-beta** and later.
+!!! note "Version"
+    The standby relay is part of Storia **26.2-10** and later (first in 26.2-8-beta).
 
 Run a second relay as a **standby** and it keeps a live copy of everything the active relay stores. If the active
 relay's machine or disk is lost, the standby takes over and the world is not lost.

@@ -1,8 +1,8 @@
 ---
 summary: Store the world in the Linear region format and use about half the disk space. Existing worlds are converted as they are used.
 ---
-!!! note "Beta"
-    The Linear region format is part of Storia **26.2-9-beta** and later. Back up your world before switching.
+!!! note "Version"
+    The Linear region format is part of Storia **26.2-10** and later (first in 26.2-9-beta). Back up your world before switching.
 
 The **Linear region format** stores each region (32 × 32 chunks) as one Zstandard stream in a single `r.X.Z.linear`
 file ([format and tools](https://github.com/xymb-endcrystalme/LinearRegionFileFormatTools)). Vanilla's Anvil format
