@@ -218,7 +218,7 @@ T = {
         # footer
         "tagline": "A Minecraft server for big communities, built on Folia.",
         "f_use": "Use", "f_learn": "Learn", "f_source": "Source",
-        "issues": "Report an issue", "releases": "All releases", "website_src": "This website",
+        "issues": "Report an issue", "releases": "All releases", "website_src": "This website", "group_about": "About ASHIKA Group",
         "legal": "Storia is not an official Minecraft product and is not affiliated with Mojang or Microsoft.",
         "thanks": "Built on Paper, Folia and Velocity by PaperMC.",
         "nf_title": "Page not found", "nf_text": "There is nothing here. It may have moved.", "nf_home": "Go home",
@@ -288,7 +288,7 @@ T = {
         "docs_menu": "ドキュメントのメニュー",
         "tagline": "Folia をベースにした、大人数のコミュニティのための Minecraft サーバー。",
         "f_use": "使う", "f_learn": "学ぶ", "f_source": "ソース",
-        "issues": "問題を報告", "releases": "すべてのリリース", "website_src": "このサイト",
+        "issues": "問題を報告", "releases": "すべてのリリース", "website_src": "このサイト", "group_about": "ASHIKA Group について",
         "legal": "Storia は Minecraft の公式製品ではなく、Mojang や Microsoft とは関係ありません。",
         "thanks": "PaperMC の Paper・Folia・Velocity をもとに作られています。",
         "nf_title": "ページが見つかりません", "nf_text": "ここには何もありません。移動した可能性があります。", "nf_home": "ホームへ",
@@ -355,6 +355,11 @@ def footer(lang):
         <li><a href="https://github.com/{PROXY_REPO}">Storia Proxy</a></li>
         <li><a href="https://github.com/{SITE_REPO}">{t['website_src']}</a></li>
         <li><a href="{GITHUB}/issues">{t['issues']}</a></li>
+      </ul></div>
+      <div><h2>ASHIKA Group</h2><ul>
+        <li><a href="https://group.ashikanw.com/{lang}/">{t['group_about']}</a></li>
+        <li><a href="https://www.ashikanw.com">ASHIKA Network</a></li>
+        <li><a href="https://minecrafts.jp">SABALISU</a></li>
       </ul></div>
     </div>
     <div class="bottom"><span>© {datetime.now().year} StoriaMC · {e(t['legal'])}</span><span>{e(t['thanks'])}</span><span>Developed by <a href="https://group.ashikanw.com/{lang}/">ASHIKA Group</a></span></div>
