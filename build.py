@@ -55,6 +55,7 @@ DOCS_NAV = [
     (("Features", "機能"), [
         ("ram-world", "RAM world", "RAM ワールド"),
         ("pregeneration", "Chunk pregeneration", "チャンクの事前生成"),
+        ("linear", "Linear region format", "Linear 形式"),
         ("tick-guard", "Tick guard", "Tick Guard"),
         ("player-budget", "Per-player budget", "プレイヤーごとの予算"),
         ("performance", "Performance & tuning", "パフォーマンスと調整"),

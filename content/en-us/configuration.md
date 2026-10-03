@@ -37,6 +37,11 @@ player-budget:
   memory-high-percent: 85
   memory-low-percent: 70
   fast-mover-speed: 12.0
+region-format:
+  type: anvil
+  linear:
+    compression-level: 1
+    flush-seconds: 5
 cluster:
   enabled: false
   coordinator: 127.0.0.1:25590
@@ -107,6 +112,14 @@ Makes this server a [[worker|Storia Worker]] in a [[cluster|Storia Cluster]]. Se
 | `secret` | `''` | The relay's secret, at least 8 characters. Never sent over the network. |
 
 If an older `storia.yml` still has an `offload:` section, it is ignored and can be deleted.
+
+## region-format
+
+| Key | Default | Meaning |
+| --- | --- | --- |
+| `region-format.type` | `anvil` | How chunks are stored: `anvil` (vanilla) or `linear`. See [[linear]]. |
+| `region-format.linear.compression-level` | `1` | Zstandard level, 1 to 22. |
+| `region-format.linear.flush-seconds` | `5` | How often changed regions are written, in seconds. |
 
 ## Java system properties
 

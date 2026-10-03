@@ -37,6 +37,11 @@ player-budget:
   memory-high-percent: 85
   memory-low-percent: 70
   fast-mover-speed: 12.0
+region-format:
+  type: anvil
+  linear:
+    compression-level: 1
+    flush-seconds: 5
 cluster:
   enabled: false
   coordinator: 127.0.0.1:25590
@@ -107,6 +112,14 @@ cluster:
 | `secret` | `''` | Relay と同じ合言葉。8 文字以上。ネットワークには流れません。 |
 
 古い `storia.yml` に `offload:` の項目が残っていても無視されます。消してかまいません。
+
+## region-format
+
+| キー | 初期値 | 内容 |
+| --- | --- | --- |
+| `region-format.type` | `anvil` | ワールドの保存形式。`anvil`（バニラ）か `linear`。[[linear]] を参照。 |
+| `region-format.linear.compression-level` | `1` | Zstandard の圧縮レベル（1〜22）。 |
+| `region-format.linear.flush-seconds` | `5` | 変更したリージョンを書く間隔（秒）。 |
 
 ## Java のシステムプロパティ
 
